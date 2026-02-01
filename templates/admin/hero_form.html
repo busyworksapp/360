@@ -1,0 +1,101 @@
+{% extends "admin/base.html" %}
+
+{% block title %}{% if hero %}Edit Hero Section{% else %}Add Hero Section{% endif %} - Admin{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3><i class="fas fa-image"></i> {% if hero %}Edit Hero Section{% else %}Add New Hero Section{% endif %}</h3>
+    <a href="{{ url_for('admin_hero_sections') }}" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> Back to Hero Sections
+    </a>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <form method="POST" enctype="multipart/form-data">
+            <div class="mb-3">
+                <label for="title" class="form-label">Hero Title *</label>
+                <input type="text" class="form-control" id="title" name="title" 
+                       value="{{ hero.title or '' }}" required>
+                <small class="text-muted">Main headline text</small>
+            </div>
+
+            <div class="mb-3">
+                <label for="subtitle" class="form-label">Subtitle</label>
+                <input type="text" class="form-control" id="subtitle" name="subtitle" 
+                       value="{{ hero.subtitle or '' }}">
+                <small class="text-muted">Secondary headline</small>
+            </div>
+
+            <div class="mb-3">
+                <label for="description" class="form-label">Description</label>
+                <textarea class="form-control" id="description" name="description" rows="3">{{ hero.description or '' }}</textarea>
+                <small class="text-muted">Additional description text</small>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="cta_text" class="form-label">CTA Button Text</label>
+                        <input type="text" class="form-control" id="cta_text" name="cta_text" 
+                               value="{{ hero.cta_text or 'Learn More' }}">
+                        <small class="text-muted">Call-to-action button text</small>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="cta_link" class="form-label">CTA Link</label>
+                        <input type="text" class="form-control" id="cta_link" name="cta_link" 
+                               value="{{ hero.cta_link or '#' }}" placeholder="/services">
+                        <small class="text-muted">Where the button links to</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="background_image" class="form-label">Background Image</label>
+                        <input type="file" class="form-control" id="background_image" name="background_image" accept="image/*">
+                        <small class="text-muted">JPG, PNG (max 5MB)</small>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="order_position" class="form-label">Display Order</label>
+                        <input type="number" class="form-control" id="order_position" name="order_position" 
+                               value="{{ hero.order_position or 0 }}" min="0">
+                        <small class="text-muted">Lower numbers appear first</small>
+                    </div>
+                </div>
+            </div>
+
+            {% if hero and hero.background_image %}
+            <div class="mb-3">
+                <label class="form-label">Current Background Image</label>
+                <div>
+                    <img src="{{ hero.background_image }}" alt="Hero Background" style="max-width: 300px; border-radius: 8px;">
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="mb-3 form-check">
+                <input type="checkbox" class="form-check-input" id="is_active" name="is_active"
+                       {% if hero is none or hero.is_active %}checked{% endif %}>
+                <label class="form-check-label" for="is_active">
+                    <i class="fas fa-check"></i> Active (display on website)
+                </label>
+            </div>
+
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> {% if hero %}Update Hero Section{% else %}Create Hero Section{% endif %}
+                </button>
+                <a href="{{ url_for('admin_hero_sections') }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-times"></i> Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

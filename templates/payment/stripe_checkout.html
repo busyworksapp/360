@@ -1,0 +1,298 @@
+{% extends "payment/base.html" %}
+
+{% block title %}Stripe Checkout - Barron CMS{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Stripe Elements Styling */
+    .StripeElement {
+        padding: 12px;
+        border: 1px solid #d0d0d0;
+        border-radius: 4px;
+        font-size: 14px;
+    }
+
+    .StripeElement--focus {
+        border-color: #007bff;
+        box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+    }
+
+    .StripeElement--invalid {
+        border-color: #dc3545;
+        box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
+    }
+
+    .card-error {
+        color: #dc3545;
+        font-size: 13px;
+        margin-top: 8px;
+    }
+
+    .form-group.stripe-element {
+        margin-bottom: 20px;
+    }
+
+    .stripe-element-label {
+        display: block;
+        margin-bottom: 8px;
+        color: #333;
+        font-weight: 600;
+        font-size: 14px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="payment-container">
+    <!-- Payment Header -->
+    <div class="payment-header">
+        <h1>💳 Stripe Checkout</h1>
+        <p>Secure Payment Processing</p>
+    </div>
+
+    <!-- Order Summary -->
+    {% if order %}
+    <div class="order-summary">
+        <div class="order-summary-item">
+            <span class="order-summary-label">Order Number:</span>
+            <span class="order-summary-value">#{{ order.order_number }}</span>
+        </div>
+        <div class="order-summary-item">
+            <span class="order-summary-label">Items:</span>
+            <span class="order-summary-value">{{ order.order_items|length }} item(s)</span>
+        </div>
+        <div class="order-summary-item">
+            <span class="order-summary-label">Subtotal:</span>
+            <span class="order-summary-value">${{ "%.2f"|format(order.subtotal) }}</span>
+        </div>
+        {% if order.tax_amount %}
+        <div class="order-summary-item">
+            <span class="order-summary-label">Tax:</span>
+            <span class="order-summary-value">${{ "%.2f"|format(order.tax_amount) }}</span>
+        </div>
+        {% endif %}
+        {% if order.shipping_cost %}
+        <div class="order-summary-item">
+            <span class="order-summary-label">Shipping:</span>
+            <span class="order-summary-value">${{ "%.2f"|format(order.shipping_cost) }}</span>
+        </div>
+        {% endif %}
+        <div class="order-summary-total">
+            <span>Total Amount:</span>
+            <span>${{ "%.2f"|format(order.total_amount) }}</span>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Error Messages -->
+    <div id="errorMessage" class="alert alert-error" style="display: none;">
+        <span class="alert-close" onclick="this.parentElement.style.display='none';">&times;</span>
+        <strong>Error:</strong> <span id="errorText"></span>
+    </div>
+
+    <!-- Success Message -->
+    <div id="successMessage" class="alert alert-success" style="display: none;">
+        <strong>Success!</strong> Your payment has been processed successfully.
+        Redirecting to confirmation page...
+    </div>
+
+    <!-- Stripe Payment Form -->
+    <form method="POST" id="payment-form" class="payment-form">
+        <input type="hidden" name="order_id" value="{{ order.id if order else '' }}">
+        
+        <!-- Cardholder Name -->
+        <div class="form-group">
+            <label for="cardholderName">Cardholder Name</label>
+            <input type="text" id="cardholderName" placeholder="John Doe" required>
+        </div>
+
+        <!-- Stripe Card Element -->
+        <div class="form-group stripe-element">
+            <label class="stripe-element-label">Card Details</label>
+            <div id="card-element" class="StripeElement"></div>
+            <div id="card-errors" class="card-error" role="alert"></div>
+        </div>
+
+        <!-- Billing Address -->
+        <div class="form-row">
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" placeholder="john@example.com" value="{{ current_user.email if current_user else '' }}" required>
+            </div>
+            <div class="form-group">
+                <label for="phone">Phone Number</label>
+                <input type="tel" id="phone" placeholder="+1 (555) 123-4567">
+            </div>
+        </div>
+
+        <!-- Address Fields -->
+        <div class="form-group">
+            <label for="address">Street Address</label>
+            <input type="text" id="address" placeholder="123 Main Street" required>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="city">City</label>
+                <input type="text" id="city" placeholder="New York" required>
+            </div>
+            <div class="form-group">
+                <label for="state">State/Province</label>
+                <input type="text" id="state" placeholder="NY" required>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="zip">ZIP/Postal Code</label>
+                <input type="text" id="zip" placeholder="10001" required>
+            </div>
+            <div class="form-group">
+                <label for="country">Country</label>
+                <input type="text" id="country" placeholder="United States" required>
+            </div>
+        </div>
+
+        <!-- Terms Agreement -->
+        <div style="margin-bottom: 20px;">
+            <label style="display: flex; align-items: center; font-weight: normal; cursor: pointer;">
+                <input type="checkbox" id="agreeTerms" required style="width: auto; margin-right: 10px;">
+                <span>I agree to the <a href="#" target="_blank">terms and conditions</a></span>
+            </label>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="btn-group">
+            <button type="submit" id="submit-btn" class="btn btn-primary">
+                Pay ${{ "%.2f"|format(order.total_amount if order else 0) }}
+            </button>
+            <a href="{{ url_for('payment.select_payment_method') }}" class="btn btn-cancel">
+                Choose Different Method
+            </a>
+        </div>
+
+        <!-- Security Info -->
+        <div class="security-info">
+            <i class="fas fa-lock"></i> Your payment information is encrypted with SSL.
+            We use Stripe's PCI-compliant platform for secure payment processing.
+        </div>
+    </form>
+</div>
+
+<!-- Stripe.js Library -->
+<script src="https://js.stripe.com/v3/"></script>
+
+<script>
+    // Initialize Stripe
+    const stripe = Stripe('{{ config.STRIPE_PUBLIC_KEY }}');
+    const elements = stripe.elements();
+    const cardElement = elements.create('card');
+
+    // Mount card element
+    cardElement.mount('#card-element');
+
+    // Handle card errors
+    cardElement.addEventListener('change', function(event) {
+        const displayError = document.getElementById('card-errors');
+        if (event.error) {
+            displayError.textContent = event.error.message;
+            displayError.style.display = 'block';
+        } else {
+            displayError.textContent = '';
+            displayError.style.display = 'none';
+        }
+    });
+
+    // Handle form submission
+    const form = document.getElementById('payment-form');
+    form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        const submitBtn = document.getElementById('submit-btn');
+        const errorDiv = document.getElementById('errorMessage');
+        const errorText = document.getElementById('errorText');
+
+        // Disable button and show loading
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span class="spinner"></span> Processing Payment...';
+
+        try {
+            // Get form data
+            const orderId = document.querySelector('input[name="order_id"]').value;
+
+            // Create payment intent on server
+            const response = await fetch('{{ url_for("payment.process_stripe") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({
+                    order_id: orderId
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to create payment');
+            }
+
+            const data = await response.json();
+
+            if (data.error) {
+                throw new Error(data.error);
+            }
+
+            // Confirm payment with Stripe
+            const cardholderName = document.getElementById('cardholderName').value;
+            const email = document.getElementById('email').value;
+            const address = document.getElementById('address').value;
+            const city = document.getElementById('city').value;
+            const state = document.getElementById('state').value;
+            const zip = document.getElementById('zip').value;
+            const country = document.getElementById('country').value;
+
+            const { paymentIntent, error } = await stripe.confirmCardPayment(data.client_secret, {
+                payment_method: {
+                    card: cardElement,
+                    billing_details: {
+                        name: cardholderName,
+                        email: email,
+                        address: {
+                            line1: address,
+                            city: city,
+                            state: state,
+                            postal_code: zip,
+                            country: country
+                        }
+                    }
+                }
+            });
+
+            if (error) {
+                throw new Error(error.message);
+            }
+
+            if (paymentIntent.status === 'succeeded') {
+                // Show success message
+                document.getElementById('successMessage').style.display = 'block';
+                
+                // Redirect after 2 seconds
+                setTimeout(function() {
+                    window.location.href = '{{ url_for("payment.payment_status") }}?order_id={{ order.id if order else "0" }}&status=COMPLETE';
+                }, 2000);
+            } else {
+                throw new Error('Payment failed: ' + paymentIntent.status);
+            }
+
+        } catch (err) {
+            // Show error message
+            errorText.textContent = err.message;
+            errorDiv.style.display = 'block';
+
+            // Re-enable button
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = 'Pay ${{ "%.2f"|format(order.total_amount if order else 0) }}';
+        }
+    });
+</script>
+
+{% endblock %}

@@ -1,0 +1,553 @@
+{% extends "base.html" %}
+
+{% block title %}360Degree Supply - Industrial Supplies{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Home Page Consistent Styling - FORCE GREEN/GOLD THEME */
+    
+    .hero {
+        background: linear-gradient(135deg, var(--primary) 0%, #2d5a3d 100%) !important;
+        color: white !important;
+        padding: 60px 0 !important;
+        text-align: center !important;
+        margin-bottom: 60px !important;
+    }
+
+    .hero h1 {
+        font-size: 2.2rem !important;
+        font-weight: 700 !important;
+        margin-bottom: 20px !important;
+        color: white !important;
+    }
+
+    .hero p {
+        font-size: 1.1rem !important;
+        margin-bottom: 30px !important;
+        opacity: 0.9 !important;
+        color: white !important;
+    }
+
+    .hero .btn {
+        padding: 12px 40px !important;
+        font-size: 1.1rem !important;
+        font-weight: 600 !important;
+    }
+
+    .hero .btn-primary {
+        background-color: var(--secondary) !important;
+        border-color: var(--secondary) !important;
+        color: white !important;
+    }
+
+    .hero .btn-primary:hover {
+        background-color: #e08a00 !important;
+        border-color: #e08a00 !important;
+        color: white !important;
+    }
+
+    /* Services Section */
+    .services-section {
+        background-color: #f8f9fa !important;
+        padding: 60px 0 !important;
+    }
+
+    .section-title {
+        text-align: center;
+        margin-bottom: 50px;
+    }
+
+    .section-title h2 {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: var(--primary) !important;
+        margin-bottom: 15px;
+    }
+
+    .section-title .divider {
+        width: 60px;
+        height: 4px;
+        background-color: var(--secondary) !important;
+        margin: 15px auto;
+        border-radius: 2px;
+    }
+
+    .section-title p {
+        font-size: 1.0rem;
+        color: #666;
+        margin-bottom: 0;
+    }
+
+    .service-card {
+        background: white !important;
+        border: none !important;
+        border-radius: 12px !important;
+        padding: 30px !important;
+        text-align: center !important;
+        transition: all 0.3s ease !important;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08) !important;
+        height: 100% !important;
+    }
+
+    .service-card:hover {
+        box-shadow: 0 8px 16px rgba(0,0,0,0.12) !important;
+        transform: translateY(-5px) !important;
+    }
+
+    .service-icon {
+        font-size: 2.5rem !important;
+        color: var(--secondary) !important;
+        margin-bottom: 15px !important;
+    }
+
+    .service-card h4 {
+        color: var(--primary) !important;
+        font-weight: 600 !important;
+        margin-bottom: 15px !important;
+        font-size: 1.1rem !important;
+    }
+
+    .service-card p {
+        color: #666 !important;
+        line-height: 1.6 !important;
+        margin: 0 !important;
+        font-size: 0.9rem !important;
+    }
+
+    /* Products Section */
+    .products-section {
+        padding: 60px 0 !important;
+    }
+
+    .product-card {
+        background: white !important;
+        border: 1px solid #ddd !important;
+        border-radius: 12px !important;
+        overflow: hidden !important;
+        transition: all 0.3s ease !important;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08) !important;
+        height: 100% !important;
+    }
+
+    .product-card:hover {
+        border-color: var(--secondary) !important;
+        box-shadow: 0 8px 16px rgba(0,0,0,0.12) !important;
+        transform: translateY(-5px) !important;
+    }
+
+    .product-image {
+        background: linear-gradient(135deg, var(--primary) 0%, #2d5a3d 100%) !important;
+        color: white !important;
+        padding: 60px 20px !important;
+        text-align: center !important;
+        font-size: 4rem !important;
+    }
+
+    .product-details {
+        padding: 20px !important;
+    }
+
+    .product-name {
+        font-weight: 600 !important;
+        font-size: 1.0rem !important;
+        color: var(--primary) !important;
+        margin-bottom: 5px !important;
+    }
+
+    .product-category {
+        font-size: 0.8rem !important;
+        color: #999 !important;
+        margin-bottom: 10px !important;
+    }
+
+    .product-price {
+        font-size: 1.1rem !important;
+        font-weight: 700 !important;
+        color: var(--secondary) !important;
+        margin-bottom: 10px !important;
+    }
+
+    .product-details p {
+        color: #666 !important;
+        font-size: 0.9rem !important;
+        line-height: 1.6 !important;
+    }
+
+    /* Testimonials Section */
+    .testimonials-section {
+        background-color: #f8f9fa !important;
+        padding: 60px 0 !important;
+    }
+
+    .testimonial-card {
+        background: white !important;
+        border-radius: 12px !important;
+        padding: 30px !important;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08) !important;
+        height: 100% !important;
+        transition: all 0.3s ease !important;
+    }
+
+    .testimonial-card:hover {
+        box-shadow: 0 8px 16px rgba(0,0,0,0.12) !important;
+        transform: translateY(-5px) !important;
+    }
+
+    .testimonial-quote {
+        font-size: 1.8rem !important;
+        color: var(--secondary) !important;
+        margin-bottom: 15px !important;
+    }
+
+    .testimonial-content {
+        font-style: italic !important;
+        color: #666 !important;
+        margin-bottom: 20px !important;
+        line-height: 1.8 !important;
+        font-size: 0.9rem !important;
+    }
+
+    .testimonial-rating {
+        margin-bottom: 20px !important;
+    }
+
+    .testimonial-rating i {
+        color: var(--secondary) !important;
+        margin-right: 5px !important;
+    }
+
+    .testimonial-author {
+        display: flex !important;
+        align-items: center !important;
+        gap: 15px !important;
+    }
+
+    .testimonial-avatar {
+        width: 50px !important;
+        height: 50px !important;
+        border-radius: 50% !important;
+        object-fit: cover !important;
+    }
+
+    .testimonial-avatar-placeholder {
+        width: 50px !important;
+        height: 50px !important;
+        border-radius: 50% !important;
+        background: linear-gradient(135deg, var(--primary) 0%, #2d5a3d 100%) !important;
+        color: white !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        font-weight: 600 !important;
+        font-size: 1.5rem !important;
+    }
+
+    .testimonial-name {
+        font-weight: 600 !important;
+        color: var(--primary) !important;
+    }
+
+    .testimonial-meta {
+        font-size: 0.85rem !important;
+        color: #999 !important;
+    }
+
+    /* Contact Section */
+    .contact-section {
+        padding: 60px 0 !important;
+    }
+
+    .contact-section h2 {
+        color: var(--primary) !important;
+        font-weight: 700 !important;
+        font-size: 1.6rem !important;
+        margin-bottom: 20px !important;
+    }
+
+    .contact-section .divider {
+        width: 60px !important;
+        height: 4px !important;
+        background-color: var(--secondary) !important;
+        margin-bottom: 30px !important;
+        border-radius: 2px !important;
+    }
+
+    .contact-info {
+        display: flex !important;
+        align-items: center !important;
+        gap: 15px !important;
+        margin-bottom: 20px !important;
+        font-size: 0.95rem !important;
+    }
+
+    .contact-info i {
+        color: var(--secondary) !important;
+        font-size: 1.5rem !important;
+        width: 30px !important;
+    }
+
+    .contact-section form input,
+    .contact-section form textarea {
+        border: 1px solid #ddd !important;
+        border-radius: 8px !important;
+        padding: 10px 15px !important;
+    }
+
+    .contact-section form input:focus,
+    .contact-section form textarea:focus {
+        border-color: var(--secondary) !important;
+        box-shadow: 0 0 0 0.2rem rgba(243, 156, 18, 0.25) !important;
+    }
+
+    .contact-section .btn-primary {
+        background-color: var(--secondary) !important;
+        border-color: var(--secondary) !important;
+        font-weight: 600 !important;
+        color: white !important;
+    }
+
+    .contact-section .btn-primary:hover {
+        background-color: #e08a00 !important;
+        border-color: #e08a00 !important;
+        color: white !important;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+    <!-- Hero Section -->
+    {% if hero_sections %}
+        {% for hero in hero_sections %}
+            <section class="hero">
+                <div class="container">
+                    <h1>{{ hero.title }}</h1>
+                    <p>{{ hero.subtitle }}</p>
+                    <a href="{{ hero.cta_link or '#services' }}" class="btn btn-primary btn-lg">
+                        {{ hero.cta_text or 'Learn More' }}
+                    </a>
+                </div>
+            </section>
+        {% endfor %}
+    {% else %}
+        <section class="hero">
+            <div class="container">
+                <h1>Welcome to 360Degree Supply</h1>
+                <p>Your trusted partner for industrial supplies and services</p>
+                <a href="#services" class="btn btn-primary btn-lg">Explore Our Services</a>
+            </div>
+        </section>
+    {% endif %}
+
+    <!-- Services Section -->
+    <section class="services-section" id="services">
+        <div class="container">
+            <div class="section-title">
+                <h2>Our Services</h2>
+                <div class="divider"></div>
+                <p>Comprehensive industrial solutions tailored to your needs</p>
+            </div>
+            
+            <div class="row">
+                {% if services %}
+                    {% for service in services %}
+                        <div class="col-md-6 col-lg-4">
+                            <div class="service-card">
+                                <div class="service-icon">
+                                    <i class="fas fa-{{ service.icon or 'cog' }}"></i>
+                                </div>
+                                <h4>{{ service.title }}</h4>
+                                <p>{{ service.description or 'Professional service description' }}</p>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="col-12 text-center">
+                        <p class="text-muted">No services available yet.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+
+    <!-- Products Section -->
+    <section class="products-section">
+        <div class="container">
+            <div class="section-title">
+                <h2>Our Products</h2>
+                <div class="divider"></div>
+                <p>Quality products for your industrial needs</p>
+            </div>
+            
+            <div class="row">
+                {% if products %}
+                    {% for product in products %}
+                        <div class="col-md-6 col-lg-4 mb-4">
+                            <div class="product-card">
+                                <div class="product-image">
+                                    <i class="fas fa-box"></i>
+                                </div>
+                                <div class="product-details">
+                                    <div class="product-name">{{ product.name }}</div>
+                                    <div class="product-category">{{ product.category or 'Uncategorized' }}</div>
+                                    <div class="product-price">R{{ "%.2f"|format(product.price or 0) }}</div>
+                                    <p class="mb-0">{{ product.description or 'Product details' }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="col-12 text-center">
+                        <p class="text-muted">No products available yet.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="testimonials-section" id="testimonials">
+        <div class="container">
+            <div class="row mb-5">
+                <div class="col-lg-8 mx-auto text-center">
+                    <h2>What Our Clients Say</h2>
+                    <div class="divider"></div>
+                    <p class="text-muted">
+                        Trusted by leading companies across mining, logistics, and industrial sectors
+                    </p>
+                </div>
+            </div>
+
+            {% if testimonials %}
+            <div class="row">
+                {% for testimonial in testimonials %}
+                <div class="col-md-6 col-lg-4">
+                    <div class="testimonial-card">
+                        <div class="testimonial-quote">
+                            <i class="fas fa-quote-left"></i>
+                        </div>
+                        
+                        <p class="testimonial-content">
+                            "{{ testimonial.content }}"
+                        </p>
+                        
+                        <div class="testimonial-rating">
+                            {% for i in range(5) %}
+                                {% if i < testimonial.rating %}
+                                    <i class="fas fa-star"></i>
+                                {% else %}
+                                    <i class="fas fa-star text-muted"></i>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                        
+                        <div class="testimonial-author">
+                            {% if testimonial.avatar_url %}
+                                <img src="{{ testimonial.avatar_url }}" 
+                                     alt="{{ testimonial.client_name }}" 
+                                     class="testimonial-avatar">
+                            {% else %}
+                                <div class="testimonial-avatar testimonial-avatar-placeholder">
+                                    {{ testimonial.client_name[0].upper() }}
+                                </div>
+                            {% endif %}
+                            
+                            <div class="testimonial-info">
+                                <div class="testimonial-name">
+                                    {{ testimonial.client_name }}
+                                </div>
+                                {% if testimonial.position or testimonial.company %}
+                                <div class="testimonial-meta">
+                                    {% if testimonial.position %}
+                                        {{ testimonial.position }}
+                                    {% endif %}
+                                    {% if testimonial.company %}
+                                        {% if testimonial.position %}<br>{% endif %}
+                                        {{ testimonial.company }}
+                                    {% endif %}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="alert alert-info text-center">
+                <p>No testimonials available yet.</p>
+            </div>
+            {% endif %}
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="contact-section" id="contact">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h2>Contact Us</h2>
+                    <div class="divider"></div>
+                    
+                    {% if company %}
+                        <div class="contact-info">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>{{ company.address or 'Address' }}</span>
+                        </div>
+                        <div class="contact-info">
+                            <i class="fas fa-phone"></i>
+                            <span>{{ company.phone or 'Phone' }}</span>
+                        </div>
+                        <div class="contact-info">
+                            <i class="fas fa-envelope"></i>
+                            <span>{{ company.email or 'Email' }}</span>
+                        </div>
+                    {% else %}
+                        <p>Contact information will appear here.</p>
+                    {% endif %}
+                </div>
+                
+                <div class="col-md-6">
+                    <form id="contactForm" method="POST" action="/api/contact">
+                        <div class="mb-3">
+                            <input type="text" class="form-control" name="name" placeholder="Your Name" required>
+                        </div>
+                        <div class="mb-3">
+                            <input type="email" class="form-control" name="email" placeholder="Your Email" required>
+                        </div>
+                        <div class="mb-3">
+                            <input type="tel" class="form-control" name="phone" placeholder="Your Phone" required>
+                        </div>
+                        <div class="mb-3">
+                            <textarea class="form-control" name="message" rows="4" placeholder="Your Message" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Send Message</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Handle contact form submission
+        document.getElementById('contactForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            try {
+                const response = await fetch('/api/contact', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (response.ok) {
+                    alert('Thank you! We will get back to you soon.');
+                    this.reset();
+                } else {
+                    alert('There was an error sending your message. Please try again.');
+                }
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        });
+    </script>
+{% endblock %}

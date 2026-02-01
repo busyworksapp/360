@@ -1,0 +1,61 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Payment Methods Management - Admin{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3><i class="fas fa-credit-card"></i> Payment Methods</h3>
+    <span class="badge bg-primary">{{ payment_methods|length }} Active</span>
+</div>
+
+{% if payment_methods %}
+<div class="card">
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>Payment Method</th>
+                    <th>Description</th>
+                    <th>Instructions</th>
+                    <th>Order</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for method in payment_methods %}
+                <tr>
+                    <td><strong>{{ method.name }}</strong></td>
+                    <td>{{ method.description[:60] if method.description else 'N/A' }}...</td>
+                    <td>
+                        {% if method.description %}
+                            <small>{{ method.description[:40] }}...</small>
+                        {% else %}
+                            <small class="text-muted">No description</small>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <span class="badge bg-info">{{ method.order_position }}</span>
+                    </td>
+                    <td>
+                        {% if method.is_active %}
+                            <span class="badge bg-success">Active</span>
+                        {% else %}
+                            <span class="badge bg-secondary">Inactive</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% else %}
+<div class="alert alert-info" role="alert">
+    <i class="fas fa-info-circle"></i> No payment methods configured yet.
+</div>
+{% endif %}
+
+<div class="mt-4">
+    <p class="text-muted"><i class="fas fa-info-circle"></i> Payment methods are currently managed through the database. Contact your system administrator to add or modify payment methods.</p>
+</div>
+{% endblock %}

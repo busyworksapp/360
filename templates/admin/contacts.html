@@ -1,0 +1,116 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Contact Submissions - Admin{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3><i class="fas fa-envelope"></i> Contact Form Submissions</h3>
+    <span class="badge bg-primary">{{ contacts|length }} Total</span>
+</div>
+
+{% if contacts %}
+<div class="card">
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Subject</th>
+                    <th>Date Received</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for contact in contacts %}
+                <tr>
+                    <td><strong>{{ contact.name }}</strong></td>
+                    <td>
+                        <a href="mailto:{{ contact.email }}">{{ contact.email }}</a>
+                    </td>
+                    <td>
+                        {% if contact.phone %}
+                            <a href="tel:{{ contact.phone }}">{{ contact.phone }}</a>
+                        {% else %}
+                            <span class="text-muted">N/A</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <strong>{{ contact.subject }}</strong>
+                    </td>
+                    <td>
+                        <small>{{ contact.created_at.strftime('%d %b %Y, %H:%M') }}</small>
+                    </td>
+                    <td>
+                        {% if contact.status == 'new' %}
+                            <span class="badge bg-success">New</span>
+                        {% elif contact.status == 'read' %}
+                            <span class="badge bg-info">Read</span>
+                        {% elif contact.status == 'replied' %}
+                            <span class="badge bg-secondary">Replied</span>
+                        {% else %}
+                            <span class="badge bg-light text-dark">{{ contact.status }}</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <button type="button" class="btn btn-sm btn-info" data-bs-toggle="modal" 
+                                data-bs-target="#viewMessage{{ contact.id }}" title="View">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </td>
+                </tr>
+
+                <!-- View Modal -->
+                <div class="modal fade" id="viewMessage{{ contact.id }}" tabindex="-1">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header bg-dark text-white">
+                                <h5 class="modal-title">Message from {{ contact.name }}</h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <p><strong>Name:</strong><br>{{ contact.name }}</p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <p><strong>Email:</strong><br><a href="mailto:{{ contact.email }}">{{ contact.email }}</a></p>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <p><strong>Phone:</strong><br>{{ contact.phone or 'Not provided' }}</p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <p><strong>Received:</strong><br>{{ contact.created_at.strftime('%d %B %Y at %H:%M') }}</p>
+                                    </div>
+                                </div>
+                                <hr>
+                                <p><strong>Subject:</strong> {{ contact.subject }}</p>
+                                <p><strong>Message:</strong></p>
+                                <div class="alert alert-light border">
+                                    {{ contact.message|replace('\n', '<br>')|safe }}
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <a href="mailto:{{ contact.email }}" class="btn btn-primary">
+                                    <i class="fas fa-reply"></i> Reply
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% else %}
+<div class="alert alert-info" role="alert">
+    <i class="fas fa-info-circle"></i> No contact submissions yet.
+</div>
+{% endif %}
+{% endblock %}

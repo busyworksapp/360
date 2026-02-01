@@ -1,0 +1,300 @@
+{% extends "base.html" %}
+
+{% block title %}Login - 360Degree Supply{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Unified Login Page Styling */
+    .login-wrapper {
+        min-height: calc(100vh - 300px);
+        display: flex;
+        align-items: center;
+        padding: 60px 0;
+    }
+
+    .login-card {
+        border: none !important;
+        border-radius: 12px !important;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.15) !important;
+        overflow: hidden;
+    }
+
+    .login-header {
+        background: linear-gradient(135deg, var(--primary) 0%, #2d5a3d 100%);
+        padding: 30px;
+        text-align: center;
+    }
+
+    .login-header h2 {
+        color: white !important;
+        margin-bottom: 5px !important;
+        font-size: 1.8rem !important;
+    }
+
+    .login-header p {
+        color: rgba(255,255,255,0.8);
+        margin: 0;
+        font-size: 0.95rem;
+    }
+
+    /* Nav Tabs */
+    .nav-tabs {
+        border-bottom: 2px solid #ddd !important;
+        background: #f8f9fa;
+    }
+
+    .nav-tabs .nav-link {
+        color: var(--primary) !important;
+        font-weight: 600;
+        border: none !important;
+        border-bottom: 3px solid transparent !important;
+        padding: 15px 25px !important;
+        transition: all 0.3s ease;
+        font-size: 0.95rem;
+    }
+
+    .nav-tabs .nav-link:hover {
+        color: var(--secondary) !important;
+        border-bottom-color: var(--secondary) !important;
+    }
+
+    .nav-tabs .nav-link.active {
+        background-color: transparent !important;
+        color: var(--secondary) !important;
+        border-bottom-color: var(--secondary) !important;
+        box-shadow: none;
+    }
+
+    .tab-content {
+        padding: 35px;
+    }
+
+    /* Form Styling */
+    .login-form .form-label {
+        color: var(--primary) !important;
+        font-weight: 600 !important;
+        font-size: 0.95rem !important;
+        margin-bottom: 8px !important;
+    }
+
+    .login-form .form-control {
+        border: 1px solid #ddd !important;
+        border-radius: 8px !important;
+        padding: 10px 15px !important;
+        font-size: 0.9rem !important;
+        margin-bottom: 15px !important;
+    }
+
+    .login-form .form-control:focus {
+        border-color: var(--secondary) !important;
+        box-shadow: 0 0 0 0.2rem rgba(243, 156, 18, 0.25) !important;
+    }
+
+    .login-form .btn-submit {
+        background-color: var(--secondary) !important;
+        border-color: var(--secondary) !important;
+        color: white !important;
+        font-weight: 600 !important;
+        font-size: 0.95rem !important;
+        padding: 10px 20px !important;
+        width: 100%;
+        transition: all 0.3s ease;
+    }
+
+    .login-form .btn-submit:hover {
+        background-color: #e08a00 !important;
+        border-color: #e08a00 !important;
+        color: white !important;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+
+    .login-form hr {
+        border-color: #ddd !important;
+        margin: 20px 0 !important;
+    }
+
+    .form-footer {
+        text-align: center;
+        font-size: 0.9rem;
+    }
+
+    .form-footer a {
+        color: var(--secondary) !important;
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+    .form-footer a:hover {
+        text-decoration: underline;
+    }
+
+    .alert {
+        border-radius: 8px !important;
+        margin-bottom: 15px !important;
+    }
+
+    .input-icon {
+        position: relative;
+    }
+
+    .input-icon i {
+        position: absolute;
+        right: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--secondary);
+        font-size: 0.9rem;
+    }
+
+    .info-text {
+        background: #ecf0f1;
+        padding: 15px;
+        border-left: 4px solid var(--secondary);
+        border-radius: 4px;
+        margin-bottom: 20px;
+        font-size: 0.9rem;
+        color: var(--dark);
+    }
+
+    .info-text i {
+        color: var(--secondary);
+        margin-right: 8px;
+        font-weight: bold;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="login-wrapper">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card login-card">
+                    <!-- Header -->
+                    <div class="login-header">
+                        <h2><i class="fas fa-sign-in-alt"></i> 360Degree Supply</h2>
+                        <p>Unified Login Portal</p>
+                    </div>
+
+                    <!-- Tabs -->
+                    <ul class="nav nav-tabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="admin-tab" data-bs-toggle="tab" data-bs-target="#admin-pane" type="button" role="tab">
+                                <i class="fas fa-user-shield"></i> Admin Login
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="customer-tab" data-bs-toggle="tab" data-bs-target="#customer-pane" type="button" role="tab">
+                                <i class="fas fa-user"></i> Customer Login
+                            </button>
+                        </li>
+                    </ul>
+
+                    <!-- Tab Content -->
+                    <div class="tab-content">
+                        <!-- Admin Login Tab -->
+                        <div class="tab-pane fade show active" id="admin-pane" role="tabpanel">
+                            {% with messages = get_flashed_messages(with_categories=true) %}
+                                {% if messages %}
+                                    {% for category, message in messages %}
+                                        <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
+                                            <i class="fas fa-{% if category == 'error' %}exclamation-circle{% else %}check-circle{% endif %}"></i>
+                                            {{ message }}
+                                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                        </div>
+                                    {% endfor %}
+                                {% endif %}
+                            {% endwith %}
+
+                            <div class="info-text">
+                                <i class="fas fa-shield-alt"></i>
+                                <strong>Admin Access:</strong> Access the administration panel to manage your business content, products, services, and operations.
+                            </div>
+
+                            <form method="POST" action="{{ url_for('admin_login') }}" class="login-form">
+                                <div class="mb-3">
+                                    <label for="admin-email" class="form-label">
+                                        <i class="fas fa-envelope"></i> Email Address
+                                    </label>
+                                    <input type="email" class="form-control form-control-lg" id="admin-email" name="email" 
+                                           placeholder="admin@example.com" required autofocus>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="admin-password" class="form-label">
+                                        <i class="fas fa-lock"></i> Password
+                                    </label>
+                                    <input type="password" class="form-control form-control-lg" id="admin-password" name="password" 
+                                           placeholder="••••••••" required>
+                                </div>
+
+                                <button type="submit" class="btn btn-primary btn-submit">
+                                    <i class="fas fa-sign-in-alt"></i> Admin Login
+                                </button>
+                            </form>
+
+                            <hr>
+
+                            <div class="form-footer">
+                                <p class="mb-0">
+                                    <a href="{{ url_for('index') }}">
+                                        <i class="fas fa-arrow-left"></i> Back to Home
+                                    </a>
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Customer Login Tab -->
+                        <div class="tab-pane fade" id="customer-pane" role="tabpanel">
+                            <div class="info-text">
+                                <i class="fas fa-user-circle"></i>
+                                <strong>Customer Access:</strong> Log in to your customer account to track orders, save preferences, and access exclusive offers.
+                            </div>
+
+                            <form method="POST" action="{{ url_for('customer_login') }}" class="login-form">
+                                <div class="mb-3">
+                                    <label for="customer-email" class="form-label">
+                                        <i class="fas fa-envelope"></i> Email Address
+                                    </label>
+                                    <input type="email" class="form-control form-control-lg" id="customer-email" name="email" 
+                                           placeholder="your@email.com" required>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="customer-password" class="form-label">
+                                        <i class="fas fa-lock"></i> Password
+                                    </label>
+                                    <input type="password" class="form-control form-control-lg" id="customer-password" name="password" 
+                                           placeholder="••••••••" required>
+                                </div>
+
+                                <button type="submit" class="btn btn-primary btn-submit">
+                                    <i class="fas fa-sign-in-alt"></i> Customer Login
+                                </button>
+                            </form>
+
+                            <hr>
+
+                            <p class="text-center mb-3">
+                                Don't have an account?
+                                <a href="{{ url_for('customer_register') }}" class="fw-bold">
+                                    Create one now
+                                </a>
+                            </p>
+
+                            <div class="form-footer">
+                                <p class="mb-0">
+                                    <a href="{{ url_for('index') }}">
+                                        <i class="fas fa-arrow-left"></i> Back to Home
+                                    </a>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,156 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <!-- Statistics Cards -->
+    <div class="col-md-6 col-lg-3">
+        <div class="stat-card">
+            <h5><i class="fas fa-cogs"></i> Services</h5>
+            <div class="value">{{ total_services }}</div>
+            <i class="fas fa-cogs"></i>
+        </div>
+    </div>
+    
+    <div class="col-md-6 col-lg-3">
+        <div class="stat-card">
+            <h5><i class="fas fa-box"></i> Products</h5>
+            <div class="value">{{ total_products }}</div>
+            <i class="fas fa-box"></i>
+        </div>
+    </div>
+    
+    <div class="col-md-6 col-lg-3">
+        <div class="stat-card">
+            <h5><i class="fas fa-credit-card"></i> Transactions</h5>
+            <div class="value">{{ total_transactions }}</div>
+            <i class="fas fa-credit-card"></i>
+        </div>
+    </div>
+    
+    <div class="col-md-6 col-lg-3">
+        <div class="stat-card">
+            <h5><i class="fas fa-envelope"></i> Messages</h5>
+            <div class="value">{{ pending_contacts }}</div>
+            <i class="fas fa-envelope"></i>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Recent Transactions -->
+    <div class="col-lg-6">
+        <div class="content-card">
+            <h3><i class="fas fa-history"></i> Recent Transactions</h3>
+            
+            {% if recent_transactions %}
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Transaction ID</th>
+                                <th>Customer</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for tx in recent_transactions %}
+                                <tr>
+                                    <td>
+                                        <small><code>{{ tx.transaction_id[:12] }}...</code></small>
+                                    </td>
+                                    <td>{{ tx.customer_name or 'N/A' }}</td>
+                                    <td><strong>R{{ "%.2f"|format(tx.amount) }}</strong></td>
+                                    <td>
+                                        {% if tx.status == 'completed' %}
+                                            <span class="badge badge-success">Completed</span>
+                                        {% elif tx.status == 'pending' %}
+                                            <span class="badge badge-warning">Pending</span>
+                                        {% else %}
+                                            <span class="badge badge-danger">{{ tx.status }}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td><small>{{ tx.created_at.strftime('%d %b %Y') }}</small></td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <a href="/admin/transactions" class="btn btn-sm btn-primary mt-3">View All Transactions →</a>
+            {% else %}
+                <p class="text-muted">No transactions yet.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Recent Contact Submissions -->
+    <div class="col-lg-6">
+        <div class="content-card">
+            <h3><i class="fas fa-comments"></i> Recent Messages</h3>
+            
+            {% if recent_contacts %}
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for contact in recent_contacts %}
+                                <tr>
+                                    <td><strong>{{ contact.name }}</strong></td>
+                                    <td><small>{{ contact.email }}</small></td>
+                                    <td>
+                                        {% if contact.status == 'new' %}
+                                            <span class="badge badge-warning">New</span>
+                                        {% elif contact.status == 'read' %}
+                                            <span class="badge" style="background-color: #7f8c8d;">Read</span>
+                                        {% else %}
+                                            <span class="badge badge-success">Replied</span>
+                                        {% endif %}
+                                    </td>
+                                    <td><small>{{ contact.created_at.strftime('%d %b %Y') }}</small></td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <a href="/admin/contacts" class="btn btn-sm btn-primary mt-3">View All Messages →</a>
+            {% else %}
+                <p class="text-muted">No contact submissions yet.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="content-card">
+            <h3><i class="fas fa-bolt"></i> Quick Actions</h3>
+            <div class="btn-group" role="group">
+                <a href="/admin/services" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Add Service
+                </a>
+                <a href="/admin/products" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Add Product
+                </a>
+                <a href="/admin/company" class="btn btn-primary">
+                    <i class="fas fa-edit"></i> Edit Company Info
+                </a>
+                <a href="/admin/settings" class="btn btn-primary">
+                    <i class="fas fa-cog"></i> Settings
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

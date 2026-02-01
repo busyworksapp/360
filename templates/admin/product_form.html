@@ -1,0 +1,107 @@
+{% extends "admin/base.html" %}
+
+{% block title %}{% if product %}Edit Product{% else %}Add Product{% endif %} - Admin{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3><i class="fas fa-box"></i> {% if product %}Edit Product{% else %}Add New Product{% endif %}</h3>
+    <a href="{{ url_for('admin_products') }}" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> Back to Products
+    </a>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <form method="POST" enctype="multipart/form-data">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Product Name *</label>
+                        <input type="text" class="form-control" id="name" name="name" 
+                               value="{{ product.name or '' }}" required>
+                        <small class="text-muted">The name of your product</small>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="category" class="form-label">Category *</label>
+                        <input type="text" class="form-control" id="category" name="category" 
+                               value="{{ product.category or '' }}" required>
+                        <small class="text-muted">e.g., Fuel, Minerals, etc.</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="description" class="form-label">Description *</label>
+                <textarea class="form-control" id="description" name="description" rows="4" required>{{ product.description or '' }}</textarea>
+                <small class="text-muted">Detailed product description</small>
+            </div>
+
+            <div class="mb-3">
+                <label for="specifications" class="form-label">Specifications</label>
+                <textarea class="form-control" id="specifications" name="specifications" rows="3" placeholder="Enter product specifications">{{ product.specifications or '' }}</textarea>
+                <small class="text-muted">Technical details and specifications</small>
+            </div>
+
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="mb-3">
+                        <label for="price" class="form-label">Price (R) *</label>
+                        <input type="number" class="form-control" id="price" name="price" 
+                               value="{{ product.price or '' }}" step="0.01" min="0" required>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="mb-3">
+                        <label for="unit" class="form-label">Unit *</label>
+                        <input type="text" class="form-control" id="unit" name="unit" 
+                               value="{{ product.unit or 'L' }}" required>
+                        <small class="text-muted">e.g., L, KG, M³, etc.</small>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="mb-3">
+                        <label for="order_position" class="form-label">Display Order</label>
+                        <input type="number" class="form-control" id="order_position" name="order_position" 
+                               value="{{ product.order_position or 0 }}" min="0">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="mb-3">
+                        <label for="image" class="form-label">Product Image</label>
+                        <input type="file" class="form-control" id="image" name="image" accept="image/*">
+                        <small class="text-muted">JPG, PNG, GIF (max 5MB)</small>
+                    </div>
+                </div>
+            </div>
+
+            {% if product and product.image_url %}
+            <div class="mb-3">
+                <label class="form-label">Current Image</label>
+                <div>
+                    <img src="{{ product.image_url }}" alt="{{ product.name }}" style="max-width: 200px; border-radius: 8px;">
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="mb-3 form-check">
+                <input type="checkbox" class="form-check-input" id="is_active" name="is_active"
+                       {% if product is none or product.is_active %}checked{% endif %}>
+                <label class="form-check-label" for="is_active">
+                    <i class="fas fa-check"></i> Active (display on website)
+                </label>
+            </div>
+
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> {% if product %}Update Product{% else %}Create Product{% endif %}
+                </button>
+                <a href="{{ url_for('admin_products') }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-times"></i> Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

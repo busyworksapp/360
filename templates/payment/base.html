@@ -1,0 +1,412 @@
+{% extends "base.html" %}
+
+{% block title %}Payment - Barron CMS{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Payment Container Styles */
+    .payment-container {
+        max-width: 600px;
+        margin: 40px auto;
+        padding: 20px;
+        background: #f9f9f9;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .payment-header {
+        text-align: center;
+        margin-bottom: 30px;
+        border-bottom: 2px solid #007bff;
+        padding-bottom: 20px;
+    }
+
+    .payment-header h1 {
+        color: #333;
+        font-size: 28px;
+        margin: 0;
+    }
+
+    .payment-header p {
+        color: #666;
+        margin: 10px 0 0 0;
+        font-size: 14px;
+    }
+
+    /* Order Summary */
+    .order-summary {
+        background: white;
+        padding: 20px;
+        border-radius: 6px;
+        margin-bottom: 20px;
+        border: 1px solid #e0e0e0;
+    }
+
+    .order-summary-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px 0;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    .order-summary-item:last-child {
+        border-bottom: none;
+    }
+
+    .order-summary-label {
+        color: #666;
+        font-weight: 500;
+    }
+
+    .order-summary-value {
+        color: #333;
+        font-weight: 600;
+    }
+
+    .order-summary-total {
+        display: flex;
+        justify-content: space-between;
+        padding: 15px 0;
+        margin-top: 10px;
+        border-top: 2px solid #007bff;
+        font-size: 18px;
+        color: #007bff;
+        font-weight: bold;
+    }
+
+    /* Payment Methods */
+    .payment-methods {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+        margin-bottom: 20px;
+    }
+
+    .payment-method {
+        padding: 15px;
+        border: 2px solid #e0e0e0;
+        border-radius: 6px;
+        cursor: pointer;
+        text-align: center;
+        transition: all 0.3s ease;
+        background: white;
+    }
+
+    .payment-method:hover {
+        border-color: #007bff;
+        background: #f8fbff;
+    }
+
+    .payment-method input[type="radio"] {
+        display: none;
+    }
+
+    .payment-method input[type="radio"]:checked + label {
+        color: #007bff;
+    }
+
+    .payment-method input[type="radio"]:checked ~ {
+        border-color: #007bff;
+        background: #f8fbff;
+    }
+
+    .payment-method-label {
+        display: block;
+        font-weight: 600;
+        color: #333;
+        cursor: pointer;
+        margin-bottom: 5px;
+    }
+
+    .payment-method-icon {
+        font-size: 32px;
+        margin-bottom: 10px;
+    }
+
+    /* Forms */
+    .payment-form {
+        background: white;
+        padding: 20px;
+        border-radius: 6px;
+        border: 1px solid #e0e0e0;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        color: #333;
+        font-weight: 600;
+        font-size: 14px;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #d0d0d0;
+        border-radius: 4px;
+        font-size: 14px;
+        font-family: inherit;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+        outline: none;
+        border-color: #007bff;
+        box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+    }
+
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+    }
+
+    .form-row.full {
+        grid-template-columns: 1fr;
+    }
+
+    /* Buttons */
+    .btn-group {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+    }
+
+    .btn {
+        padding: 12px 24px;
+        border: none;
+        border-radius: 6px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary {
+        background: #007bff;
+        color: white;
+        flex: 1;
+    }
+
+    .btn-primary:hover {
+        background: #0056b3;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3);
+    }
+
+    .btn-primary:active {
+        transform: translateY(0);
+    }
+
+    .btn-secondary {
+        background: #6c757d;
+        color: white;
+        flex: 1;
+    }
+
+    .btn-secondary:hover {
+        background: #545b62;
+    }
+
+    .btn-cancel {
+        background: #f8f9fa;
+        color: #333;
+        border: 1px solid #dee2e6;
+    }
+
+    .btn-cancel:hover {
+        background: #e9ecef;
+    }
+
+    .btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+
+    /* Status Indicators */
+    .status-badge {
+        display: inline-block;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    .status-success {
+        background: #d4edda;
+        color: #155724;
+    }
+
+    .status-failed {
+        background: #f8d7da;
+        color: #721c24;
+    }
+
+    .status-pending {
+        background: #fff3cd;
+        color: #856404;
+    }
+
+    .status-processing {
+        background: #d1ecf1;
+        color: #0c5460;
+    }
+
+    /* Error Messages */
+    .alert {
+        padding: 15px;
+        border-radius: 6px;
+        margin-bottom: 20px;
+        border-left: 4px solid;
+    }
+
+    .alert-error {
+        background: #f8d7da;
+        border-color: #f5c6cb;
+        color: #721c24;
+    }
+
+    .alert-success {
+        background: #d4edda;
+        border-color: #c3e6cb;
+        color: #155724;
+    }
+
+    .alert-warning {
+        background: #fff3cd;
+        border-color: #ffeaa7;
+        color: #856404;
+    }
+
+    .alert-info {
+        background: #d1ecf1;
+        border-color: #bee5eb;
+        color: #0c5460;
+    }
+
+    .alert-close {
+        float: right;
+        cursor: pointer;
+        font-size: 18px;
+        color: inherit;
+        opacity: 0.7;
+    }
+
+    .alert-close:hover {
+        opacity: 1;
+    }
+
+    /* Loading Spinner */
+    .spinner {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        border: 3px solid #f3f3f3;
+        border-top: 3px solid #007bff;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin-right: 10px;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    /* Security Info */
+    .security-info {
+        background: #f8f9fa;
+        padding: 15px;
+        border-radius: 6px;
+        margin-top: 20px;
+        font-size: 13px;
+        color: #666;
+    }
+
+    .security-info i {
+        color: #28a745;
+        margin-right: 5px;
+    }
+
+    /* Transaction Details */
+    .transaction-details {
+        background: white;
+        padding: 20px;
+        border-radius: 6px;
+        border: 1px solid #e0e0e0;
+        margin-bottom: 20px;
+    }
+
+    .transaction-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid #e0e0e0;
+    }
+
+    .transaction-id {
+        font-size: 18px;
+        font-weight: bold;
+        color: #333;
+    }
+
+    .transaction-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px 0;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    .transaction-row:last-child {
+        border-bottom: none;
+    }
+
+    .transaction-label {
+        color: #666;
+        font-weight: 500;
+    }
+
+    .transaction-value {
+        color: #333;
+        font-weight: 600;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .payment-container {
+            margin: 20px 10px;
+            padding: 15px;
+        }
+
+        .payment-methods {
+            grid-template-columns: 1fr;
+        }
+
+        .form-row {
+            grid-template-columns: 1fr;
+        }
+
+        .transaction-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .status-badge {
+            margin-top: 10px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Payment content will be inserted here by child templates -->
+{% endblock %}

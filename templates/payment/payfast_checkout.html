@@ -1,0 +1,228 @@
+{% extends "payment/base.html" %}
+
+{% block title %}PayFast Checkout - Barron CMS{% endblock %}
+
+{% block content %}
+<div class="payment-container">
+    <!-- Payment Header -->
+    <div class="payment-header">
+        <h1>🏦 PayFast Checkout</h1>
+        <p>South African Payment Gateway</p>
+    </div>
+
+    <!-- Order Summary -->
+    {% if order %}
+    <div class="order-summary">
+        <div class="order-summary-item">
+            <span class="order-summary-label">Order Number:</span>
+            <span class="order-summary-value">#{{ order.order_number }}</span>
+        </div>
+        <div class="order-summary-item">
+            <span class="order-summary-label">Items:</span>
+            <span class="order-summary-value">{{ order.order_items|length }} item(s)</span>
+        </div>
+        <div class="order-summary-item">
+            <span class="order-summary-label">Subtotal:</span>
+            <span class="order-summary-value">R{{ "%.2f"|format(order.subtotal) }}</span>
+        </div>
+        {% if order.tax_amount %}
+        <div class="order-summary-item">
+            <span class="order-summary-label">Tax:</span>
+            <span class="order-summary-value">R{{ "%.2f"|format(order.tax_amount) }}</span>
+        </div>
+        {% endif %}
+        {% if order.shipping_cost %}
+        <div class="order-summary-item">
+            <span class="order-summary-label">Shipping:</span>
+            <span class="order-summary-value">R{{ "%.2f"|format(order.shipping_cost) }}</span>
+        </div>
+        {% endif %}
+        <div class="order-summary-total">
+            <span>Total Amount:</span>
+            <span>R{{ "%.2f"|format(order.total_amount) }}</span>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Error Messages -->
+    <div id="errorMessage" class="alert alert-error" style="display: none;">
+        <span class="alert-close" onclick="this.parentElement.style.display='none';">&times;</span>
+        <strong>Error:</strong> <span id="errorText"></span>
+    </div>
+
+    <!-- Processing Message -->
+    <div id="processingMessage" class="alert alert-info" style="display: none;">
+        <span class="spinner"></span>
+        <strong>Processing...</strong> You will be redirected to PayFast to complete your payment.
+    </div>
+
+    <!-- PayFast Payment Form -->
+    <form method="POST" id="payfast-form" class="payment-form">
+        <input type="hidden" name="order_id" value="{{ order.id if order else '' }}">
+        
+        <!-- Customer Information -->
+        <div class="form-group">
+            <label for="customer_name">Full Name</label>
+            <input type="text" id="customer_name" placeholder="John Doe" value="{{ current_user.name if current_user else '' }}" required>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="customer_email">Email Address</label>
+                <input type="email" id="customer_email" placeholder="john@example.com" value="{{ current_user.email if current_user else '' }}" required>
+            </div>
+            <div class="form-group">
+                <label for="customer_phone">Phone Number</label>
+                <input type="tel" id="customer_phone" placeholder="+27 12 345 6789">
+            </div>
+        </div>
+
+        <!-- Billing Address -->
+        <div class="form-group">
+            <label for="address">Street Address</label>
+            <input type="text" id="address" placeholder="123 Main Street" required>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="city">City/Town</label>
+                <input type="text" id="city" placeholder="Johannesburg" required>
+            </div>
+            <div class="form-group">
+                <label for="province">Province</label>
+                <input type="text" id="province" placeholder="Gauteng" required>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="postal_code">Postal Code</label>
+                <input type="text" id="postal_code" placeholder="2000" required>
+            </div>
+            <div class="form-group">
+                <label for="country">Country</label>
+                <input type="text" id="country" placeholder="South Africa" required>
+            </div>
+        </div>
+
+        <!-- Payment Methods Info -->
+        <div style="background: #f8f9fa; padding: 15px; border-radius: 6px; margin-bottom: 20px;">
+            <h4 style="margin-top: 0; color: #333;">💳 Accepted Payment Methods</h4>
+            <ul style="margin: 10px 0 0 0; padding-left: 20px; color: #666; font-size: 14px;">
+                <li>Credit Cards (Visa, Mastercard, American Express)</li>
+                <li>Debit Cards (All SA banks)</li>
+                <li>Digital Wallets (Zapper, Snapscan)</li>
+                <li>EFT (Electronic Funds Transfer)</li>
+                <li>PayPal</li>
+            </ul>
+        </div>
+
+        <!-- Terms Agreement -->
+        <div style="margin-bottom: 20px;">
+            <label style="display: flex; align-items: center; font-weight: normal; cursor: pointer;">
+                <input type="checkbox" id="agreeTerms" required style="width: auto; margin-right: 10px;">
+                <span>I agree to the <a href="#" target="_blank">terms and conditions</a></span>
+            </label>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="btn-group">
+            <button type="submit" id="submit-btn" class="btn btn-primary">
+                Proceed to PayFast Payment (R{{ "%.2f"|format(order.total_amount if order else 0) }})
+            </button>
+            <a href="{{ url_for('payment.select_payment_method') }}" class="btn btn-cancel">
+                Choose Different Method
+            </a>
+        </div>
+
+        <!-- Security Info -->
+        <div class="security-info">
+            <i class="fas fa-lock"></i> PayFast is PCI-DSS Level 1 compliant.
+            Your payment information is secure and protected.
+        </div>
+
+        <!-- Payment Processing Flow -->
+        <div style="background: #e8f4f8; padding: 15px; border-radius: 6px; margin-top: 20px; font-size: 13px; color: #0c5460;">
+            <h5 style="margin-top: 0;">How it works:</h5>
+            <ol style="margin: 10px 0; padding-left: 20px;">
+                <li>Click "Proceed to PayFast Payment" below</li>
+                <li>You will be redirected to the secure PayFast payment page</li>
+                <li>Select your preferred payment method</li>
+                <li>Complete the payment with your chosen method</li>
+                <li>You will be automatically redirected back to confirm your payment</li>
+            </ol>
+        </div>
+    </form>
+</div>
+
+<script>
+    // Handle form submission
+    const form = document.getElementById('payfast-form');
+    form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        const submitBtn = document.getElementById('submit-btn');
+        const errorDiv = document.getElementById('errorMessage');
+        const errorText = document.getElementById('errorText');
+        const processingDiv = document.getElementById('processingMessage');
+
+        // Validate form
+        if (!form.checkValidity()) {
+            alert('Please fill in all required fields');
+            return;
+        }
+
+        // Disable button and show loading
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span class="spinner"></span> Processing...';
+
+        try {
+            // Get form data
+            const orderId = document.querySelector('input[name="order_id"]').value;
+
+            // Create payment request on server
+            const response = await fetch('{{ url_for("payment.process_payfast") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({
+                    order_id: orderId
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to create payment request');
+            }
+
+            const data = await response.json();
+
+            if (data.error) {
+                throw new Error(data.error);
+            }
+
+            if (!data.payment_url) {
+                throw new Error('No payment URL received');
+            }
+
+            // Show processing message
+            processingDiv.style.display = 'block';
+
+            // Redirect to PayFast after a short delay
+            setTimeout(function() {
+                window.location.href = data.payment_url;
+            }, 1500);
+
+        } catch (err) {
+            // Show error message
+            errorText.textContent = err.message;
+            errorDiv.style.display = 'block';
+
+            // Re-enable button
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = 'Proceed to PayFast Payment (R{{ "%.2f"|format(order.total_amount if order else 0) }})';
+        }
+    });
+</script>
+
+{% endblock %}

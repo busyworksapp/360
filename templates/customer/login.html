@@ -1,0 +1,156 @@
+{% extends "base.html" %}
+
+{% block title %}Customer Login - 360Degree Supply{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Login Page Styling */
+    .login-container {
+        min-height: auto;
+        display: block;
+        padding: 60px 0;
+        padding-bottom: 20px;
+        margin-bottom: 0;
+    }
+
+    .login-card {
+        border: none !important;
+        border-radius: 12px !important;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.12) !important;
+    }
+
+    .login-card .card-body {
+        padding: 40px !important;
+    }
+
+    .login-card .card-title {
+        color: var(--primary) !important;
+        font-weight: 700 !important;
+        font-size: 1.5rem !important;
+        margin-bottom: 10px !important;
+    }
+
+    .login-card .text-muted {
+        font-size: 0.9rem !important;
+    }
+
+    .login-container .row {
+        padding: 20px 0;
+    }
+
+    .login-card .form-label {
+        color: var(--primary) !important;
+        font-weight: 600 !important;
+        font-size: 0.95rem !important;
+        margin-bottom: 8px !important;
+    }
+
+    .login-card .form-control {
+        border: 1px solid #ddd !important;
+        border-radius: 8px !important;
+        padding: 10px 15px !important;
+        font-size: 0.9rem !important;
+    }
+
+    .login-card .form-control:focus {
+        border-color: var(--secondary) !important;
+        box-shadow: 0 0 0 0.2rem rgba(243, 156, 18, 0.25) !important;
+    }
+
+    .login-card .btn-primary {
+        background-color: var(--secondary) !important;
+        border-color: var(--secondary) !important;
+        color: white !important;
+        font-weight: 600 !important;
+        font-size: 0.95rem !important;
+    }
+
+    .login-card .btn-primary:hover {
+        background-color: #e08a00 !important;
+        border-color: #e08a00 !important;
+        color: white !important;
+    }
+
+    .login-card a {
+        color: var(--secondary) !important;
+        text-decoration: none;
+    }
+
+    .login-card a:hover {
+        text-decoration: underline;
+    }
+
+    .login-card hr {
+        border-color: #ddd !important;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="login-container">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-5">
+                <div class="card login-card">
+                    <div class="card-body">
+                        <div class="text-center mb-4">
+                            <h2 class="card-title">
+                                <i class="fas fa-sign-in-alt"></i> Customer Login
+                            </h2>
+                            <p class="text-muted">Access your account</p>
+                        </div>
+
+                        {% with messages = get_flashed_messages(with_categories=true) %}
+                            {% if messages %}
+                                {% for category, message in messages %}
+                                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                                        {{ message }}
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+                        {% endwith %}
+
+                        <form method="POST">
+                            <div class="mb-3">
+                                <label for="email" class="form-label">
+                                    <i class="fas fa-envelope"></i> Email Address
+                                </label>
+                                <input type="email" class="form-control form-control-lg" id="email" name="email" 
+                                       placeholder="your@email.com" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="password" class="form-label">
+                                    <i class="fas fa-lock"></i> Password
+                                </label>
+                                <input type="password" class="form-control form-control-lg" id="password" name="password" 
+                                       placeholder="••••••••" required>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary btn-lg w-100 mb-3">
+                                <i class="fas fa-sign-in-alt"></i> Sign In
+                            </button>
+                        </form>
+
+                        <hr>
+
+                        <p class="text-center mb-3">
+                            Don't have an account?
+                            <a href="{{ url_for('customer_register') }}" class="fw-bold">
+                                Create one now
+                            </a>
+                        </p>
+
+                        <div class="text-center">
+                            <a href="{{ url_for('index') }}" class="text-muted small">
+                                <i class="fas fa-arrow-left"></i> Back to Home
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

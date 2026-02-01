@@ -1,0 +1,53 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Payment Terms Management - Admin{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3><i class="fas fa-file-contract"></i> Payment Terms</h3>
+    <span class="badge bg-primary">{{ payment_terms|length }} Active</span>
+</div>
+
+{% if payment_terms %}
+<div class="card">
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>Term Name</th>
+                    <th>Description</th>
+                    <th>Order</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for term in payment_terms %}
+                <tr>
+                    <td><strong>{{ term.name }}</strong></td>
+                    <td>{{ term.description[:80] }}...</td>
+                    <td>
+                        <span class="badge bg-info">{{ term.order_position }}</span>
+                    </td>
+                    <td>
+                        {% if term.is_active %}
+                            <span class="badge bg-success">Active</span>
+                        {% else %}
+                            <span class="badge bg-secondary">Inactive</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% else %}
+<div class="alert alert-info" role="alert">
+    <i class="fas fa-info-circle"></i> No payment terms configured yet.
+</div>
+{% endif %}
+
+<div class="mt-4">
+    <p class="text-muted"><i class="fas fa-info-circle"></i> Payment terms are currently managed through the database. Contact your system administrator to add or modify payment terms.</p>
+</div>
+{% endblock %}

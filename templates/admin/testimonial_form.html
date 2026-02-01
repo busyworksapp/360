@@ -1,0 +1,166 @@
+{% extends "admin/base.html" %}
+
+{% block title %}{% if testimonial %}Edit{% else %}Add{% endif %} Testimonial - Admin{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h2>
+                <i class="fas fa-star"></i>
+                {% if testimonial %}Edit Testimonial{% else %}Add New Testimonial{% endif %}
+            </h2>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-body">
+                    <form method="POST" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label for="client_name" class="form-label">
+                                <i class="fas fa-user"></i> Client Name *
+                            </label>
+                            <input type="text" class="form-control" id="client_name" name="client_name" 
+                                   value="{% if testimonial %}{{ testimonial.client_name }}{% endif %}" required>
+                            <small class="text-muted">The name of the client giving the testimonial</small>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="company" class="form-label">
+                                    <i class="fas fa-building"></i> Company
+                                </label>
+                                <input type="text" class="form-control" id="company" name="company"
+                                       value="{% if testimonial %}{{ testimonial.company }}{% endif %}">
+                                <small class="text-muted">Client's company name</small>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="position" class="form-label">
+                                    <i class="fas fa-briefcase"></i> Position
+                                </label>
+                                <input type="text" class="form-control" id="position" name="position"
+                                       value="{% if testimonial %}{{ testimonial.position }}{% endif %}">
+                                <small class="text-muted">Client's job title</small>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="content" class="form-label">
+                                <i class="fas fa-quote-left"></i> Testimonial Content *
+                            </label>
+                            <textarea class="form-control" id="content" name="content" rows="5" required>{% if testimonial %}{{ testimonial.content }}{% endif %}</textarea>
+                            <small class="text-muted">The testimonial text (what the client said)</small>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="rating" class="form-label">
+                                    <i class="fas fa-star"></i> Rating (1-5)
+                                </label>
+                                <select class="form-control" id="rating" name="rating">
+                                    {% for i in range(1, 6) %}
+                                        <option value="{{ i }}" {% if testimonial and testimonial.rating == i %}selected{% elif not testimonial and i == 5 %}selected{% endif %}>
+                                            {{ i }} Star{{ 's' if i != 1 else '' }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="order_position" class="form-label">
+                                    <i class="fas fa-sort"></i> Display Order
+                                </label>
+                                <input type="number" class="form-control" id="order_position" name="order_position"
+                                       value="{% if testimonial %}{{ testimonial.order_position }}{% else %}0{% endif %}">
+                                <small class="text-muted">Lower numbers appear first</small>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="avatar" class="form-label">
+                                <i class="fas fa-image"></i> Avatar/Photo
+                            </label>
+                            {% if testimonial and testimonial.avatar_url %}
+                                <div class="mb-2">
+                                    <img src="{{ testimonial.avatar_url }}" alt="{{ testimonial.client_name }}" class="rounded-circle" style="width: 100px; height: 100px; object-fit: cover;">
+                                </div>
+                            {% endif %}
+                            <input type="file" class="form-control" id="avatar" name="avatar" accept="image/*">
+                            <small class="text-muted">Profile photo (JPG, PNG, GIF - max 5MB)</small>
+                        </div>
+
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="is_active" name="is_active"
+                                   {% if testimonial is none or testimonial.is_active %}checked{% endif %}>
+                            <label class="form-check-label" for="is_active">
+                                <i class="fas fa-check"></i> Active (display on website)
+                            </label>
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> {% if testimonial %}Update{% else %}Add{% endif %} Testimonial
+                            </button>
+                            <a href="{{ url_for('admin_testimonials') }}" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Back
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card bg-light">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="fas fa-lightbulb"></i> Tips
+                    </h5>
+                    <ul class="small">
+                        <li>Use real testimonials from actual clients</li>
+                        <li>Include the client's name and company for credibility</li>
+                        <li>Keep testimonials to 1-3 sentences</li>
+                        <li>Focus on specific benefits or results</li>
+                        <li>Use a professional headshot for the avatar</li>
+                        <li>5-star rating is recommended for positive testimonials</li>
+                    </ul>
+                </div>
+            </div>
+
+            {% if testimonial %}
+            <div class="card mt-3">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="fas fa-eye"></i> Preview
+                    </h5>
+                    <div class="testimonial-preview">
+                        <div class="d-flex align-items-center mb-2">
+                            {% if testimonial.avatar_url %}
+                                <img src="{{ testimonial.avatar_url }}" alt="{{ testimonial.client_name }}" class="rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover;">
+                            {% endif %}
+                            <div>
+                                <strong>{{ testimonial.client_name }}</strong>
+                                {% if testimonial.position %}
+                                    <br><small class="text-muted">{{ testimonial.position }}</small>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="mb-2">
+                            {% for i in range(5) %}
+                                {% if i < testimonial.rating %}
+                                    <i class="fas fa-star text-warning"></i>
+                                {% else %}
+                                    <i class="fas fa-star text-muted"></i>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                        <p class="fst-italic">{{ testimonial.content }}</p>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

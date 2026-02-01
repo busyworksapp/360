@@ -1,0 +1,158 @@
+{% extends "payment/base.html" %}
+
+{% block title %}Select Payment Method - Barron CMS{% endblock %}
+
+{% block content %}
+<div class="payment-container">
+    <!-- Payment Header -->
+    <div class="payment-header">
+        <h1>Select Payment Method</h1>
+        <p>Choose how you'd like to pay for your order</p>
+    </div>
+
+    <!-- Order Summary -->
+    {% if order %}
+    <div class="order-summary">
+        <div class="order-summary-item">
+            <span class="order-summary-label">Order Number:</span>
+            <span class="order-summary-value">#{{ order.order_number }}</span>
+        </div>
+        <div class="order-summary-item">
+            <span class="order-summary-label">Items:</span>
+            <span class="order-summary-value">{{ order.order_items|length }} item(s)</span>
+        </div>
+        <div class="order-summary-item">
+            <span class="order-summary-label">Subtotal:</span>
+            <span class="order-summary-value">${{ "%.2f"|format(order.subtotal) }}</span>
+        </div>
+        {% if order.tax_amount %}
+        <div class="order-summary-item">
+            <span class="order-summary-label">Tax:</span>
+            <span class="order-summary-value">${{ "%.2f"|format(order.tax_amount) }}</span>
+        </div>
+        {% endif %}
+        {% if order.shipping_cost %}
+        <div class="order-summary-item">
+            <span class="order-summary-label">Shipping:</span>
+            <span class="order-summary-value">${{ "%.2f"|format(order.shipping_cost) }}</span>
+        </div>
+        {% endif %}
+        <div class="order-summary-total">
+            <span>Total Amount:</span>
+            <span>${{ "%.2f"|format(order.total_amount) }}</span>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Error Messages -->
+    {% if error %}
+    <div class="alert alert-error">
+        <span class="alert-close" onclick="this.parentElement.style.display='none';">&times;</span>
+        <strong>Error:</strong> {{ error }}
+    </div>
+    {% endif %}
+
+    <!-- Payment Method Selection Form -->
+    <form method="POST" action="{{ url_for('payment.select_payment_method') }}" id="paymentForm">
+        <!-- Hidden order ID -->
+        <input type="hidden" name="order_id" value="{{ order.id if order else '' }}">
+
+        <!-- Payment Methods Grid -->
+        <div class="payment-methods">
+            <!-- Stripe Option -->
+            <div class="payment-method">
+                <input type="radio" id="stripe_method" name="payment_method" value="stripe" required>
+                <label for="stripe_method" class="payment-method-label">
+                    <div class="payment-method-icon">💳</div>
+                    <div>Stripe</div>
+                    <small style="color: #999; font-weight: normal;">Credit/Debit Card</small>
+                </label>
+            </div>
+
+            <!-- PayFast Option -->
+            <div class="payment-method">
+                <input type="radio" id="payfast_method" name="payment_method" value="payfast" required>
+                <label for="payfast_method" class="payment-method-label">
+                    <div class="payment-method-icon">🏦</div>
+                    <div>PayFast</div>
+                    <small style="color: #999; font-weight: normal;">EFT/Card/Wallet</small>
+                </label>
+            </div>
+        </div>
+
+        <!-- Payment Method Descriptions -->
+        <div style="background: #f8f9fa; padding: 20px; border-radius: 6px; margin-bottom: 20px;">
+            <div id="stripeDesc" style="display: none;">
+                <h4 style="margin-top: 0;">💳 Stripe Payment</h4>
+                <p style="margin-bottom: 0; color: #666; font-size: 14px;">
+                    Secure credit and debit card payments. Fast, reliable, and PCI compliant.
+                    Supports Visa, Mastercard, American Express, and more.
+                </p>
+            </div>
+            <div id="payfastDesc" style="display: none;">
+                <h4 style="margin-top: 0;">🏦 PayFast Payment</h4>
+                <p style="margin-bottom: 0; color: #666; font-size: 14px;">
+                    South African payment gateway. Supports EFT, credit cards, debit cards, and digital wallets.
+                    Trusted by thousands of South African businesses.
+                </p>
+            </div>
+        </div>
+
+        <!-- Buttons -->
+        <div class="btn-group">
+            <button type="submit" class="btn btn-primary" id="proceedBtn" disabled>
+                Proceed to Payment
+            </button>
+            <a href="{{ url_for('checkout.view_cart') }}" class="btn btn-cancel">
+                Back to Cart
+            </a>
+        </div>
+
+        <!-- Security Info -->
+        <div class="security-info">
+            <i class="fas fa-lock"></i> Your payment information is encrypted and secure.
+            We never store your full card details.
+        </div>
+    </form>
+</div>
+
+<script>
+// Payment method selection handler
+document.querySelectorAll('input[name="payment_method"]').forEach(radio => {
+    radio.addEventListener('change', function() {
+        // Hide all descriptions
+        document.getElementById('stripeDesc').style.display = 'none';
+        document.getElementById('payfastDesc').style.display = 'none';
+
+        // Show selected description
+        if (this.value === 'stripe') {
+            document.getElementById('stripeDesc').style.display = 'block';
+        } else if (this.value === 'payfast') {
+            document.getElementById('payfastDesc').style.display = 'block';
+        }
+
+        // Enable proceed button
+        document.getElementById('proceedBtn').disabled = false;
+    });
+});
+
+// Form submission validation
+document.getElementById('paymentForm').addEventListener('submit', function(e) {
+    const method = document.querySelector('input[name="payment_method"]:checked');
+    
+    if (!method) {
+        e.preventDefault();
+        alert('Please select a payment method');
+        return false;
+    }
+
+    // Disable button and show loading
+    const btn = document.getElementById('proceedBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span> Processing...';
+});
+
+// Show first method description on load
+document.getElementById('stripeDesc').style.display = 'block';
+</script>
+{% endblock %}

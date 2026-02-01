@@ -1,0 +1,189 @@
+{% extends "base.html" %}
+
+{% block title %}Customer Dashboard - 360Degree Supply{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-5 mb-5">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h1 class="display-5">
+                <i class="fas fa-tachometer-alt"></i> Welcome, {{ current_user.get_full_name() }}!
+            </h1>
+            <p class="text-muted">Manage your account and orders</p>
+        </div>
+        <div class="col-md-4 text-end">
+            <a href="{{ url_for('customer_logout') }}" class="btn btn-outline-danger btn-lg">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
+        </div>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <!-- Account Stats -->
+    <div class="row mb-5">
+        <div class="col-md-3">
+            <div class="card text-center shadow-sm">
+                <div class="card-body">
+                    <div class="text-primary mb-3">
+                        <i class="fas fa-shopping-cart fa-3x"></i>
+                    </div>
+                    <h6 class="card-title text-muted">Total Orders</h6>
+                    <h3 class="card-text">0</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center shadow-sm">
+                <div class="card-body">
+                    <div class="text-success mb-3">
+                        <i class="fas fa-check-circle fa-3x"></i>
+                    </div>
+                    <h6 class="card-title text-muted">Completed Orders</h6>
+                    <h3 class="card-text">0</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center shadow-sm">
+                <div class="card-body">
+                    <div class="text-warning mb-3">
+                        <i class="fas fa-hourglass-half fa-3x"></i>
+                    </div>
+                    <h6 class="card-title text-muted">Pending Orders</h6>
+                    <h3 class="card-text">0</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center shadow-sm">
+                <div class="card-body">
+                    <div class="text-info mb-3">
+                        <i class="fas fa-dollar-sign fa-3x"></i>
+                    </div>
+                    <h6 class="card-title text-muted">Total Spent</h6>
+                    <h3 class="card-text">R 0</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row mb-5">
+        <div class="col-md-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-lightning-bolt"></i> Quick Actions
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <a href="{{ url_for('products') }}" class="btn btn-outline-primary btn-lg w-100">
+                                <i class="fas fa-shopping-bag"></i>
+                                <br>
+                                <small>Shop Products</small>
+                            </a>
+                        </div>
+                        <div class="col-md-3">
+                            <a href="{{ url_for('customer_profile') }}" class="btn btn-outline-primary btn-lg w-100">
+                                <i class="fas fa-user"></i>
+                                <br>
+                                <small>View Profile</small>
+                            </a>
+                        </div>
+                        <div class="col-md-3">
+                            <button class="btn btn-outline-primary btn-lg w-100" disabled>
+                                <i class="fas fa-box"></i>
+                                <br>
+                                <small>My Orders</small>
+                            </button>
+                        </div>
+                        <div class="col-md-3">
+                            <button class="btn btn-outline-primary btn-lg w-100" disabled>
+                                <i class="fas fa-heart"></i>
+                                <br>
+                                <small>Saved Items</small>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Orders -->
+    <div class="row mb-5">
+        <div class="col-md-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-secondary text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-history"></i> Recent Orders
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted mb-0">No orders yet. 
+                        <a href="{{ url_for('products') }}">Start shopping</a> to place your first order!
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Account Info Summary -->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-info-circle"></i> Account Information
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p>
+                                <strong>Email:</strong> 
+                                <span class="text-muted">{{ current_user.email }}</span>
+                            </p>
+                            <p>
+                                <strong>Name:</strong> 
+                                <span class="text-muted">{{ current_user.get_full_name() or 'Not set' }}</span>
+                            </p>
+                            <p>
+                                <strong>Company:</strong> 
+                                <span class="text-muted">{{ current_user.company or 'Not set' }}</span>
+                            </p>
+                        </div>
+                        <div class="col-md-6">
+                            <p>
+                                <strong>Phone:</strong> 
+                                <span class="text-muted">{{ current_user.phone or 'Not set' }}</span>
+                            </p>
+                            <p>
+                                <strong>Location:</strong> 
+                                <span class="text-muted">{{ current_user.city or 'Not set' }}, {{ current_user.country or 'Not set' }}</span>
+                            </p>
+                            <p>
+                                <a href="{{ url_for('customer_profile') }}" class="btn btn-sm btn-outline-primary">
+                                    <i class="fas fa-edit"></i> Edit Profile
+                                </a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
