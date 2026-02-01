@@ -5,7 +5,19 @@ load_dotenv()
 
 class Config:
     SECRET_KEY = os.getenv('SECRET_KEY', 'dev-secret-key')
-    SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL', '').replace('mysql://', 'mysql+pymysql://')
+    
+    # Handle DATABASE_URL with proper format conversion
+    _db_url = os.getenv('DATABASE_URL', '')
+    if _db_url:
+        # Replace mysql:// with mysql+pymysql:// if needed
+        if _db_url.startswith('mysql://'):
+            SQLALCHEMY_DATABASE_URI = _db_url.replace('mysql://', 'mysql+pymysql://', 1)
+        else:
+            SQLALCHEMY_DATABASE_URI = _db_url
+    else:
+        # Fallback for development
+        SQLALCHEMY_DATABASE_URI = 'sqlite:///dev.db'
+    
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     
     REDIS_URL = os.getenv('REDIS_URL')
