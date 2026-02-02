@@ -103,18 +103,18 @@
                             </a>
                         </div>
                         <div class="col-md-3">
-                            <button class="btn btn-outline-primary btn-lg w-100" disabled>
+                            <a href="{{ url_for('customer_orders') }}" class="btn btn-outline-primary btn-lg w-100">
                                 <i class="fas fa-box"></i>
                                 <br>
                                 <small>My Orders</small>
-                            </button>
+                            </a>
                         </div>
                         <div class="col-md-3">
-                            <button class="btn btn-outline-primary btn-lg w-100" disabled>
-                                <i class="fas fa-heart"></i>
+                            <a href="{{ url_for('customer_invoices') }}" class="btn btn-outline-primary btn-lg w-100">
+                                <i class="fas fa-file-invoice"></i>
                                 <br>
-                                <small>Saved Items</small>
-                            </button>
+                                <small>My Invoices</small>
+                            </a>
                         </div>
                     </div>
                 </div>

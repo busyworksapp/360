@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block title %}Payment Cancelled - 360Degree Supply{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-lg border-0">
+                <div class="card-body text-center py-5">
+                    <!-- Cancel Icon -->
+                    <div class="mb-4">
+                        <i class="fas fa-times-circle" style="font-size: 4rem; color: #dc3545;"></i>
+                    </div>
+
+                    <!-- Title -->
+                    <h1 class="display-5 mb-3" style="color: var(--primary);">
+                        <strong>Payment Cancelled</strong>
+                    </h1>
+
+                    <!-- Message -->
+                    <p class="lead text-muted mb-4">
+                        Your payment transaction has been cancelled. No charges have been made to your account.
+                    </p>
+
+                    <!-- Reasons Section -->
+                    <div style="background-color: #fff3cd; padding: 20px; border-radius: 12px; margin-bottom: 30px; border-left: 4px solid #ff9800;">
+                        <h5 class="mb-3" style="color: var(--primary);">What Happened?</h5>
+                        <ul class="text-start small text-muted" style="list-style: none; padding: 0;">
+                            <li class="mb-2">
+                                <i class="fas fa-check" style="color: var(--primary);"></i>
+                                You cancelled the payment process
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-check" style="color: var(--primary);"></i>
+                                Your payment method was declined
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-check" style="color: var(--primary);"></i>
+                                Payment processing encountered an error
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Next Steps -->
+                    <div class="alert alert-info mb-4">
+                        <i class="fas fa-lightbulb"></i>
+                        <strong> Try Again?</strong>
+                        <p class="mb-0 mt-2">Your cart items are still saved. You can review your order and try again with a different payment method.</p>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="d-grid gap-2">
+                        <a href="{{ url_for('view_cart') }}" class="btn btn-lg" style="background-color: var(--secondary); color: white;">
+                            <i class="fas fa-shopping-cart"></i> Return to Cart
+                        </a>
+                        <a href="{{ url_for('checkout') }}" class="btn btn-lg btn-outline-primary">
+                            <i class="fas fa-credit-card"></i> Try Payment Again
+                        </a>
+                        <a href="{{ url_for('index') }}" class="btn btn-lg btn-outline-secondary">
+                            <i class="fas fa-home"></i> Continue Shopping
+                        </a>
+                    </div>
+
+                    <!-- Contact Support -->
+                    <div class="mt-4 pt-3 border-top">
+                        <p class="text-muted small mb-0">
+                            Having trouble? 
+                            <a href="{{ url_for('contact') }}" style="color: var(--secondary); text-decoration: none;">
+                                Get in touch with our support team
+                            </a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card {
+        border-radius: 16px !important;
+    }
+    
+    .display-5 {
+        font-weight: 700;
+    }
+    
+    ul li:before {
+        content: "✓ ";
+    }
+</style>
+{% endblock %}

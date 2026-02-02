@@ -10,7 +10,7 @@ from models import (
     db, User, SiteSettings, CompanyInfo, Service, Product, HeroSection,
     ContentSection, PaymentMethod, PaymentTerm, Transaction,
     ContactSubmission, MenuItem, Testimonial, Customer, Cart, CartItem,
-    Order, OrderItem
+    Order, OrderItem, Invoice, InvoicePayment
 )
 from email_service import EmailService
 import json
@@ -1427,6 +1427,210 @@ def payfast_webhook():
     result = payfast_payment.verify_webhook(post_data)
     
     return jsonify(result)
+
+
+# ==================== INVOICE ROUTES ====================
+
+# Customer Invoice Routes
+@app.route('/customer/invoices', methods=['GET'])
+@login_required
+def customer_invoices():
+    """View all customer invoices"""
+    if not isinstance(current_user, Customer):
+        flash('Customers only', 'error')
+        return redirect(url_for('index'))
+    
+    try:
+        invoices = Invoice.query.filter_by(
+            customer_id=current_user.id
+        ).order_by(Invoice.issue_date.desc()).all()
+        
+        menu_items = MenuItem.query.filter_by(
+            is_active=True, parent_id=None
+        ).order_by(MenuItem.order_position).all()
+        company_info = CompanyInfo.query.first()
+        
+        return render_template(
+            'customer/invoices.html',
+            invoices=invoices,
+            menu_items=menu_items,
+            company_info=company_info
+        )
+    except Exception as e:
+        app.logger.error(f"Error fetching customer invoices: {str(e)}")
+        flash('Error loading invoices', 'danger')
+        return redirect(url_for('customer_dashboard'))
+
+
+@app.route('/customer/invoices/<int:invoice_id>', methods=['GET'])
+@login_required
+def customer_invoice_detail(invoice_id):
+    """View invoice details"""
+    if not isinstance(current_user, Customer):
+        flash('Customers only', 'error')
+        return redirect(url_for('index'))
+    
+    try:
+        invoice = Invoice.query.filter_by(
+            id=invoice_id, customer_id=current_user.id
+        ).first()
+        
+        if not invoice:
+            flash('Invoice not found', 'error')
+            return redirect(url_for('customer_invoices'))
+        
+        menu_items = MenuItem.query.filter_by(
+            is_active=True, parent_id=None
+        ).order_by(MenuItem.order_position).all()
+        company_info = CompanyInfo.query.first()
+        
+        return render_template(
+            'customer/invoice_detail.html',
+            invoice=invoice,
+            menu_items=menu_items,
+            company_info=company_info
+        )
+    except Exception as e:
+        app.logger.error(f"Error fetching invoice: {str(e)}")
+        flash('Error loading invoice', 'danger')
+        return redirect(url_for('customer_invoices'))
+
+
+# Admin Invoice Routes
+@app.route('/admin/invoices', methods=['GET'])
+@login_required
+def admin_invoices():
+    """View all invoices (admin)"""
+    if not isinstance(current_user, User):
+        flash('Admin only', 'error')
+        return redirect(url_for('login'))
+    
+    try:
+        invoices = Invoice.query.order_by(Invoice.issue_date.desc()).all()
+        
+        # Calculate summary stats
+        total_invoices = len(invoices)
+        total_amount = sum(float(inv.total_amount) for inv in invoices)
+        total_paid = sum(float(inv.paid_amount) for inv in invoices)
+        outstanding = total_amount - total_paid
+        
+        return render_template(
+            'admin/invoices.html',
+            invoices=invoices,
+            total_invoices=total_invoices,
+            total_amount=total_amount,
+            total_paid=total_paid,
+            outstanding=outstanding
+        )
+    except Exception as e:
+        app.logger.error(f"Error fetching invoices: {str(e)}")
+        flash('Error loading invoices', 'danger')
+        return redirect(url_for('admin_dashboard'))
+
+
+@app.route('/admin/invoices/<int:invoice_id>', methods=['GET'])
+@login_required
+def admin_invoice_detail(invoice_id):
+    """View invoice details (admin)"""
+    if not isinstance(current_user, User):
+        flash('Admin only', 'error')
+        return redirect(url_for('login'))
+    
+    try:
+        invoice = Invoice.query.get(invoice_id)
+        
+        if not invoice:
+            flash('Invoice not found', 'error')
+            return redirect(url_for('admin_invoices'))
+        
+        return render_template(
+            'admin/invoice_detail.html',
+            invoice=invoice
+        )
+    except Exception as e:
+        app.logger.error(f"Error fetching invoice: {str(e)}")
+        flash('Error loading invoice', 'danger')
+        return redirect(url_for('admin_invoices'))
+
+
+@app.route('/admin/invoices/<int:invoice_id>/edit', methods=['GET', 'POST'])
+@login_required
+def admin_invoice_edit(invoice_id):
+    """Edit invoice (admin)"""
+    if not isinstance(current_user, User):
+        flash('Admin only', 'error')
+        return redirect(url_for('login'))
+    
+    try:
+        invoice = Invoice.query.get(invoice_id)
+        
+        if not invoice:
+            flash('Invoice not found', 'error')
+            return redirect(url_for('admin_invoices'))
+        
+        if request.method == 'POST':
+            invoice.due_date = datetime.strptime(
+                request.form.get('due_date'), '%Y-%m-%d'
+            )
+            invoice.status = request.form.get('status')
+            invoice.notes = request.form.get('notes')
+            invoice.terms = request.form.get('terms')
+            
+            db.session.commit()
+            flash('Invoice updated successfully', 'success')
+            return redirect(url_for('admin_invoice_detail', invoice_id=invoice.id))
+        
+        return render_template(
+            'admin/invoice_edit.html',
+            invoice=invoice
+        )
+    except Exception as e:
+        app.logger.error(f"Error updating invoice: {str(e)}")
+        flash('Error updating invoice', 'danger')
+        return redirect(url_for('admin_invoices'))
+
+
+@app.route('/admin/invoices/new', methods=['GET', 'POST'])
+@login_required
+def admin_invoice_create():
+    """Create new invoice (admin)"""
+    if not isinstance(current_user, User):
+        flash('Admin only', 'error')
+        return redirect(url_for('login'))
+    
+    try:
+        if request.method == 'POST':
+            customer_id = request.form.get('customer_id')
+            invoice_number = request.form.get('invoice_number')
+            total_amount = request.form.get('total_amount')
+            due_date = datetime.strptime(
+                request.form.get('due_date'), '%Y-%m-%d'
+            )
+            
+            invoice = Invoice(
+                invoice_number=invoice_number,
+                customer_id=customer_id,
+                total_amount=total_amount,
+                due_date=due_date,
+                status='draft'
+            )
+            
+            db.session.add(invoice)
+            db.session.commit()
+            
+            flash('Invoice created successfully', 'success')
+            return redirect(url_for('admin_invoice_detail', invoice_id=invoice.id))
+        
+        customers = Customer.query.all()
+        return render_template(
+            'admin/invoice_create.html',
+            customers=customers
+        )
+    except Exception as e:
+        app.logger.error(f"Error creating invoice: {str(e)}")
+        flash('Error creating invoice', 'danger')
+        return redirect(url_for('admin_invoices'))
+
 
 @app.route('/payment/success')
 def payment_success():

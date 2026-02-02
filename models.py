@@ -569,4 +569,91 @@ class Transaction(db.Model):
         }
 
 
+class Invoice(db.Model):
+    __tablename__ = 'invoices'
+
+    id = db.Column(db.Integer, primary_key=True)
+    invoice_number = db.Column(db.String(50), unique=True, nullable=False)
+    order_id = db.Column(db.Integer, db.ForeignKey('orders.id'), nullable=True)
+    customer_id = db.Column(db.Integer, db.ForeignKey('customers.id'), nullable=False)
+    
+    # Invoice Details
+    issue_date = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    due_date = db.Column(db.DateTime, nullable=False)
+    subtotal = db.Column(db.Numeric(10, 2), default=0, nullable=False)
+    tax_amount = db.Column(db.Numeric(10, 2), default=0, nullable=False)
+    total_amount = db.Column(db.Numeric(10, 2), nullable=False)
+    paid_amount = db.Column(db.Numeric(10, 2), default=0, nullable=False)
+    
+    # Invoice Status: draft, sent, viewed, partial, paid, overdue, cancelled
+    status = db.Column(db.String(20), default='draft', nullable=False)
+    
+    # Notes and details
+    notes = db.Column(db.Text)
+    terms = db.Column(db.Text)
+    
+    # File storage (PDF path)
+    pdf_path = db.Column(db.String(255))
+    
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(
+        db.DateTime, default=datetime.utcnow,
+        onupdate=datetime.utcnow
+    )
+    
+    # Relationships
+    customer = db.relationship('Customer', backref='invoices')
+    order = db.relationship('Order', backref='invoices')
+    payments = db.relationship('InvoicePayment', backref='invoice', cascade='all, delete-orphan')
+
+    def __repr__(self):
+        return f'<Invoice {self.invoice_number}>'
+
+    def is_overdue(self):
+        """Check if invoice is overdue"""
+        if self.status == 'paid':
+            return False
+        return datetime.utcnow() > self.due_date
+
+    def remaining_balance(self):
+        """Calculate remaining balance"""
+        return float(self.total_amount) - float(self.paid_amount)
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'invoice_number': self.invoice_number,
+            'customer_id': self.customer_id,
+            'order_id': self.order_id,
+            'issue_date': self.issue_date.isoformat() if self.issue_date else None,
+            'due_date': self.due_date.isoformat() if self.due_date else None,
+            'subtotal': float(self.subtotal),
+            'tax_amount': float(self.tax_amount),
+            'total_amount': float(self.total_amount),
+            'paid_amount': float(self.paid_amount),
+            'status': self.status,
+            'created_at': self.created_at.isoformat() if self.created_at else None,
+        }
+
+
+class InvoicePayment(db.Model):
+    __tablename__ = 'invoice_payments'
+
+    id = db.Column(db.Integer, primary_key=True)
+    invoice_id = db.Column(db.Integer, db.ForeignKey('invoices.id'), nullable=False)
+    amount = db.Column(db.Numeric(10, 2), nullable=False)
+    payment_date = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    payment_method = db.Column(db.String(50), nullable=False)  # stripe, payfast, bank_transfer, etc
+    transaction_id = db.Column(db.String(255), unique=True)
+    notes = db.Column(db.Text)
+    
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def __repr__(self):
+        return f'<InvoicePayment {self.id}>'
+
+
+
+
+
 
