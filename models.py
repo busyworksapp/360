@@ -74,12 +74,63 @@ class Product(db.Model):
     category = db.Column(db.String(100))
     specifications = db.Column(db.Text)
     image_url = db.Column(db.String(255))
-    price = db.Column(db.Numeric(10, 2))
+    price = db.Column(db.Numeric(10, 2))  # Legacy field for backward compatibility
+    price_zar = db.Column(db.Numeric(10, 2))  # South African Rand - Local pricing
+    price_usd = db.Column(db.Numeric(10, 2))  # US Dollar - International pricing
     unit = db.Column(db.String(50))
     is_active = db.Column(db.Boolean, default=True)
     order_position = db.Column(db.Integer, default=0)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    
+    def get_price_for_location(self, is_local=True):
+        """
+        Get the appropriate price based on customer location.
+        
+        Args:
+            is_local (bool): True for local (ZAR) pricing, False for international (USD)
+            
+        Returns:
+            Decimal: The appropriate price for the customer's location
+        """
+        if is_local:
+            # Local customer - show ZAR price, fallback to legacy price
+            return self.price_zar or self.price
+        else:
+            # International customer - show USD price, fallback to legacy price
+            return self.price_usd or self.price
+    
+    def get_currency_for_location(self, is_local=True):
+        """
+        Get the currency symbol based on customer location.
+        
+        Returns:
+            str: Currency code ('ZAR' or 'USD')
+        """
+        return 'ZAR' if is_local else 'USD'
+    
+    def to_dict(self, is_local=True):
+        """
+        Convert product to dictionary with location-appropriate pricing.
+        
+        Args:
+            is_local (bool): True for local (ZAR) pricing, False for international (USD)
+            
+        Returns:
+            dict: Product data with appropriate price
+        """
+        return {
+            'id': self.id,
+            'name': self.name,
+            'description': self.description,
+            'category': self.category,
+            'specifications': self.specifications,
+            'image_url': self.image_url,
+            'price': float(self.get_price_for_location(is_local)),
+            'currency': self.get_currency_for_location(is_local),
+            'unit': self.unit,
+            'is_active': self.is_active
+        }
 
 class HeroSection(db.Model):
     __tablename__ = 'hero_sections'

@@ -17,7 +17,12 @@
                 <tr>
                     <th>Product Name</th>
                     <th>Category</th>
-                    <th>Price</th>
+                    <th>
+                        <i class="fas fa-rand"></i> Local Price (ZAR)
+                    </th>
+                    <th>
+                        <i class="fas fa-dollar-sign"></i> International (USD)
+                    </th>
                     <th>Unit</th>
                     <th>Status</th>
                     <th>Actions</th>
@@ -28,7 +33,23 @@
                 <tr>
                     <td><strong>{{ product.name }}</strong></td>
                     <td><span class="badge bg-secondary">{{ product.category }}</span></td>
-                    <td><strong>R {{ "%.2f"|format(product.price) }}</strong></td>
+                    <td>
+                        {% if product.price_zar %}
+                            <strong>R {{ "%.2f"|format(product.price_zar) }}</strong>
+                        {% elif product.price %}
+                            <strong>R {{ "%.2f"|format(product.price) }}</strong>
+                            <small class="text-muted">(legacy)</small>
+                        {% else %}
+                            <span class="text-muted">—</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if product.price_usd %}
+                            <strong>${{ "%.2f"|format(product.price_usd) }}</strong>
+                        {% else %}
+                            <span class="text-muted">—</span>
+                        {% endif %}
+                    </td>
                     <td>{{ product.unit }}</td>
                     <td>
                         {% if product.is_active %}
@@ -42,14 +63,17 @@
                            class="btn btn-sm btn-info">
                             <i class="fas fa-edit"></i>
                         </a>
-                        <button class="btn btn-sm btn-danger" onclick="deleteProduct({{ product.id }})">
+                        <button class="btn btn-sm btn-danger" 
+                                onclick="deleteProduct({{ product.id }})">
                             <i class="fas fa-trash"></i>
                         </button>
                     </td>
                 </tr>
                 {% else %}
                 <tr>
-                    <td colspan="6" class="text-center text-muted py-4">No products found</td>
+                    <td colspan="7" class="text-center text-muted py-4">
+                        No products found
+                    </td>
                 </tr>
                 {% endfor %}
             </tbody>

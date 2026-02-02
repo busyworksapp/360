@@ -40,9 +40,27 @@
     {% endif %}
 
     <div class="row">
-        <!-- Cart Items -->
+<!-- Cart Items -->
         <div class="col-md-8">
             {% if cart and cart.items %}
+                <!-- Location-Based Pricing Info -->
+                {% if pricing_context %}
+                <div class="alert alert-info mb-3" role="alert">
+                    <i class="fas fa-globe"></i>
+                    {% if pricing_context.is_local %}
+                        <strong>Prices shown in South African Rand (ZAR)</strong>
+                        {% if pricing_context.location_detected %}
+                            for {{ pricing_context.country_name }}
+                        {% endif %}
+                    {% else %}
+                        <strong>Prices shown in US Dollars (USD)</strong>
+                        {% if pricing_context.location_detected %}
+                            for {{ pricing_context.country_name }}
+                        {% endif %}
+                    {% endif %}
+                </div>
+                {% endif %}
+
                 <div class="card shadow-sm">
                     <div class="card-header bg-primary text-white">
                         <h5 class="mb-0">
@@ -85,7 +103,7 @@
                                         </div>
                                     </td>
                                     <td>
-                                        <strong>R {{ "%.2f"|format(item.price_at_add or item.product.price) }}</strong>
+                                        <strong>{{ pricing_context.currency_symbol if pricing_context else 'R' }} {{ "%.2f"|format(item.price_at_add or item.product.price) }}</strong>
                                     </td>
                                     <td>
                                         <div class="input-group" style="width: 120px;">
@@ -100,7 +118,7 @@
                                         </div>
                                     </td>
                                     <td>
-                                        <strong>R <span class="item-total">{{ "%.2f"|format(item.get_total()) }}</span></strong>
+                                        <strong>{{ pricing_context.currency_symbol if pricing_context else 'R' }} <span class="item-total">{{ "%.2f"|format(item.get_total()) }}</span></strong>
                                     </td>
                                     <td>
                                         <button class="btn btn-sm btn-danger remove-item" title="Remove item">
@@ -143,7 +161,7 @@
                     {% if cart and cart.items %}
                         <div class="d-flex justify-content-between mb-2">
                             <span>Subtotal:</span>
-                            <strong>R <span id="subtotal">{{ "%.2f"|format(cart.get_subtotal()) }}</span></strong>
+                            <strong>{{ pricing_context.currency_symbol if pricing_context else 'R' }} <span id="subtotal">{{ "%.2f"|format(cart.get_subtotal()) }}</span></strong>
                         </div>
                         <div class="d-flex justify-content-between mb-2">
                             <span>Shipping:</span>
@@ -156,7 +174,7 @@
                         <hr>
                         <div class="d-flex justify-content-between mb-4">
                             <h5 class="mb-0">Total:</h5>
-                            <h5 class="mb-0">R <span id="total">{{ "%.2f"|format(cart.get_subtotal()) }}</span></h5>
+                            <h5 class="mb-0">{{ pricing_context.currency_symbol if pricing_context else 'R' }} <span id="total">{{ "%.2f"|format(cart.get_subtotal()) }}</span></h5>
                         </div>
 
                         {% if current_user and current_user.__class__.__name__ == 'Customer' %}

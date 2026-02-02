@@ -1,0 +1,73 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Create New Invoice{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h2><i class="fas fa-plus-circle"></i> Create New Invoice</h2>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body p-4">
+        <form method="POST" class="needs-validation">
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="invoice_number" class="form-label">Invoice Number</label>
+                    <input type="text" class="form-control" id="invoice_number" name="invoice_number" 
+                           placeholder="INV-001" required>
+                    <small class="text-muted">e.g. INV-001, INV-202402-001</small>
+                </div>
+                <div class="col-md-6">
+                    <label for="customer_id" class="form-label">Customer</label>
+                    <select class="form-select" id="customer_id" name="customer_id" required>
+                        <option value="">-- Select Customer --</option>
+                        {% for customer in customers %}
+                            <option value="{{ customer.id }}">
+                                {{ customer.get_full_name() }} ({{ customer.email }})
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="total_amount" class="form-label">Total Amount (R)</label>
+                    <input type="number" class="form-control" id="total_amount" name="total_amount" 
+                           step="0.01" placeholder="0.00" required>
+                </div>
+                <div class="col-md-6">
+                    <label for="due_date" class="form-label">Due Date</label>
+                    <input type="date" class="form-control" id="due_date" name="due_date" required>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="notes" class="form-label">Notes (Optional)</label>
+                <textarea class="form-control" id="notes" name="notes" rows="3" placeholder="Additional notes..."></textarea>
+            </div>
+
+            <div class="mb-3">
+                <label for="terms" class="form-label">Terms & Conditions (Optional)</label>
+                <textarea class="form-control" id="terms" name="terms" rows="3" placeholder="Payment terms..."></textarea>
+            </div>
+
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Create Invoice
+                </button>
+                <a href="{{ url_for('admin_invoices') }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-times"></i> Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    // Set today's date as default
+    document.getElementById('due_date').valueAsDate = new Date();
+</script>
+{% endblock %}

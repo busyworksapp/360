@@ -17,6 +17,8 @@ import json
 from werkzeug.utils import secure_filename
 from payments import StripePayment, PayFastPayment
 from email_service import EmailService
+from geolocation import geolocation_service
+from pricing import pricing_service
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -145,12 +147,20 @@ def services():
 @app.route('/products')
 @cache.cached(timeout=300)
 def products():
-    products = Product.query.filter_by(is_active=True).order_by(Product.order_position).all()
+    products = Product.query.filter_by(is_active=True).order_by(
+        Product.order_position
+    ).all()
     company_info = CompanyInfo.query.first()
-    menu_items = MenuItem.query.filter_by(is_active=True, parent_id=None).order_by(MenuItem.order_position).all()
+    menu_items = MenuItem.query.filter_by(
+        is_active=True, parent_id=None
+    ).order_by(MenuItem.order_position).all()
     
-    return render_template('products.html', 
+    # Get pricing context for current customer
+    pricing_ctx = pricing_service.get_product_list_context(products)
+    
+    return render_template('products.html',
                          products=products,
+                         pricing_context=pricing_ctx,
                          company_info=company_info,
                          menu_items=menu_items)
 
@@ -400,12 +410,24 @@ def admin_products():
 @login_required
 def admin_product_add():
     if request.method == 'POST':
+        price_zar = request.form.get('price_zar')
+        price_usd = request.form.get('price_usd')
+        
+        # Validate pricing
+        is_valid, error_msg = pricing_service.validate_pricing_data(
+            price_zar, price_usd
+        )
+        if not is_valid:
+            flash(f'Pricing Error: {error_msg}', 'danger')
+            return render_template('admin/product_form.html', product=None)
+        
         product = Product(
             name=request.form.get('name'),
             description=request.form.get('description'),
             category=request.form.get('category'),
             specifications=request.form.get('specifications'),
-            price=request.form.get('price'),
+            price_zar=price_zar or None,
+            price_usd=price_usd or None,
             unit=request.form.get('unit'),
             order_position=request.form.get('order_position', 0),
             is_active=request.form.get('is_active') == 'on'
@@ -431,11 +453,24 @@ def admin_product_edit(id):
     product = Product.query.get_or_404(id)
     
     if request.method == 'POST':
+        price_zar = request.form.get('price_zar')
+        price_usd = request.form.get('price_usd')
+        
+        # Validate pricing
+        is_valid, error_msg = pricing_service.validate_pricing_data(
+            price_zar, price_usd
+        )
+        if not is_valid:
+            flash(f'Pricing Error: {error_msg}', 'danger')
+            return render_template('admin/product_form.html',
+                                 product=product)
+        
         product.name = request.form.get('name')
         product.description = request.form.get('description')
         product.category = request.form.get('category')
         product.specifications = request.form.get('specifications')
-        product.price = request.form.get('price')
+        product.price_zar = price_zar or None
+        product.price_usd = price_usd or None
         product.unit = request.form.get('unit')
         product.order_position = request.form.get('order_position', 0)
         product.is_active = request.form.get('is_active') == 'on'
@@ -826,6 +861,8 @@ def view_cart():
     company_info = CompanyInfo.query.first()
 
     cart = None
+    pricing_ctx = pricing_service.get_customer_pricing_context()
+    
     if current_user and isinstance(current_user, Customer):
         cart = Cart.query.filter_by(
             customer_id=current_user.id, is_active=True
@@ -833,6 +870,7 @@ def view_cart():
 
     return render_template('cart.html',
                            cart=cart,
+                           pricing_context=pricing_ctx,
                            menu_items=menu_items,
                            company_info=company_info)
 

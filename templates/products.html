@@ -80,34 +80,52 @@
 <!-- Products Grid -->
 <section class="py-5">
     <div class="container">
+        <!-- Pricing Location Info -->
+        {% if pricing_context %}
+            <div class="alert alert-info mb-4" role="alert">
+                <i class="fas fa-globe"></i>
+                {% if pricing_context.pricing_context.is_local %}
+                    <strong>Displaying prices in South African Rand (ZAR)</strong>
+                    {% if pricing_context.pricing_context.location_detected %}
+                        for {{ pricing_context.pricing_context.country_name }}
+                    {% endif %}
+                {% else %}
+                    <strong>Displaying prices in US Dollars (USD)</strong>
+                    {% if pricing_context.pricing_context.location_detected %}
+                        for {{ pricing_context.pricing_context.country_name }}
+                    {% endif %}
+                {% endif %}
+            </div>
+        {% endif %}
+
         <div class="row">
-            {% if products %}
-                {% for product in products %}
+            {% if pricing_context.products %}
+                {% for item in pricing_context.products %}
                     <div class="col-md-6 col-lg-4 mb-4">
                         <div class="product-card">
                             <div class="product-image">
-                                {% if product.image_url %}
-                                    <img src="{{ product.image_url }}" alt="{{ product.name }}" style="width: 100%; height: 100%; object-fit: cover;">
+                                {% if item.product.image_url %}
+                                    <img src="{{ item.product.image_url }}" alt="{{ item.product.name }}" style="width: 100%; height: 100%; object-fit: cover;">
                                 {% else %}
                                     <i class="fas fa-box"></i>
                                 {% endif %}
                             </div>
                             <div class="product-details">
-                                <div class="product-category">{{ product.category or 'Uncategorized' }}</div>
-                                <div class="product-name">{{ product.name }}</div>
-                                <div class="product-price">R{{ "%.2f"|format(product.price or 0) }}</div>
-                                {% if product.unit %}
-                                    <div class="product-unit">Per {{ product.unit }}</div>
+                                <div class="product-category">{{ item.product.category or 'Uncategorized' }}</div>
+                                <div class="product-name">{{ item.product.name }}</div>
+                                <div class="product-price">{{ item.formatted_price }}</div>
+                                {% if item.product.unit %}
+                                    <div class="product-unit">Per {{ item.product.unit }}</div>
                                 {% endif %}
-                                {% if product.specifications %}
-                                    <div class="product-specs">{{ product.specifications }}</div>
+                                {% if item.product.specifications %}
+                                    <div class="product-specs">{{ item.product.specifications }}</div>
                                 {% endif %}
-                                {% if product.description %}
-                                    <p class="mb-0" style="font-size: 0.9rem; color: #666;">{{ product.description }}</p>
+                                {% if item.product.description %}
+                                    <p class="mb-0" style="font-size: 0.9rem; color: #666;">{{ item.product.description }}</p>
                                 {% endif %}
                                 <div class="mt-3">
                                     <button class="btn btn-primary w-100 add-to-cart-btn" 
-                                            data-product-id="{{ product.id }}"
+                                            data-product-id="{{ item.product.id }}"
                                             onclick="addToCart(this)">
                                         <i class="fas fa-shopping-cart"></i> Add to Cart
                                     </button>
