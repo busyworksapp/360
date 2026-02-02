@@ -20,9 +20,13 @@ class Config:
     
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     
+    # Cache Configuration - Use Redis if available, fallback to simple cache
     REDIS_URL = os.getenv('REDIS_URL')
-    CACHE_TYPE = 'redis'
-    CACHE_REDIS_URL = os.getenv('REDIS_URL')
+    if REDIS_URL:
+        CACHE_TYPE = 'redis'
+        CACHE_REDIS_URL = REDIS_URL
+    else:
+        CACHE_TYPE = 'simple'
     CACHE_DEFAULT_TIMEOUT = 300
     
     STRIPE_PUBLIC_KEY = os.getenv('STRIPE_PUBLIC_KEY')
