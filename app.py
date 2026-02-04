@@ -25,6 +25,7 @@ from email_service import EmailService
 from geolocation import geolocation_service
 from pricing import pricing_service
 from ocr_service import OCRService
+from s3_storage import storage_service
 import bleach
 
 app = Flask(__name__)
@@ -246,22 +247,25 @@ def allowed_file(filename):
 
 
 def save_upload_file(file):
-    """Save uploaded file with timestamp to prevent filename collisions"""
+    """Save uploaded file to S3 cloud storage for persistence across deployments"""
     if not file or file.filename == '':
         return None
     
     if not allowed_file(file.filename):
         return None
     
-    filename = secure_filename(file.filename)
-    name, ext = filename.rsplit('.', 1) if '.' in filename else (filename, '')
-    timestamp = datetime.datetime.now().strftime('%Y%m%d_%H%M%S')
-    new_filename = f"{name}_{timestamp}.{ext}"
+    # Upload to S3 cloud storage
+    file_url, error = storage_service.upload_file(
+        file,
+        folder='uploads',
+        allowed_extensions=app.config['ALLOWED_EXTENSIONS']
+    )
     
-    filepath = os.path.join(app.config['UPLOAD_FOLDER'], new_filename)
-    file.save(filepath)
+    if error:
+        print(f"S3 Upload error: {error}")
+        return None
     
-    return f'/static/uploads/{new_filename}'
+    return file_url  # Returns full S3 URL (https://t3.storageapi.dev/bucket/uploads/filename)
 
 
 def send_payment_email(transaction):
@@ -2250,16 +2254,22 @@ def handle_eft_payment(invoice, request):
             flash('Invalid file type. Please upload PDF, JPG, or PNG', 'danger')
             return redirect(url_for('customer_pay_invoice', invoice_id=invoice.id))
         
-        # Save uploaded file
+        # Upload to S3 cloud storage using the helper function
+        from s3_storage import upload_proof_of_payment
+        file_url, error = upload_proof_of_payment(file)
+        
+        if error:
+            flash(f'Upload failed: {error}', 'danger')
+            return redirect(url_for('customer_pay_invoice', invoice_id=invoice.id))
+        
+        # Extract filename from S3 URL for storage
         import uuid
         filename = f"pop_{invoice.invoice_number}_{uuid.uuid4().hex[:8]}.{file_ext}"
-        upload_folder = os.path.join(app.config['UPLOAD_FOLDER'], 'proof_of_payments')
-        os.makedirs(upload_folder, exist_ok=True)
-        file_path = os.path.join(upload_folder, filename)
-        file.save(file_path)
         
-        # Get file size
-        file_size = os.path.getsize(file_path)
+        # Get file size (estimate if not available)
+        file.seek(0, os.SEEK_END)
+        file_size = file.tell()
+        file.seek(0)
         
         # Create pending payment record
         payment = InvoicePayment(
@@ -2272,12 +2282,12 @@ def handle_eft_payment(invoice, request):
         db.session.add(payment)
         db.session.flush()  # Get payment ID
         
-        # Create ProofOfPayment record
+        # Create ProofOfPayment record with S3 URL
         pop = ProofOfPayment(
             invoice_payment_id=payment.id,
             invoice_id=invoice.id,
             customer_id=current_user.id,
-            file_path=file_path,
+            file_path=file_url,  # Store S3 URL instead of local path
             file_name=filename,
             file_type=file_ext,
             file_size=file_size,
