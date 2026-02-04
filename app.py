@@ -24,6 +24,8 @@ from ocr_service import OCRService
 app = Flask(__name__)
 app.config.from_object(Config)
 
+# Version: 2.1.0 - Added universal table functions and cart authentication
+
 db.init_app(app)
 migrate = Migrate(app, db)
 cache = Cache(app)
