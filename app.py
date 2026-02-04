@@ -3,6 +3,10 @@ from flask_login import LoginManager, login_user, logout_user, login_required, c
 from flask_migrate import Migrate
 from flask_cors import CORS
 from flask_caching import Cache
+from flask_wtf.csrf import CSRFProtect
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
+from flask_talisman import Talisman
 import os
 from datetime import datetime, timedelta
 from config import Config
@@ -14,22 +18,66 @@ from models import (
 )
 from email_service import EmailService
 import json
+import secrets
 from werkzeug.utils import secure_filename
 from payments import StripePayment, PayFastPayment
 from email_service import EmailService
 from geolocation import geolocation_service
 from pricing import pricing_service
 from ocr_service import OCRService
+import bleach
 
 app = Flask(__name__)
 app.config.from_object(Config)
 
-# Version: 2.1.0 - Added universal table functions and cart authentication
+# Version: 2.2.0 - Production Security Hardening
 
 db.init_app(app)
 migrate = Migrate(app, db)
 cache = Cache(app)
 CORS(app)
+
+# CSRF Protection
+csrf = CSRFProtect(app)
+
+# Rate Limiting
+limiter = Limiter(
+    app=app,
+    key_func=get_remote_address,
+    default_limits=["200 per day", "50 per hour"],
+    storage_uri=app.config.get('RATELIMIT_STORAGE_URL', 'memory://')
+)
+
+# HTTPS and Security Headers
+csp = {
+    'default-src': "'self'",
+    'script-src': [
+        "'self'",
+        "'unsafe-inline'",  # TODO: Replace with nonces
+        'cdn.jsdelivr.net',
+        'code.jquery.com',
+        'js.stripe.com'
+    ],
+    'style-src': [
+        "'self'",
+        "'unsafe-inline'",
+        'cdn.jsdelivr.net',
+        'cdnjs.cloudflare.com'
+    ],
+    'img-src': ["'self'", 'data:', 'https:'],
+    'font-src': ["'self'", 'cdnjs.cloudflare.com'],
+    'connect-src': ["'self'", 'https://api.stripe.com']
+}
+
+# Only enable Talisman in production (when HTTPS is available)
+if os.getenv('FLASK_ENV') == 'production' or os.getenv('ENABLE_HTTPS') == 'True':
+    Talisman(app,
+        force_https=True,
+        strict_transport_security=True,
+        strict_transport_security_max_age=31536000,
+        content_security_policy=csp,
+        content_security_policy_nonce_in=['script-src']
+    )
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -57,6 +105,103 @@ def load_user(user_id):
     return None
 
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+
+# =====================================================
+# SECURITY FUNCTIONS
+# =====================================================
+
+@app.after_request
+def set_security_headers(response):
+    """Add security headers to all responses"""
+    # Prevent MIME sniffing
+    response.headers['X-Content-Type-Options'] = 'nosniff'
+    
+    # Enable XSS filter
+    response.headers['X-XSS-Protection'] = '1; mode=block'
+    
+    # Referrer policy
+    response.headers['Referrer-Policy'] = 'strict-origin-when-cross-origin'
+    
+    # Permissions policy
+    response.headers['Permissions-Policy'] = 'geolocation=(), microphone=(), camera=()'
+    
+    return response
+
+def validate_password_strength(password):
+    """Enforce strong password policy"""
+    import re
+    
+    if len(password) < 12:
+        return False, "Password must be at least 12 characters"
+    
+    if not re.search(r'[A-Z]', password):
+        return False, "Password must contain an uppercase letter"
+    
+    if not re.search(r'[a-z]', password):
+        return False, "Password must contain a lowercase letter"
+    
+    if not re.search(r'\d', password):
+        return False, "Password must contain a number"
+    
+    if not re.search(r'[!@#$%^&*(),.?":{}|<>]', password):
+        return False, "Password must contain a special character"
+    
+    # Check against common passwords
+    common_passwords = ['password123', 'admin123', '12345678', 'password', 'admin']
+    if password.lower() in common_passwords:
+        return False, "Password is too common"
+    
+    return True, "Password is strong"
+
+def secure_file_upload(file):
+    """Enhanced file upload security"""
+    if not file:
+        return None, "No file provided"
+    
+    # Check file size
+    file.seek(0, 2)  # Seek to end
+    size = file.tell()
+    file.seek(0)  # Reset
+    
+    if size > app.config['MAX_CONTENT_LENGTH']:
+        return None, "File too large (max 16MB)"
+    
+    if size == 0:
+        return None, "File is empty"
+    
+    # Sanitize filename
+    filename = secure_filename(file.filename)
+    if not filename:
+        return None, "Invalid filename"
+    
+    # Check extension
+    ext = filename.rsplit('.', 1)[1].lower() if '.' in filename else ''
+    if ext not in app.config['ALLOWED_EXTENSIONS']:
+        return None, f"File type .{ext} not allowed"
+    
+    # Generate unique filename to prevent overwrite attacks
+    unique_filename = f"{secrets.token_hex(16)}.{ext}"
+    
+    # Save file
+    filepath = os.path.join(app.config['UPLOAD_FOLDER'], unique_filename)
+    file.save(filepath)
+    
+    # Set restrictive permissions
+    try:
+        os.chmod(filepath, 0o644)
+    except:
+        pass  # Windows doesn't support chmod
+    
+    return unique_filename, None
+
+def sanitize_input(text, max_length=1000):
+    """Sanitize user input to prevent XSS"""
+    if not text:
+        return ""
+    
+    # Remove HTML tags and limit length
+    clean_text = bleach.clean(str(text), tags=[], strip=True)
+    return clean_text[:max_length]
 
 
 # Custom decorator to require customer login
@@ -241,6 +386,7 @@ def contact():
                          menu_items=menu_items)
 
 @app.route('/api/contact', methods=['POST'])
+@limiter.limit("3 per minute")
 def submit_contact():
     data = request.get_json()
 
@@ -309,6 +455,7 @@ def login():
 # =====================================================
 
 @app.route('/admin/login', methods=['GET', 'POST'])
+@limiter.limit("5 per minute")
 def admin_login():
     if current_user.is_authenticated:
         return redirect(url_for('admin_dashboard'))
@@ -830,6 +977,7 @@ def admin_testimonial_delete(id):
 # =====================================================
 
 @app.route('/customer/register', methods=['GET', 'POST'])
+@limiter.limit("5 per hour")
 def customer_register():
     if request.method == 'POST':
         email = request.form.get('email')
@@ -888,6 +1036,7 @@ def customer_register():
 
 
 @app.route('/customer/login', methods=['GET', 'POST'])
+@limiter.limit("10 per minute")
 def customer_login():
     if request.method == 'POST':
         email = request.form.get('email')
@@ -1126,6 +1275,7 @@ def view_cart():
 
 
 @app.route('/api/cart/add', methods=['POST'])
+@limiter.limit("30 per minute")
 @customer_required
 def add_to_cart():
     """Add product to cart via AJAX - requires customer login"""

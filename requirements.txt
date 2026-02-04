@@ -4,6 +4,9 @@ Flask-Migrate==4.0.5
 Flask-Login==0.6.3
 Flask-CORS==4.0.0
 Flask-Caching==2.1.0
+Flask-WTF==1.2.1
+Flask-Limiter==3.5.0
+Flask-Talisman==1.1.0
 mysql-connector-python==8.2.0
 PyMySQL==1.1.0
 cryptography==41.0.7
@@ -15,6 +18,10 @@ requests==2.31.0
 Pillow>=10.2.0
 bleach==6.1.0
 geoip2==4.7.0
+pyotp==2.9.0
+qrcode==7.4.2
+python-magic-bin==0.4.14
+gunicorn==21.2.0
 
 # OCR Dependencies for Proof of Payment Processing
 pytesseract==0.3.10

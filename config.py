@@ -4,7 +4,12 @@ from dotenv import load_dotenv
 load_dotenv()
 
 class Config:
-    SECRET_KEY = os.getenv('SECRET_KEY', 'dev-secret-key')
+    # SECURITY: SECRET_KEY must be set in production
+    SECRET_KEY = os.getenv('SECRET_KEY')
+    if not SECRET_KEY:
+        raise ValueError("CRITICAL SECURITY ERROR: SECRET_KEY environment variable must be set!")
+    if SECRET_KEY == 'dev-secret-key':
+        raise ValueError("CRITICAL SECURITY ERROR: Change SECRET_KEY from default value!")
     
     # Handle DATABASE_URL with proper format conversion
     _db_url = os.getenv('DATABASE_URL', '')
@@ -62,10 +67,36 @@ class Config:
     )
     SEND_EMAILS = os.getenv('SEND_EMAILS', 'True') == 'True'
     
+    # File Upload Security
     UPLOAD_FOLDER = 'static/uploads'
-    MAX_CONTENT_LENGTH = 16 * 1024 * 1024
+    MAX_CONTENT_LENGTH = 16 * 1024 * 1024  # 16MB max
     ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
     ALLOWED_POP_EXTENSIONS = {'pdf', 'jpg', 'jpeg', 'png'}
+    ALLOWED_MIME_TYPES = {
+        'image/jpeg', 'image/png', 'image/gif', 'image/webp', 'application/pdf'
+    }
+    
+    # Session Security
+    SESSION_COOKIE_SECURE = os.getenv('SESSION_COOKIE_SECURE', 'True') == 'True'
+    SESSION_COOKIE_HTTPONLY = True
+    SESSION_COOKIE_SAMESITE = 'Lax'
+    PERMANENT_SESSION_LIFETIME = 3600  # 1 hour
+    SESSION_COOKIE_NAME = '__Host-session'
+    
+    # Remember Me Security
+    REMEMBER_COOKIE_SECURE = os.getenv('REMEMBER_COOKIE_SECURE', 'True') == 'True'
+    REMEMBER_COOKIE_HTTPONLY = True
+    REMEMBER_COOKIE_DURATION = 7  # Days
+    REMEMBER_COOKIE_NAME = '__Host-remember'
+    
+    # CSRF Protection
+    WTF_CSRF_ENABLED = True
+    WTF_CSRF_TIME_LIMIT = None  # No time limit
+    WTF_CSRF_SSL_STRICT = True
+    
+    # Rate Limiting
+    RATELIMIT_STORAGE_URL = os.getenv('REDIS_URL', 'memory://')
+    RATELIMIT_STRATEGY = 'fixed-window'
     
     # OCR settings
     OCR_CONFIDENCE_THRESHOLD = 0.75  # Auto-verify if confidence >= 75%
