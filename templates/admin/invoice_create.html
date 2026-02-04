@@ -3,26 +3,44 @@
 {% block title %}Create Invoice - Admin{% endblock %}
 
 {% block content %}
-<div class="container-fluid">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2><i class="fas fa-file-invoice"></i> Create New Invoice</h2>
-        <a href="{{ url_for('admin_invoices') }}" class="btn btn-secondary">
-            <i class="fas fa-arrow-left"></i> Back to Invoices
-        </a>
+<div class="dashboard-container">
+    <!-- Breadcrumb & Page Title -->
+    <div style="margin-bottom: 16px;">
+        <div class="breadcrumb-d365">
+            <a href="{{ url_for('admin_dashboard') }}">Home</a>
+            <span class="separator">/</span>
+            <a href="{{ url_for('admin_invoices') }}">Invoices</a>
+            <span class="separator">/</span>
+            <span>Create</span>
+        </div>
+        <h1 style="font-size: 20px; font-weight: 600; margin: 4px 0 0 0; color: #323130;">
+            <i class="fas fa-file-invoice"></i> Create New Invoice
+        </h1>
+    </div>
+
+    <!-- Command Bar -->
+    <div class="command-bar-d365" style="margin-bottom: 16px;">
+        <div class="command-bar-left">
+            <a href="{{ url_for('admin_invoices') }}" class="btn-d365-secondary" style="font-size: 12px; padding: 6px 12px;">
+                <i class="fas fa-arrow-left"></i>
+                <span>Back</span>
+            </a>
+        </div>
     </div>
 
     <form method="POST" id="invoiceForm">
-        <div class="row">
-            <!-- Customer Selection -->
-            <div class="col-md-4">
-                <div class="card mb-4">
-                    <div class="card-header">
-                        <h5 class="mb-0"><i class="fas fa-user"></i> Customer Information</h5>
+        <div style="display: grid; grid-template-columns: 350px 1fr; gap: 16px;">
+            <!-- Left Sidebar -->
+            <div>
+                <!-- Customer Selection Card -->
+                <div class="d365-card" style="margin-bottom: 16px;">
+                    <div class="card-header-d365">
+                        <h3 class="card-title-d365"><i class="fas fa-user"></i> Customer Information</h3>
                     </div>
-                    <div class="card-body">
-                        <div class="mb-3">
-                            <label for="customer_id" class="form-label">Select Customer *</label>
-                            <select class="form-select" id="customer_id" name="customer_id" required>
+                    <div class="card-body-d365">
+                        <div class="form-group-d365">
+                            <label class="form-label-d365">Select Customer *</label>
+                            <select class="form-control-d365" id="customer_id" name="customer_id" required>
                                 <option value="">-- Select Customer --</option>
                                 {% for customer in customers %}
                                 <option value="{{ customer.id }}" 
@@ -35,80 +53,112 @@
                             </select>
                         </div>
 
-                        <div id="customerInfo" style="display: none;">
-                            <hr>
-                            <p class="mb-1"><strong>Email:</strong> <span id="customerEmail"></span></p>
-                            <p class="mb-1"><strong>Company:</strong> <span id="customerCompany">-</span></p>
-                            <p class="mb-1"><strong>Total Orders:</strong> <span id="customerOrderCount">0</span></p>
-                            <p class="mb-0"><strong>Total Value:</strong> R<span id="customerTotalValue">0.00</span></p>
+                        <div id="customerInfo" style="display: none; margin-top: 16px; padding-top: 16px; border-top: 1px solid #edebe9;">
+                            <div style="font-size: 12px; color: #605e5c; margin-bottom: 8px;">
+                                <strong style="color: #323130;">Email:</strong><br>
+                                <span id="customerEmail"></span>
+                            </div>
+                            <div style="font-size: 12px; color: #605e5c; margin-bottom: 8px;">
+                                <strong style="color: #323130;">Company:</strong><br>
+                                <span id="customerCompany">-</span>
+                            </div>
+                            <div style="font-size: 12px; color: #605e5c; margin-bottom: 8px;">
+                                <strong style="color: #323130;">Total Orders:</strong><br>
+                                <span id="customerOrderCount">0</span>
+                            </div>
+                            <div style="font-size: 12px; color: #605e5c;">
+                                <strong style="color: #323130;">Total Value:</strong><br>
+                                R<span id="customerTotalValue">0.00</span>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="card">
-                    <div class="card-header">
-                        <h5 class="mb-0"><i class="fas fa-cog"></i> Invoice Settings</h5>
+                <!-- Invoice Settings Card -->
+                <div class="d365-card">
+                    <div class="card-header-d365">
+                        <h3 class="card-title-d365"><i class="fas fa-cog"></i> Invoice Settings</h3>
                     </div>
-                    <div class="card-body">
-                        <div class="mb-3">
-                            <label for="due_days" class="form-label">Due in (days)</label>
-                            <input type="number" class="form-control" id="due_days" name="due_days" value="30" min="1" max="365">
+                    <div class="card-body-d365">
+                        <div class="form-group-d365">
+                            <label class="form-label-d365">Due in (days)</label>
+                            <input type="number" class="form-control-d365" id="due_days" name="due_days" value="30" min="1" max="365">
                         </div>
 
-                        <div class="mb-3">
-                            <label for="notes" class="form-label">Notes</label>
-                            <textarea class="form-control" id="notes" name="notes" rows="3" placeholder="Internal notes (not visible to customer)"></textarea>
+                        <div class="form-group-d365">
+                            <label class="form-label-d365">Notes</label>
+                            <textarea class="form-control-d365" id="notes" name="notes" rows="3" placeholder="Internal notes (not visible to customer)"></textarea>
                         </div>
 
-                        <div class="mb-3">
-                            <label for="terms" class="form-label">Payment Terms</label>
-                            <textarea class="form-control" id="terms" name="terms" rows="3" placeholder="Payment terms and conditions">Payment due within 30 days. Late payments subject to 1.5% monthly interest.</textarea>
+                        <div class="form-group-d365">
+                            <label class="form-label-d365">Payment Terms</label>
+                            <textarea class="form-control-d365" id="terms" name="terms" rows="3" placeholder="Payment terms and conditions">Payment due within 30 days. Late payments subject to 1.5% monthly interest.</textarea>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Order Selection -->
-            <div class="col-md-8">
-                <div class="card">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0"><i class="fas fa-shopping-cart"></i> Select Orders to Invoice</h5>
+            <!-- Main Content -->
+            <div>
+                <div class="d365-card">
+                    <div class="card-header-d365" style="display: flex; justify-content: space-between; align-items: center;">
+                        <h3 class="card-title-d365"><i class="fas fa-shopping-cart"></i> Select Orders to Invoice</h3>
                         <div>
-                            <button type="button" class="btn btn-sm btn-outline-primary" id="selectAllOrders">
+                            <button type="button" class="btn-d365-secondary" style="font-size: 11px; padding: 4px 10px; margin-right: 4px;" id="selectAllOrders">
                                 <i class="fas fa-check-square"></i> Select All
                             </button>
-                            <button type="button" class="btn btn-sm btn-outline-secondary" id="deselectAllOrders">
+                            <button type="button" class="btn-d365-secondary" style="font-size: 11px; padding: 4px 10px;" id="deselectAllOrders">
                                 <i class="fas fa-square"></i> Deselect All
                             </button>
                         </div>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body-d365">
                         <div id="ordersContainer">
-                            <div class="text-center text-muted py-5">
-                                <i class="fas fa-user-circle fa-3x mb-3"></i>
-                                <p>Select a customer to view their orders</p>
+                            <div style="text-align: center; padding: 60px 20px; color: #a19f9d;">
+                                <i class="fas fa-user-circle" style="font-size: 48px; margin-bottom: 16px;"></i>
+                                <p style="font-size: 14px; color: #605e5c; margin: 0;">Select a customer to view their orders</p>
                             </div>
                         </div>
 
                         <div id="noOrdersMessage" style="display: none;">
-                            <div class="alert alert-info">
-                                <i class="fas fa-info-circle"></i> This customer has no orders yet.
+                            <div style="background: #f3f2f1; border-left: 3px solid #0078d4; padding: 12px 16px; border-radius: 2px;">
+                                <i class="fas fa-info-circle" style="color: #0078d4;"></i> This customer has no orders yet.
                             </div>
                         </div>
 
                         <div id="ordersList" style="display: none;">
-                            <div class="table-responsive">
-                                <table class="table table-hover">
+                            <div style="overflow-x: auto;">
+                                <table class="table-d365">
                                     <thead>
                                         <tr>
-                                            <th width="50">
-                                                <input type="checkbox" id="selectAllCheckbox" class="form-check-input">
+                                            <th class="row-checkbox">
+                                                <input type="checkbox" id="selectAllCheckbox">
                                             </th>
-                                            <th>Order</th>
-                                            <th>Date</th>
-                                            <th>Items</th>
-                                            <th>Status</th>
-                                            <th class="text-end">Amount</th>
+                                            <th>
+                                                <div class="column-header">
+                                                    <span class="column-title">Order</span>
+                                                </div>
+                                            </th>
+                                            <th>
+                                                <div class="column-header">
+                                                    <span class="column-title">Date</span>
+                                                </div>
+                                            </th>
+                                            <th style="text-align: center;">
+                                                <div class="column-header">
+                                                    <span class="column-title">Items</span>
+                                                </div>
+                                            </th>
+                                            <th>
+                                                <div class="column-header">
+                                                    <span class="column-title">Status</span>
+                                                </div>
+                                            </th>
+                                            <th style="text-align: right;">
+                                                <div class="column-header">
+                                                    <span class="column-title">Amount</span>
+                                                </div>
+                                            </th>
                                         </tr>
                                     </thead>
                                     <tbody id="ordersTableBody">
@@ -117,22 +167,22 @@
                                 </table>
                             </div>
 
-                            <div class="mt-4 p-3 bg-light rounded">
-                                <div class="row">
-                                    <div class="col-md-8">
-                                        <p class="mb-1">Selected Orders: <strong id="selectedCount">0</strong></p>
+                            <div style="margin-top: 16px; padding: 16px; background: #faf9f8; border: 1px solid #edebe9; border-radius: 2px;">
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                                    <div>
+                                        <p style="font-size: 12px; color: #605e5c; margin-bottom: 4px;">Selected Orders: <strong style="color: #323130;" id="selectedCount">0</strong></p>
                                     </div>
-                                    <div class="col-md-4 text-end">
-                                        <p class="mb-1">Subtotal: <strong>R<span id="selectedSubtotal">0.00</span></strong></p>
-                                        <p class="mb-1">Tax: <strong>R<span id="selectedTax">0.00</span></strong></p>
-                                        <p class="mb-0 fs-5">Total: <strong class="text-primary">R<span id="selectedTotal">0.00</span></strong></p>
+                                    <div style="text-align: right;">
+                                        <p style="font-size: 12px; color: #605e5c; margin-bottom: 4px;">Subtotal: <strong style="color: #323130;">R<span id="selectedSubtotal">0.00</span></strong></p>
+                                        <p style="font-size: 12px; color: #605e5c; margin-bottom: 4px;">Tax: <strong style="color: #323130;">R<span id="selectedTax">0.00</span></strong></p>
+                                        <p style="font-size: 16px; font-weight: 600; margin: 0; color: #0078d4;">Total: R<span id="selectedTotal">0.00</span></p>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="card-footer text-end">
-                        <button type="submit" class="btn btn-primary btn-lg" id="createInvoiceBtn" disabled>
+                    <div style="padding: 12px 16px; border-top: 1px solid #edebe9; text-align: right; background: #faf9f8;">
+                        <button type="submit" class="btn-d365-primary" id="createInvoiceBtn" disabled>
                             <i class="fas fa-file-invoice"></i> Create Invoice
                         </button>
                     </div>
@@ -145,16 +195,13 @@
 <style>
     .order-row {
         cursor: pointer;
-        transition: background-color 0.2s;
+        transition: background-color 0.1s;
     }
     .order-row:hover {
-        background-color: #f8f9fa;
+        background-color: #f3f2f1;
     }
     .order-row.selected {
-        background-color: #e7f3ff;
-    }
-    .badge-has-invoice {
-        background-color: #6c757d;
+        background-color: #deecf9;
     }
 </style>
 
@@ -168,9 +215,9 @@ document.getElementById('customer_id').addEventListener('change', function() {
     if (!customerId) {
         document.getElementById('customerInfo').style.display = 'none';
         document.getElementById('ordersContainer').innerHTML = `
-            <div class="text-center text-muted py-5">
-                <i class="fas fa-user-circle fa-3x mb-3"></i>
-                <p>Select a customer to view their orders</p>
+            <div style="text-align: center; padding: 60px 20px; color: #a19f9d;">
+                <i class="fas fa-user-circle" style="font-size: 48px; margin-bottom: 16px;"></i>
+                <p style="font-size: 14px; color: #605e5c; margin: 0;">Select a customer to view their orders</p>
             </div>
         `;
         document.getElementById('createInvoiceBtn').disabled = true;
@@ -214,11 +261,11 @@ document.getElementById('customer_id').addEventListener('change', function() {
                 row.dataset.orderId = order.id;
 
                 const statusBadge = getStatusBadge(order.status);
-                const invoiceBadge = order.has_invoice ? '<span class="badge badge-has-invoice ms-2">Has Invoice</span>' : '';
+                const invoiceBadge = order.has_invoice ? '<span class="badge-d365 badge-secondary" style="margin-left: 8px; font-size: 10px;">Has Invoice</span>' : '';
 
                 row.innerHTML = `
-                    <td>
-                        <input type="checkbox" class="form-check-input order-checkbox" 
+                    <td class="row-checkbox">
+                        <input type="checkbox" class="order-checkbox" 
                                name="order_ids[]" value="${order.id}" 
                                data-subtotal="${order.subtotal}" 
                                data-tax="${order.tax_amount}"
@@ -228,10 +275,10 @@ document.getElementById('customer_id').addEventListener('change', function() {
                         <strong>${order.order_number}</strong>
                         ${invoiceBadge}
                     </td>
-                    <td>${order.created_at}</td>
-                    <td>${order.item_count} items</td>
+                    <td style="font-size: 11px;">${order.created_at}</td>
+                    <td style="text-align: center;">${order.item_count}</td>
                     <td>${statusBadge}</td>
-                    <td class="text-end"><strong>R${order.total_amount.toFixed(2)}</strong></td>
+                    <td style="text-align: right; font-weight: 600;">R${order.total_amount.toFixed(2)}</td>
                 `;
 
                 // Click row to toggle checkbox
@@ -311,13 +358,13 @@ function updateSelectedSummary() {
 
 function getStatusBadge(status) {
     const badges = {
-        'pending': '<span class="badge bg-warning">Pending</span>',
-        'processing': '<span class="badge bg-info">Processing</span>',
-        'shipped': '<span class="badge bg-primary">Shipped</span>',
-        'delivered': '<span class="badge bg-success">Delivered</span>',
-        'cancelled': '<span class="badge bg-danger">Cancelled</span>'
+        'pending': '<span class="badge-d365 badge-warning">Pending</span>',
+        'processing': '<span class="badge-d365 badge-info">Processing</span>',
+        'shipped': '<span class="badge-d365 badge-info">Shipped</span>',
+        'delivered': '<span class="badge-d365 badge-success">Delivered</span>',
+        'cancelled': '<span class="badge-d365 badge-danger">Cancelled</span>'
     };
-    return badges[status] || '<span class="badge bg-secondary">' + status + '</span>';
+    return badges[status] || '<span class="badge-d365 badge-secondary">' + status + '</span>';
 }
 </script>
 {% endblock %}

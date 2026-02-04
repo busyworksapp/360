@@ -494,10 +494,18 @@
                 if (cartCount) {
                     cartCount.textContent = data.cart_count;
                 }
-                // Show success message (you can implement a toast notification)
+                // Show success message
                 alert('Product added to cart successfully!');
             } else {
-                alert('Failed to add product to cart. Please try again.');
+                // Check if we need to redirect to login
+                if (data.redirect) {
+                    if (confirm(data.message + ' Redirect to login page?')) {
+                        // Redirect to login with next parameter pointing to products page
+                        window.location.href = data.redirect + '?next=' + encodeURIComponent(window.location.pathname);
+                    }
+                } else {
+                    alert(data.message || 'Failed to add product to cart. Please try again.');
+                }
             }
         })
         .catch(error => {

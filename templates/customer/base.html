@@ -655,10 +655,12 @@
             border: 1px solid var(--d365-neutral-light);
             border-radius: 2px;
             margin-bottom: 16px;
+            overflow: visible; /* Allow dropdowns to extend outside card */
         }
 
         .card-body-d365 {
             padding: 16px;
+            overflow: visible; /* Allow dropdowns to extend outside card body */
         }
 
         /* D365 Badges */
@@ -853,6 +855,7 @@
             setInterval(updateCartCount, 5000);
         }
     </script>
+    <script src="{{ url_for('static', filename='js/table-functions.js') }}"></script>
     {% block extra_js %}{% endblock %}
 </body>
 </html>

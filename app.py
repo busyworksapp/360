@@ -57,6 +57,41 @@ def load_user(user_id):
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
 
+# Custom decorator to require customer login
+def customer_required(f):
+    """Decorator to require customer authentication"""
+    from functools import wraps
+    
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not current_user.is_authenticated:
+            # Check if this is an AJAX request
+            if request.is_json or request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                return jsonify({
+                    'success': False,
+                    'message': 'Please log in to add items to cart.',
+                    'redirect': url_for('customer_login')
+                }), 401
+            
+            flash('Please log in to access this page.', 'warning')
+            return redirect(url_for('customer_login'))
+        
+        if not isinstance(current_user, Customer):
+            # Check if this is an AJAX request
+            if request.is_json or request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                return jsonify({
+                    'success': False,
+                    'message': 'This feature is only accessible to customers.'
+                }), 403
+            
+            flash('This page is only accessible to customers.', 'danger')
+            return redirect(url_for('index'))
+        
+        return f(*args, **kwargs)
+    
+    return decorated_function
+
+
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in \
@@ -124,6 +159,10 @@ def index():
     menu_items = MenuItem.query.filter_by(
         is_active=True, parent_id=None
     ).order_by(MenuItem.order_position).all()
+    # Get featured products (first 6 active products)
+    products = Product.query.filter_by(
+        is_active=True
+    ).limit(6).all()
 
     return render_template('index.html',
                          hero_sections=hero_sections,
@@ -131,7 +170,8 @@ def index():
                          testimonials=testimonials,
                          company_info=company_info,
                          content_sections=content_sections,
-                         menu_items=menu_items)
+                         menu_items=menu_items,
+                         products=products)
 
 @app.route('/services')
 @cache.cached(timeout=300)
@@ -900,14 +940,20 @@ def customer_login():
                     flash(f'Welcome back! Your cart has been updated with {cart_count} items.', 'success')
             
             next_page = request.args.get('next')
-            if not next_page or (
-                next_page.startswith('http') or
-                next_page.startswith('/')
-            ):
-                if next_page and not (
-                    next_page.startswith('http')
-                ):
+            
+            # Check if user came from trying to add to cart
+            if next_page:
+                # Validate next_page to prevent open redirect
+                if next_page.startswith('/') and not next_page.startswith('//'):
+                    flash('You can now add products to your cart!', 'success')
                     return redirect(next_page)
+            
+            # Default redirect - if they were trying to access cart, send to products
+            # Otherwise send to dashboard
+            if next_page and 'cart' in next_page.lower():
+                flash('Welcome back! Browse products and add items to your cart.', 'success')
+                return redirect(url_for('customer_products'))
+            
             return redirect(url_for('customer_dashboard'))
 
         flash('Invalid email or password', 'danger')
@@ -1039,8 +1085,9 @@ def customer_services():
 # ========== SHOPPING CART ROUTES ==========
 
 @app.route('/cart', methods=['GET'])
+@customer_required
 def view_cart():
-    """Display shopping cart - supports both logged-in and guest users"""
+    """Display shopping cart - requires customer login"""
     menu_items = MenuItem.query.filter_by(
         is_active=True
     ).order_by(MenuItem.order_position).all()
@@ -1077,8 +1124,9 @@ def view_cart():
 
 
 @app.route('/api/cart/add', methods=['POST'])
+@customer_required
 def add_to_cart():
-    """Add product to cart via AJAX - supports both logged-in and guest users"""
+    """Add product to cart via AJAX - requires customer login"""
     data = request.get_json()
     product_id = data.get('product_id')
     quantity = int(data.get('quantity', 1))
@@ -1094,77 +1142,40 @@ def add_to_cart():
             'success': False, 'message': 'Product not found'
         }), 404
 
-    # Check if user is logged in as customer
-    if current_user.is_authenticated and isinstance(current_user, Customer):
-        # Database cart for logged-in customers
-        cart = Cart.query.filter_by(
-            customer_id=current_user.id, is_active=True
-        ).first()
+    # Database cart for logged-in customers
+    cart = Cart.query.filter_by(
+        customer_id=current_user.id, is_active=True
+    ).first()
 
-        if not cart:
-            cart = Cart(customer_id=current_user.id)
-            db.session.add(cart)
-            db.session.commit()
-
-        # Check if product already in cart
-        cart_item = CartItem.query.filter_by(
-            cart_id=cart.id, product_id=product_id
-        ).first()
-
-        if cart_item:
-            cart_item.quantity += quantity
-        else:
-            cart_item = CartItem(
-                cart_id=cart.id,
-                product_id=product_id,
-                quantity=quantity,
-                price_at_add=product.price
-            )
-            db.session.add(cart_item)
-
+    if not cart:
+        cart = Cart(customer_id=current_user.id)
+        db.session.add(cart)
         db.session.commit()
 
-        return jsonify({
-            'success': True,
-            'message': 'Product added to cart',
-            'cart_count': cart.get_item_count(),
-            'subtotal': float(cart.get_subtotal())
-        })
+    # Check if product already in cart
+    cart_item = CartItem.query.filter_by(
+        cart_id=cart.id, product_id=product_id
+    ).first()
+
+    if cart_item:
+        cart_item.quantity += quantity
     else:
-        # Session-based cart for guests
-        if 'cart' not in session:
-            session['cart'] = []
-        
-        # Check if product already in session cart
-        cart_items = session['cart']
-        found = False
-        
-        for item in cart_items:
-            if item['product_id'] == product_id:
-                item['quantity'] += quantity
-                found = True
-                break
-        
-        if not found:
-            cart_items.append({
-                'product_id': product_id,
-                'quantity': quantity,
-                'price': float(product.price)
-            })
-        
-        session['cart'] = cart_items
-        session.modified = True
-        
-        # Calculate cart count and subtotal
-        cart_count = sum(item['quantity'] for item in cart_items)
-        subtotal = sum(item['quantity'] * item['price'] for item in cart_items)
-        
-        return jsonify({
-            'success': True,
-            'message': 'Product added to cart',
-            'cart_count': cart_count,
-            'subtotal': float(subtotal)
-        })
+        cart_item = CartItem(
+            cart_id=cart.id,
+            product_id=product_id,
+            quantity=quantity,
+            price_at_add=product.price
+        )
+        db.session.add(cart_item)
+
+    db.session.commit()
+
+    return jsonify({
+        'success': True,
+        'message': 'Product added to cart',
+        'cart_count': cart.get_item_count(),
+        'subtotal': float(cart.get_subtotal())
+    })
 
 
 @app.route('/api/cart/remove/<int:item_id>',
@@ -1272,20 +1283,16 @@ def clear_cart():
 
 
 @app.route('/api/cart/count', methods=['GET'])
+@customer_required
 def get_cart_count():
-    """Get number of items in cart (for navbar) - supports both logged-in and guest users"""
+    """Get number of items in cart (for navbar) - requires customer login"""
     cart_count = 0
 
-    if current_user.is_authenticated and isinstance(current_user, Customer):
-        cart = Cart.query.filter_by(
-            customer_id=current_user.id, is_active=True
-        ).first()
-        if cart:
-            cart_count = cart.get_item_count()
-    else:
-        # Get count from session cart for guests
-        if 'cart' in session:
-            cart_count = sum(item['quantity'] for item in session['cart'])
+    cart = Cart.query.filter_by(
+        customer_id=current_user.id, is_active=True
+    ).first()
+    if cart:
+        cart_count = cart.get_item_count()
 
     return jsonify({'cart_count': cart_count})
 

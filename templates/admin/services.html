@@ -165,7 +165,12 @@ document.getElementById('selectAll')?.addEventListener('change', function() {
 
 // Row Selection
 function selectRow(row, event) {
+    // Don't interfere with checkbox clicks or link clicks
     if (event.target.type === 'checkbox' || event.target.tagName === 'A') return;
+    
+    // Check if clicked element is inside a link
+    if (event.target.closest('a')) return;
+    
     const checkbox = row.querySelector('.row-select');
     checkbox.checked = !checkbox.checked;
     updateCommandBar();
@@ -180,9 +185,22 @@ function updateCommandBar() {
     if (selectedCount > 0) {
         editBtn.disabled = selectedCount !== 1;
         deleteBtn.disabled = false;
+        
+        // Make edit button functional when one item is selected
+        if (selectedCount === 1) {
+            editBtn.onclick = function() {
+                const selectedCheckbox = document.querySelector('.row-select:checked');
+                const row = selectedCheckbox.closest('tr');
+                const link = row.querySelector('a[href*="edit"]');
+                if (link) {
+                    window.location.href = link.href;
+                }
+            };
+        }
     } else {
         editBtn.disabled = true;
         deleteBtn.disabled = true;
+        editBtn.onclick = null;
     }
 }
 
@@ -194,6 +212,162 @@ document.getElementById('filterInput')?.addEventListener('input', function(e) {
     rows.forEach(row => {
         const text = row.textContent.toLowerCase();
         row.style.display = text.includes(filter) ? '' : 'none';
+    });
+});
+
+// Add checkbox change listeners
+document.querySelectorAll('.row-select').forEach(checkbox => {
+    checkbox.addEventListener('change', updateCommandBar);
+});
+
+// Column Filtering
+document.querySelectorAll('.filter-icon').forEach(icon => {
+    icon.addEventListener('click', function(e) {
+        e.stopPropagation();
+        const th = this.closest('th');
+        const columnIndex = Array.from(th.parentElement.children).indexOf(th);
+        
+        // Remove any existing filter dropdowns
+        document.querySelectorAll('.filter-dropdown').forEach(d => d.remove());
+        
+        // Get unique values from this column
+        const values = new Set();
+        document.querySelectorAll('.table-d365 tbody tr').forEach(row => {
+            const cell = row.children[columnIndex];
+            if (cell) {
+                const text = cell.textContent.trim();
+                if (text) values.add(text);
+            }
+        });
+        
+        // Create filter dropdown
+        const dropdown = document.createElement('div');
+        dropdown.className = 'filter-dropdown';
+        dropdown.style.cssText = `
+            position: absolute;
+            background: white;
+            border: 1px solid #8a8886;
+            border-radius: 2px;
+            box-shadow: 0 6.4px 14.4px 0 rgba(0,0,0,.132);
+            min-width: 200px;
+            max-height: 300px;
+            overflow-y: auto;
+            z-index: 1000;
+            padding: 8px 0;
+        `;
+        
+        // Add "All" option
+        const allOption = document.createElement('div');
+        allOption.style.cssText = `
+            padding: 8px 16px;
+            cursor: pointer;
+            font-size: 12px;
+            color: #323130;
+        `;
+        allOption.textContent = '(Select All)';
+        allOption.addEventListener('mouseenter', function() {
+            this.style.background = '#f3f2f1';
+        });
+        allOption.addEventListener('mouseleave', function() {
+            this.style.background = 'white';
+        });
+        allOption.addEventListener('click', function() {
+            document.querySelectorAll('.table-d365 tbody tr').forEach(row => {
+                row.style.display = '';
+            });
+            dropdown.remove();
+        });
+        dropdown.appendChild(allOption);
+        
+        // Add divider
+        const divider = document.createElement('div');
+        divider.style.cssText = 'height: 1px; background: #edebe9; margin: 4px 0;';
+        dropdown.appendChild(divider);
+        
+        // Add value options
+        Array.from(values).sort().forEach(value => {
+            const option = document.createElement('div');
+            option.style.cssText = `
+                padding: 8px 16px;
+                cursor: pointer;
+                font-size: 12px;
+                color: #323130;
+            `;
+            option.textContent = value;
+            option.addEventListener('mouseenter', function() {
+                this.style.background = '#f3f2f1';
+            });
+            option.addEventListener('mouseleave', function() {
+                this.style.background = 'white';
+            });
+            option.addEventListener('click', function() {
+                // Filter rows
+                document.querySelectorAll('.table-d365 tbody tr').forEach(row => {
+                    const cell = row.children[columnIndex];
+                    if (cell) {
+                        const cellText = cell.textContent.trim();
+                        row.style.display = cellText === value ? '' : 'none';
+                    }
+                });
+                dropdown.remove();
+            });
+            dropdown.appendChild(option);
+        });
+        
+        // Position dropdown
+        const rect = icon.getBoundingClientRect();
+        dropdown.style.left = rect.left + 'px';
+        dropdown.style.top = (rect.bottom + 5) + 'px';
+        document.body.appendChild(dropdown);
+        
+        // Close dropdown when clicking outside
+        setTimeout(() => {
+            document.addEventListener('click', function closeDropdown() {
+                dropdown.remove();
+                document.removeEventListener('click', closeDropdown);
+            });
+        }, 0);
+    });
+});
+
+// Column Sorting
+document.querySelectorAll('.sort-icon').forEach(icon => {
+    icon.addEventListener('click', function(e) {
+        e.stopPropagation();
+        const th = this.closest('th');
+        const columnIndex = Array.from(th.parentElement.children).indexOf(th);
+        const tbody = document.querySelector('.table-d365 tbody');
+        const rows = Array.from(tbody.querySelectorAll('tr'));
+        
+        // Determine sort direction
+        const currentDirection = th.dataset.sortDirection || 'asc';
+        const newDirection = currentDirection === 'asc' ? 'desc' : 'asc';
+        th.dataset.sortDirection = newDirection;
+        
+        // Update icon
+        this.className = newDirection === 'asc' ? 'fas fa-sort-up sort-icon' : 'fas fa-sort-down sort-icon';
+        
+        // Sort rows
+        rows.sort((a, b) => {
+            const aText = a.children[columnIndex]?.textContent.trim() || '';
+            const bText = b.children[columnIndex]?.textContent.trim() || '';
+            
+            // Try numeric comparison
+            const aNum = parseFloat(aText);
+            const bNum = parseFloat(bText);
+            
+            if (!isNaN(aNum) && !isNaN(bNum)) {
+                return newDirection === 'asc' ? aNum - bNum : bNum - aNum;
+            }
+            
+            // String comparison
+            return newDirection === 'asc' 
+                ? aText.localeCompare(bText)
+                : bText.localeCompare(aText);
+        });
+        
+        // Reorder rows
+        rows.forEach(row => tbody.appendChild(row));
     });
 });
 </script>

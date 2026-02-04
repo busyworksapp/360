@@ -294,10 +294,16 @@
                 }, 2000);
 
                 updateNavbarCartCount();
-            } else if (response.status === 401) {
-                window.location.href = '/customer/login?next=/cart';
             } else {
-                alert(data.message || 'Error adding to cart');
+                // Check if we need to redirect to login
+                if (data.redirect) {
+                    if (confirm(data.message + ' Redirect to login page?')) {
+                        // Redirect to login with next parameter pointing to current page
+                        window.location.href = data.redirect + '?next=' + encodeURIComponent(window.location.pathname);
+                    }
+                } else {
+                    alert(data.message || 'Error adding to cart');
+                }
             }
         } catch (error) {
             console.error('Error:', error);

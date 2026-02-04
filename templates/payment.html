@@ -252,7 +252,7 @@
                 <h4 style="color: #323130; font-size: 16px; font-weight: 600; margin-bottom: 24px;">
                     <i class="fas fa-credit-card" style="color: #0078d4;"></i> PayFast Payment
                 </h4>
-                <form action="{{ url_for('process_payfast_payment') }}" method="POST">
+                <form action="{{ url_for('payfast_payment') }}" method="POST">
                     <div class="form-group-d365">
                         <label for="name_first">First Name</label>
                         <input type="text" id="name_first" name="name_first" class="form-control-d365" required>

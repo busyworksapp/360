@@ -298,6 +298,7 @@
             border-radius: 2px;
             box-shadow: 0 1.6px 3.6px rgba(0,0,0,0.132);
             margin-bottom: 16px;
+            overflow: visible; /* Allow dropdowns to extend outside card */
         }
 
         .card-header-d365 {
@@ -315,6 +316,7 @@
 
         .card-body-d365 {
             padding: 24px;
+            overflow: visible; /* Allow dropdowns to extend outside card body */
         }
 
         /* D365 Tables - Authentic Styling */
@@ -641,6 +643,7 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/table-functions.js') }}"></script>
     {% block extra_js %}{% endblock %}
 </body>
 </html>

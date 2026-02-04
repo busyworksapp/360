@@ -314,36 +314,82 @@
             </div>
 
             {% if recent_orders %}
-                <table class="d365-table">
+                <table class="table-d365">
                     <thead>
                         <tr>
-                            <th>Order Number</th>
-                            <th>Date</th>
-                            <th>Items</th>
-                            <th>Amount</th>
-                            <th>Status</th>
+                            <th>
+                                <div class="column-header">
+                                    <span class="column-title">Order Number</span>
+                                </div>
+                            </th>
+                            <th>
+                                <div class="column-header">
+                                    <span class="column-title">Order Date</span>
+                                </div>
+                            </th>
+                            <th style="text-align: center;">
+                                <div class="column-header">
+                                    <span class="column-title">Items</span>
+                                </div>
+                            </th>
+                            <th style="text-align: right;">
+                                <div class="column-header">
+                                    <span class="column-title">Total Amount</span>
+                                </div>
+                            </th>
+                            <th>
+                                <div class="column-header">
+                                    <span class="column-title">Status</span>
+                                </div>
+                            </th>
+                            <th>
+                                <div class="column-header">
+                                    <span class="column-title">Payment</span>
+                                </div>
+                            </th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for order in recent_orders %}
                             <tr onclick="window.location.href='{{ url_for('customer_order_detail', order_id=order.id) }}'" style="cursor: pointer;">
-                                <td><strong>{{ order.order_number }}</strong></td>
-                                <td>{{ order.created_at.strftime('%d/%m/%Y') }}</td>
-                                <td>{{ order.items|length }}</td>
-                                <td>R {{ "%.2f"|format(order.total_amount) }}</td>
+                                <td>
+                                    <a href="{{ url_for('customer_order_detail', order_id=order.id) }}">
+                                        {{ order.order_number }}
+                                    </a>
+                                </td>
+                                <td style="font-size: 11px;">
+                                    {{ order.created_at.strftime('%d %b %Y') }}
+                                </td>
+                                <td style="text-align: center;">
+                                    {{ order.items|length }}
+                                </td>
+                                <td style="text-align: right; font-weight: 600;">
+                                    R {{ "%.2f"|format(order.total_amount) }}
+                                </td>
                                 <td>
                                     {% if order.status == 'pending' %}
-                                        <span class="status-badge pending">Pending</span>
+                                        <span class="badge-d365 badge-warning">Pending</span>
                                     {% elif order.status == 'processing' %}
-                                        <span class="status-badge processing">Processing</span>
+                                        <span class="badge-d365 badge-info">Processing</span>
                                     {% elif order.status == 'shipped' %}
-                                        <span class="status-badge shipped">Shipped</span>
+                                        <span class="badge-d365 badge-info">Shipped</span>
                                     {% elif order.status == 'delivered' %}
-                                        <span class="status-badge delivered">Delivered</span>
+                                        <span class="badge-d365 badge-success">Delivered</span>
                                     {% elif order.status == 'cancelled' %}
-                                        <span class="status-badge cancelled">Cancelled</span>
+                                        <span class="badge-d365 badge-danger">Cancelled</span>
                                     {% else %}
-                                        <span class="status-badge">{{ order.status|title }}</span>
+                                        <span class="badge-d365 badge-secondary">{{ order.status|title }}</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if order.payment_status == 'paid' %}
+                                        <span class="badge-d365 badge-success">Paid</span>
+                                    {% elif order.payment_status == 'pending' %}
+                                        <span class="badge-d365 badge-warning">Pending</span>
+                                    {% elif order.payment_status == 'failed' %}
+                                        <span class="badge-d365 badge-danger">Failed</span>
+                                    {% else %}
+                                        <span class="badge-d365 badge-secondary">{{ order.payment_status|title }}</span>
                                     {% endif %}
                                 </td>
                             </tr>
