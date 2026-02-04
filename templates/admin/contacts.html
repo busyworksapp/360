@@ -3,114 +3,269 @@
 {% block title %}Contact Submissions - Admin{% endblock %}
 
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h3><i class="fas fa-envelope"></i> Contact Form Submissions</h3>
-    <span class="badge bg-primary">{{ contacts|length }} Total</span>
-</div>
-
-{% if contacts %}
-<div class="card">
-    <div class="table-responsive">
-        <table class="table table-hover">
-            <thead class="table-dark">
-                <tr>
-                    <th>Name</th>
-                    <th>Email</th>
-                    <th>Phone</th>
-                    <th>Subject</th>
-                    <th>Date Received</th>
-                    <th>Status</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for contact in contacts %}
-                <tr>
-                    <td><strong>{{ contact.name }}</strong></td>
-                    <td>
-                        <a href="mailto:{{ contact.email }}">{{ contact.email }}</a>
-                    </td>
-                    <td>
-                        {% if contact.phone %}
-                            <a href="tel:{{ contact.phone }}">{{ contact.phone }}</a>
-                        {% else %}
-                            <span class="text-muted">N/A</span>
-                        {% endif %}
-                    </td>
-                    <td>
-                        <strong>{{ contact.subject }}</strong>
-                    </td>
-                    <td>
-                        <small>{{ contact.created_at.strftime('%d %b %Y, %H:%M') }}</small>
-                    </td>
-                    <td>
-                        {% if contact.status == 'new' %}
-                            <span class="badge bg-success">New</span>
-                        {% elif contact.status == 'read' %}
-                            <span class="badge bg-info">Read</span>
-                        {% elif contact.status == 'replied' %}
-                            <span class="badge bg-secondary">Replied</span>
-                        {% else %}
-                            <span class="badge bg-light text-dark">{{ contact.status }}</span>
-                        {% endif %}
-                    </td>
-                    <td>
-                        <button type="button" class="btn btn-sm btn-info" data-bs-toggle="modal" 
-                                data-bs-target="#viewMessage{{ contact.id }}" title="View">
-                            <i class="fas fa-eye"></i>
-                        </button>
-                    </td>
-                </tr>
-
-                <!-- View Modal -->
-                <div class="modal fade" id="viewMessage{{ contact.id }}" tabindex="-1">
-                    <div class="modal-dialog modal-lg">
-                        <div class="modal-content">
-                            <div class="modal-header bg-dark text-white">
-                                <h5 class="modal-title">Message from {{ contact.name }}</h5>
-                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+<div style="padding: 16px; background: #faf9f8;">
+    <!-- Breadcrumb Navigation -->
+    <div class="breadcrumb-d365">
+        <a href="{{ url_for('admin_dashboard') }}">Home</a>
+        <span class="separator">/</span>
+        <span>Contact Submissions</span>
+    </div>
+    
+    <!-- Page Title -->
+    <h1 style="font-size: 20px; font-weight: 600; margin: 4px 0 16px 0; color: #323130;">
+        Contact Submissions
+    </h1>
+    
+    <!-- Command Bar -->
+    <div class="command-bar-d365">
+        <div class="command-bar-left">
+            <button class="btn-d365-secondary" id="viewBtn" disabled onclick="viewSelected()">
+                <i class="fas fa-eye"></i> View
+            </button>
+            <button class="btn-d365-secondary" onclick="location.reload()">
+                <i class="fas fa-sync-alt"></i> Refresh
+            </button>
+        </div>
+        <div class="command-bar-right">
+            <div class="search-box-d365">
+                <i class="fas fa-search"></i>
+                <input type="text" id="filterInput" placeholder="Filter" onkeyup="filterTable()">
+            </div>
+        </div>
+    </div>
+    
+    <!-- Table Card -->
+    <div class="d365-card">
+        <div class="card-body-d365" style="padding: 0;">
+            <table class="table-d365" id="contactsTable">
+                <thead>
+                    <tr>
+                        <th class="row-checkbox">
+                            <input type="checkbox" id="selectAll" onchange="toggleSelectAll(this)">
+                        </th>
+                        <th class="sortable">
+                            <div class="column-header">
+                                <span class="column-title">Name</span>
+                                <span class="column-icons">
+                                    <i class="fas fa-filter filter-icon"></i>
+                                    <i class="fas fa-sort sort-icon"></i>
+                                </span>
                             </div>
-                            <div class="modal-body">
-                                <div class="row mb-3">
-                                    <div class="col-md-6">
-                                        <p><strong>Name:</strong><br>{{ contact.name }}</p>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <p><strong>Email:</strong><br><a href="mailto:{{ contact.email }}">{{ contact.email }}</a></p>
-                                    </div>
-                                </div>
-                                <div class="row mb-3">
-                                    <div class="col-md-6">
-                                        <p><strong>Phone:</strong><br>{{ contact.phone or 'Not provided' }}</p>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <p><strong>Received:</strong><br>{{ contact.created_at.strftime('%d %B %Y at %H:%M') }}</p>
-                                    </div>
-                                </div>
-                                <hr>
-                                <p><strong>Subject:</strong> {{ contact.subject }}</p>
-                                <p><strong>Message:</strong></p>
-                                <div class="alert alert-light border">
-                                    {{ contact.message|replace('\n', '<br>')|safe }}
-                                </div>
+                        </th>
+                        <th class="sortable">
+                            <div class="column-header">
+                                <span class="column-title">Email</span>
+                                <span class="column-icons">
+                                    <i class="fas fa-filter filter-icon"></i>
+                                    <i class="fas fa-sort sort-icon"></i>
+                                </span>
                             </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                <a href="mailto:{{ contact.email }}" class="btn btn-primary">
-                                    <i class="fas fa-reply"></i> Reply
-                                </a>
+                        </th>
+                        <th class="sortable">
+                            <div class="column-header">
+                                <span class="column-title">Phone</span>
+                                <span class="column-icons">
+                                    <i class="fas fa-filter filter-icon"></i>
+                                    <i class="fas fa-sort sort-icon"></i>
+                                </span>
                             </div>
-                        </div>
-                    </div>
-                </div>
-                {% endfor %}
-            </tbody>
-        </table>
+                        </th>
+                        <th class="sortable">
+                            <div class="column-header">
+                                <span class="column-title">Subject</span>
+                                <span class="column-icons">
+                                    <i class="fas fa-filter filter-icon"></i>
+                                    <i class="fas fa-sort sort-icon"></i>
+                                </span>
+                            </div>
+                        </th>
+                        <th class="sortable">
+                            <div class="column-header">
+                                <span class="column-title">Date Received</span>
+                                <span class="column-icons">
+                                    <i class="fas fa-filter filter-icon"></i>
+                                    <i class="fas fa-sort sort-icon"></i>
+                                </span>
+                            </div>
+                        </th>
+                        <th class="sortable">
+                            <div class="column-header">
+                                <span class="column-title">Status</span>
+                                <span class="column-icons">
+                                    <i class="fas fa-filter filter-icon"></i>
+                                    <i class="fas fa-sort sort-icon"></i>
+                                </span>
+                            </div>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for contact in contacts %}
+                    <tr onclick="selectRow(this, event)" data-contact-id="{{ contact.id }}">
+                        <td class="row-checkbox">
+                            <input type="checkbox" class="row-select" value="{{ contact.id }}">
+                        </td>
+                        <td style="font-weight: 600;">{{ contact.name }}</td>
+                        <td>
+                            <a href="mailto:{{ contact.email }}">{{ contact.email }}</a>
+                        </td>
+                        <td>
+                            {% if contact.phone %}
+                                <a href="tel:{{ contact.phone }}">{{ contact.phone }}</a>
+                            {% else %}
+                                <span style="color: #a19f9d;">N/A</span>
+                            {% endif %}
+                        </td>
+                        <td style="font-weight: 600;">{{ contact.subject }}</td>
+                        <td style="font-size: 11px;">
+                            {{ contact.created_at.strftime('%d %b %Y, %H:%M') }}
+                        </td>
+                        <td>
+                            {% if contact.status == 'new' %}
+                                <span class="badge-d365 badge-success">New</span>
+                            {% elif contact.status == 'read' %}
+                                <span class="badge-d365 badge-info">Read</span>
+                            {% elif contact.status == 'replied' %}
+                                <span class="badge-d365 badge-secondary">Replied</span>
+                            {% else %}
+                                <span class="badge-d365 badge-secondary">{{ contact.status }}</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="7" style="text-align: center; padding: 24px; color: #605e5c;">
+                            No contact submissions found
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <!-- Footer -->
+    <div style="margin-top: 12px; font-size: 12px; color: #605e5c;">
+        <span>Total records: {{ contacts|length }}</span>
     </div>
 </div>
-{% else %}
-<div class="alert alert-info" role="alert">
-    <i class="fas fa-info-circle"></i> No contact submissions yet.
+
+<!-- Modals for viewing messages -->
+{% for contact in contacts %}
+<div class="modal fade" id="viewMessage{{ contact.id }}" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content" style="border-radius: 2px; border: 1px solid #edebe9;">
+            <div class="modal-header" style="background: #323130; color: white; padding: 16px 24px; border-bottom: none;">
+                <h5 class="modal-title" style="font-size: 16px; font-weight: 600;">Message from {{ contact.name }}</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" style="padding: 24px;">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <p style="margin-bottom: 8px;"><strong style="color: #323130;">Name:</strong><br>{{ contact.name }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p style="margin-bottom: 8px;"><strong style="color: #323130;">Email:</strong><br><a href="mailto:{{ contact.email }}" style="color: #0078d4;">{{ contact.email }}</a></p>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <p style="margin-bottom: 8px;"><strong style="color: #323130;">Phone:</strong><br>
+                            {% if contact.phone %}
+                                <a href="tel:{{ contact.phone }}" style="color: #0078d4;">{{ contact.phone }}</a>
+                            {% else %}
+                                <span style="color: #a19f9d;">N/A</span>
+                            {% endif %}
+                        </p>
+                    </div>
+                    <div class="col-md-6">
+                        <p style="margin-bottom: 8px;"><strong style="color: #323130;">Date:</strong><br>{{ contact.created_at.strftime('%d %b %Y, %H:%M') }}</p>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <p style="margin-bottom: 8px;"><strong style="color: #323130;">Subject:</strong><br>{{ contact.subject }}</p>
+                </div>
+                <div>
+                    <p style="margin-bottom: 8px;"><strong style="color: #323130;">Message:</strong></p>
+                    <div style="padding: 12px; background: #faf9f8; border-left: 3px solid #0078d4; border-radius: 2px;">
+                        {{ contact.message }}
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer" style="padding: 16px 24px; background: #faf9f8; border-top: 1px solid #edebe9;">
+                <button type="button" class="btn-d365-secondary" data-bs-dismiss="modal">Close</button>
+                <a href="mailto:{{ contact.email }}" class="btn-d365-primary">
+                    <i class="fas fa-reply"></i> Reply
+                </a>
+            </div>
+        </div>
+    </div>
 </div>
-{% endif %}
+{% endfor %}
+
+<script>
+function toggleSelectAll(checkbox) {
+    const checkboxes = document.querySelectorAll('.row-select');
+    checkboxes.forEach(cb => {
+        cb.checked = checkbox.checked;
+        if (checkbox.checked) {
+            cb.closest('tr').classList.add('selected');
+        } else {
+            cb.closest('tr').classList.remove('selected');
+        }
+    });
+    updateCommandBar();
+}
+
+function selectRow(row, event) {
+    if (event.target.tagName === 'A' || event.target.type === 'checkbox') {
+        return;
+    }
+    
+    const checkbox = row.querySelector('.row-select');
+    checkbox.checked = !checkbox.checked;
+    
+    if (checkbox.checked) {
+        row.classList.add('selected');
+    } else {
+        row.classList.remove('selected');
+    }
+    
+    updateCommandBar();
+}
+
+function updateCommandBar() {
+    const checkedCount = document.querySelectorAll('.row-select:checked').length;
+    const viewBtn = document.getElementById('viewBtn');
+    
+    viewBtn.disabled = checkedCount !== 1;
+}
+
+function viewSelected() {
+    const checked = document.querySelector('.row-select:checked');
+    if (checked) {
+        const contactId = checked.value;
+        const modal = new bootstrap.Modal(document.getElementById('viewMessage' + contactId));
+        modal.show();
+    }
+}
+
+function filterTable() {
+    const input = document.getElementById('filterInput');
+    const filter = input.value.toLowerCase();
+    const table = document.getElementById('contactsTable');
+    const rows = table.getElementsByTagName('tr');
+    
+    for (let i = 1; i < rows.length; i++) {
+        const row = rows[i];
+        const text = row.textContent || row.innerText;
+        
+        if (text.toLowerCase().indexOf(filter) > -1) {
+            row.style.display = '';
+        } else {
+            row.style.display = 'none';
+        }
+    }
+}
+</script>
 {% endblock %}

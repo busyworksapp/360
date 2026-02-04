@@ -1,633 +1,444 @@
-{% extends "base.html" %}
+{% extends "admin/base.html" %}
 
 {% block title %}Payment Transactions - Admin Dashboard{% endblock %}
 
-{% block extra_css %}
-<style>
-    .admin-container {
-        max-width: 1200px;
-        margin: 40px auto;
-        padding: 20px;
-    }
-
-    .admin-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 30px;
-        padding-bottom: 20px;
-        border-bottom: 2px solid #007bff;
-    }
-
-    .admin-header h1 {
-        margin: 0;
-        color: #333;
-    }
-
-    .admin-filters {
-        background: white;
-        padding: 20px;
-        border-radius: 6px;
-        margin-bottom: 20px;
-        border: 1px solid #e0e0e0;
-    }
-
-    .filter-row {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 15px;
-        margin-bottom: 15px;
-    }
-
-    .filter-group {
-        display: flex;
-        flex-direction: column;
-    }
-
-    .filter-group label {
-        margin-bottom: 8px;
-        font-weight: 600;
-        color: #333;
-        font-size: 14px;
-    }
-
-    .filter-group select,
-    .filter-group input {
-        padding: 10px;
-        border: 1px solid #d0d0d0;
-        border-radius: 4px;
-        font-size: 14px;
-    }
-
-    .filter-group select:focus,
-    .filter-group input:focus {
-        outline: none;
-        border-color: #007bff;
-        box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
-    }
-
-    .filter-buttons {
-        display: flex;
-        gap: 10px;
-    }
-
-    .btn {
-        padding: 10px 20px;
-        border: none;
-        border-radius: 4px;
-        font-size: 14px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.3s ease;
-    }
-
-    .btn-primary {
-        background: #007bff;
-        color: white;
-    }
-
-    .btn-primary:hover {
-        background: #0056b3;
-    }
-
-    .btn-secondary {
-        background: #6c757d;
-        color: white;
-    }
-
-    .btn-secondary:hover {
-        background: #545b62;
-    }
-
-    /* Transactions Table */
-    .transactions-table {
-        background: white;
-        border-radius: 6px;
-        border: 1px solid #e0e0e0;
-        overflow: hidden;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    }
-
-    .table-responsive {
-        overflow-x: auto;
-    }
-
-    table {
-        width: 100%;
-        border-collapse: collapse;
-    }
-
-    thead tr {
-        background: #f8f9fa;
-        border-bottom: 2px solid #dee2e6;
-    }
-
-    th {
-        padding: 15px;
-        text-align: left;
-        font-weight: 600;
-        color: #333;
-        font-size: 14px;
-    }
-
-    tbody tr {
-        border-bottom: 1px solid #e0e0e0;
-        transition: background 0.3s ease;
-    }
-
-    tbody tr:hover {
-        background: #f8f9fa;
-    }
-
-    td {
-        padding: 15px;
-        color: #333;
-        font-size: 14px;
-    }
-
-    .status-badge {
-        display: inline-block;
-        padding: 6px 12px;
-        border-radius: 20px;
-        font-size: 12px;
-        font-weight: 600;
-    }
-
-    .status-completed {
-        background: #d4edda;
-        color: #155724;
-    }
-
-    .status-failed {
-        background: #f8d7da;
-        color: #721c24;
-    }
-
-    .status-pending {
-        background: #fff3cd;
-        color: #856404;
-    }
-
-    .status-refunded {
-        background: #d1ecf1;
-        color: #0c5460;
-    }
-
-    .gateway-badge {
-        display: inline-block;
-        padding: 6px 12px;
-        border-radius: 4px;
-        font-size: 12px;
-        font-weight: 600;
-        background: #e9ecef;
-        color: #495057;
-    }
-
-    .amount {
-        font-weight: 600;
-        color: #007bff;
-    }
-
-    .action-buttons {
-        display: flex;
-        gap: 8px;
-    }
-
-    .btn-small {
-        padding: 6px 12px;
-        font-size: 12px;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-        transition: all 0.3s ease;
-    }
-
-    .btn-view {
-        background: #007bff;
-        color: white;
-    }
-
-    .btn-view:hover {
-        background: #0056b3;
-    }
-
-    .btn-refund {
-        background: #dc3545;
-        color: white;
-    }
-
-    .btn-refund:hover {
-        background: #c82333;
-    }
-
-    /* Pagination */
-    .pagination {
-        display: flex;
-        justify-content: center;
-        gap: 5px;
-        margin-top: 20px;
-        padding-top: 20px;
-        border-top: 1px solid #e0e0e0;
-    }
-
-    .pagination a,
-    .pagination span {
-        padding: 8px 12px;
-        border: 1px solid #dee2e6;
-        border-radius: 4px;
-        text-decoration: none;
-        color: #007bff;
-        transition: all 0.3s ease;
-    }
-
-    .pagination a:hover {
-        background: #007bff;
-        color: white;
-    }
-
-    .pagination .active {
-        background: #007bff;
-        color: white;
-        border-color: #007bff;
-    }
-
-    /* Stats */
-    .stats-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 15px;
-        margin-bottom: 30px;
-    }
-
-    .stat-card {
-        background: white;
-        padding: 20px;
-        border-radius: 6px;
-        border-left: 4px solid #007bff;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
-
-    .stat-label {
-        color: #666;
-        font-size: 12px;
-        font-weight: 600;
-        margin-bottom: 5px;
-        text-transform: uppercase;
-    }
-
-    .stat-value {
-        color: #007bff;
-        font-size: 24px;
-        font-weight: bold;
-    }
-
-    /* No results */
-    .no-results {
-        text-align: center;
-        padding: 40px;
-        color: #999;
-    }
-
-    .no-results i {
-        font-size: 48px;
-        margin-bottom: 20px;
-        opacity: 0.5;
-    }
-</style>
-{% endblock %}
-
 {% block content %}
-<div class="admin-container">
-    <!-- Admin Header -->
-    <div class="admin-header">
-        <div>
-            <h1>💳 Payment Transactions</h1>
-            <p style="margin: 10px 0 0 0; color: #666;">Manage and monitor all payment transactions</p>
-        </div>
-        <div style="text-align: right;">
-            <a href="{{ url_for('admin.dashboard') }}" class="btn btn-secondary">← Back to Dashboard</a>
-        </div>
+<div class="admin-content">
+    <!-- Breadcrumb -->
+    <div class="breadcrumb-d365">
+        <a href="{{ url_for('admin.dashboard') }}">Home</a>
+        <span class="separator">/</span>
+        <span>Payment Transactions</span>
     </div>
 
-    <!-- Filter Section -->
-    <div class="admin-filters">
-        <form method="GET" id="filterForm">
-            <!-- Search Row -->
-            <div class="filter-row">
-                <div class="filter-group" style="grid-column: span 2;">
-                    <label for="search">Search (Order #, Customer Email, Transaction ID):</label>
-                    <input type="text" name="search" id="search" placeholder="Enter order number, email, or transaction ID..." value="{{ search_query or '' }}">
-                </div>
+    <!-- Page Title -->
+    <h1 style="font-size: 20px; font-weight: 600; margin: 4px 0 16px 0; color: #323130;">
+        Payment Transactions
+    </h1>
+
+    <!-- Summary Cards -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 20px;">
+        <div class="d365-card">
+            <div class="card-body-d365" style="padding: 16px;">
+                <div style="font-size: 11px; color: #605e5c; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">Total Transactions</div>
+                <div style="font-size: 24px; font-weight: 600; color: #323130;">{{ total_count or 0 }}</div>
             </div>
-
-            <!-- Filter Row 1 -->
-            <div class="filter-row">
-                <div class="filter-group">
-                    <label for="gateway">Payment Gateway:</label>
-                    <select name="gateway" id="gateway">
-                        <option value="">All Gateways</option>
-                        <option value="stripe" {% if current_gateway == 'stripe' %}selected{% endif %}>Stripe</option>
-                        <option value="payfast" {% if current_gateway == 'payfast' %}selected{% endif %}>PayFast</option>
-                    </select>
-                </div>
-
-                <div class="filter-group">
-                    <label for="status">Transaction Status:</label>
-                    <select name="status" id="status">
-                        <option value="">All Statuses</option>
-                        <option value="completed" {% if current_status == 'completed' %}selected{% endif %}>Completed</option>
-                        <option value="pending" {% if current_status == 'pending' %}selected{% endif %}>Pending</option>
-                        <option value="failed" {% if current_status == 'failed' %}selected{% endif %}>Failed</option>
-                        <option value="refunded" {% if current_status == 'refunded' %}selected{% endif %}>Refunded</option>
-                    </select>
-                </div>
-
-                <div class="filter-group">
-                    <label for="sort">Sort By:</label>
-                    <select name="order_by" id="sort">
-                        <option value="date" {% if current_sort == 'date' %}selected{% endif %}>Date (Newest First)</option>
-                        <option value="amount" {% if current_sort == 'amount' %}selected{% endif %}>Amount (Highest First)</option>
-                        <option value="status" {% if current_sort == 'status' %}selected{% endif %}>Status</option>
-                    </select>
-                </div>
+        </div>
+        <div class="d365-card">
+            <div class="card-body-d365" style="padding: 16px;">
+                <div style="font-size: 11px; color: #605e5c; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">Total Amount</div>
+                <div style="font-size: 24px; font-weight: 600; color: #0078d4;">${{ "%.2f"|format(total_amount or 0) }}</div>
             </div>
-
-            <!-- Date Range Row -->
-            <div class="filter-row">
-                <div class="filter-group">
-                    <label for="date_from">From Date:</label>
-                    <input type="date" name="date_from" id="date_from" value="{{ date_from or '' }}">
-                </div>
-
-                <div class="filter-group">
-                    <label for="date_to">To Date:</label>
-                    <input type="date" name="date_to" id="date_to" value="{{ date_to or '' }}">
-                </div>
+        </div>
+        <div class="d365-card">
+            <div class="card-body-d365" style="padding: 16px;">
+                <div style="font-size: 11px; color: #605e5c; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">Completed</div>
+                <div style="font-size: 24px; font-weight: 600; color: #107c10;">{{ completed_count or 0 }}</div>
             </div>
-
-            <div class="filter-buttons">
-                <button type="submit" class="btn btn-primary">🔍 Apply Filters</button>
-                <a href="{{ url_for('payment.admin_transactions_list') }}" class="btn btn-secondary">Reset</a>
-            </div>
-        </form>
-    </div>
-
-    <!-- Bulk Actions Section -->
-    <div class="admin-filters" id="bulkActionsSection" style="display: none; background: #f0f8ff;">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-            <div>
-                <input type="checkbox" id="selectAll"> 
-                <span id="selectionCount">0 selected</span>
-            </div>
-            <div style="display: flex; gap: 10px;">
-                <button type="button" class="btn btn-secondary" onclick="exportSelected()">📥 Export CSV</button>
-                <button type="button" class="btn btn-secondary" onclick="checkStatusSelected()">📊 Check Status</button>
+        </div>
+        <div class="d365-card">
+            <div class="card-body-d365" style="padding: 16px;">
+                <div style="font-size: 11px; color: #605e5c; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">Failed</div>
+                <div style="font-size: 24px; font-weight: 600; color: #a80000;">{{ failed_count or 0 }}</div>
             </div>
         </div>
     </div>
 
-    <div class="transactions-table">
-        <div class="table-responsive">
-            <table>
+    <!-- Filters Card -->
+    <div class="d365-card" style="margin-bottom: 20px;">
+        <div class="card-header-d365" style="cursor: pointer;" onclick="toggleFilters()">
+            <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+                <span style="font-size: 14px; font-weight: 600;">Filters</span>
+                <i class="fas fa-chevron-down" id="filterIcon" style="color: #605e5c; font-size: 12px;"></i>
+            </div>
+        </div>
+        <div class="card-body-d365" id="filterBody" style="display: none;">
+            <form method="GET" id="filterForm">
+                <!-- Search -->
+                <div style="margin-bottom: 16px;">
+                    <label style="display: block; font-size: 12px; font-weight: 600; color: #323130; margin-bottom: 8px;">
+                        Search (Order #, Email, Transaction ID)
+                    </label>
+                    <div class="search-box-d365" style="width: 100%;">
+                        <i class="fas fa-search"></i>
+                        <input type="text" name="search" placeholder="Search transactions..." value="{{ search_query or '' }}" style="width: 100%;">
+                    </div>
+                </div>
+
+                <!-- Filter Grid -->
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 16px;">
+                    <div>
+                        <label style="display: block; font-size: 12px; font-weight: 600; color: #323130; margin-bottom: 8px;">
+                            Payment Gateway
+                        </label>
+                        <select name="gateway" style="width: 100%; padding: 8px 12px; border: 1px solid #8a8886; border-radius: 2px; font-size: 14px; color: #323130;">
+                            <option value="">All Gateways</option>
+                            <option value="stripe" {% if current_gateway == 'stripe' %}selected{% endif %}>Stripe</option>
+                            <option value="payfast" {% if current_gateway == 'payfast' %}selected{% endif %}>PayFast</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label style="display: block; font-size: 12px; font-weight: 600; color: #323130; margin-bottom: 8px;">
+                            Transaction Status
+                        </label>
+                        <select name="status" style="width: 100%; padding: 8px 12px; border: 1px solid #8a8886; border-radius: 2px; font-size: 14px; color: #323130;">
+                            <option value="">All Statuses</option>
+                            <option value="completed" {% if current_status == 'completed' %}selected{% endif %}>Completed</option>
+                            <option value="pending" {% if current_status == 'pending' %}selected{% endif %}>Pending</option>
+                            <option value="failed" {% if current_status == 'failed' %}selected{% endif %}>Failed</option>
+                            <option value="refunded" {% if current_status == 'refunded' %}selected{% endif %}>Refunded</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label style="display: block; font-size: 12px; font-weight: 600; color: #323130; margin-bottom: 8px;">
+                            Sort By
+                        </label>
+                        <select name="order_by" style="width: 100%; padding: 8px 12px; border: 1px solid #8a8886; border-radius: 2px; font-size: 14px; color: #323130;">
+                            <option value="date" {% if current_sort == 'date' %}selected{% endif %}>Date (Newest First)</option>
+                            <option value="amount" {% if current_sort == 'amount' %}selected{% endif %}>Amount (Highest)</option>
+                            <option value="status" {% if current_sort == 'status' %}selected{% endif %}>Status</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Date Range -->
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 16px;">
+                    <div>
+                        <label style="display: block; font-size: 12px; font-weight: 600; color: #323130; margin-bottom: 8px;">
+                            From Date
+                        </label>
+                        <input type="date" name="date_from" value="{{ date_from or '' }}" style="width: 100%; padding: 8px 12px; border: 1px solid #8a8886; border-radius: 2px; font-size: 14px;">
+                    </div>
+
+                    <div>
+                        <label style="display: block; font-size: 12px; font-weight: 600; color: #323130; margin-bottom: 8px;">
+                            To Date
+                        </label>
+                        <input type="date" name="date_to" value="{{ date_to or '' }}" style="width: 100%; padding: 8px 12px; border: 1px solid #8a8886; border-radius: 2px; font-size: 14px;">
+                    </div>
+                </div>
+
+                <!-- Filter Buttons -->
+                <div style="display: flex; gap: 12px;">
+                    <button type="submit" class="btn-d365-primary">
+                        <i class="fas fa-filter"></i> Apply Filters
+                    </button>
+                    <a href="{{ url_for('payment.admin_transactions_list') }}" class="btn-d365-secondary">
+                        Reset
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Command Bar -->
+    <div class="command-bar-d365">
+        <div class="command-bar-left">
+            <button type="button" class="btn-d365-primary" onclick="viewSelected()" id="viewBtn" disabled>
+                <i class="fas fa-eye"></i> View
+            </button>
+            <button type="button" class="btn-d365-secondary" onclick="exportSelected()" id="exportBtn" disabled>
+                <i class="fas fa-download"></i> Export
+            </button>
+            <button type="button" class="btn-d365-secondary" onclick="location.reload();">
+                <i class="fas fa-sync-alt"></i> Refresh
+            </button>
+        </div>
+        <div class="command-bar-right">
+            <div class="search-box-d365">
+                <i class="fas fa-search"></i>
+                <input type="text" id="quickFilter" placeholder="Filter" onkeyup="filterTable()">
+            </div>
+        </div>
+    </div>
+
+    <!-- Transactions Table -->
+    <div class="d365-card">
+        <div class="card-body-d365" style="padding: 0;">
+            {% if transactions and transactions|length > 0 %}
+            <table class="table-d365">
                 <thead>
                     <tr>
-                        <th style="width: 40px;"><input type="checkbox" id="selectAll" onchange="selectAllTransactions(this)"></th>
-                        <th>Transaction ID</th>
-                        <th>Order</th>
-                        <th>Gateway</th>
-                        <th>Amount</th>
-                        <th>Status</th>
-                        <th>Date</th>
-                        <th>Actions</th>
+                        <th class="row-checkbox">
+                            <input type="checkbox" id="selectAll" onclick="toggleSelectAll(this)">
+                        </th>
+                        <th class="sortable">
+                            <div class="column-header">
+                                <span class="column-title">Transaction ID</span>
+                                <span class="column-icons">
+                                    <i class="fas fa-filter filter-icon"></i>
+                                    <i class="fas fa-sort sort-icon"></i>
+                                </span>
+                            </div>
+                        </th>
+                        <th class="sortable">
+                            <div class="column-header">
+                                <span class="column-title">Order #</span>
+                                <span class="column-icons">
+                                    <i class="fas fa-filter filter-icon"></i>
+                                    <i class="fas fa-sort sort-icon"></i>
+                                </span>
+                            </div>
+                        </th>
+                        <th class="sortable">
+                            <div class="column-header">
+                                <span class="column-title">Customer</span>
+                                <span class="column-icons">
+                                    <i class="fas fa-filter filter-icon"></i>
+                                    <i class="fas fa-sort sort-icon"></i>
+                                </span>
+                            </div>
+                        </th>
+                        <th class="sortable">
+                            <div class="column-header">
+                                <span class="column-title">Gateway</span>
+                                <span class="column-icons">
+                                    <i class="fas fa-filter filter-icon"></i>
+                                    <i class="fas fa-sort sort-icon"></i>
+                                </span>
+                            </div>
+                        </th>
+                        <th class="sortable">
+                            <div class="column-header">
+                                <span class="column-title">Amount</span>
+                                <span class="column-icons">
+                                    <i class="fas fa-filter filter-icon"></i>
+                                    <i class="fas fa-sort sort-icon"></i>
+                                </span>
+                            </div>
+                        </th>
+                        <th class="sortable">
+                            <div class="column-header">
+                                <span class="column-title">Status</span>
+                                <span class="column-icons">
+                                    <i class="fas fa-filter filter-icon"></i>
+                                    <i class="fas fa-sort sort-icon"></i>
+                                </span>
+                            </div>
+                        </th>
+                        <th class="sortable">
+                            <div class="column-header">
+                                <span class="column-title">Date</span>
+                                <span class="column-icons">
+                                    <i class="fas fa-filter filter-icon"></i>
+                                    <i class="fas fa-sort sort-icon"></i>
+                                </span>
+                            </div>
+                        </th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for tx in transactions.items %}
-                    <tr class="transaction-row">
-                        <td style="width: 40px;"><input type="checkbox" class="transaction-checkbox" value="{{ tx.id }}" onchange="updateSelectionCount()"></td>
-                        <td>
-                            <strong>#{{ tx.payment_reference[:16] }}</strong>
-                            {% if tx.payment_reference|length > 16 %}
-                            <small style="color: #999;">{{ tx.payment_reference[16:] }}</small>
-                            {% endif %}
+                    {% for transaction in transactions %}
+                    <tr onclick="selectRow(this, event)">
+                        <td class="row-checkbox">
+                            <input type="checkbox" class="row-select" value="{{ transaction.id }}">
                         </td>
                         <td>
-                            <a href="{{ url_for('customer.view_order', order_id=tx.order_id) }}" style="color: #007bff; text-decoration: none;">
-                                Order #{{ tx.order.order_number }}
+                            <a href="{{ url_for('payment.admin_transaction_detail', transaction_id=transaction.id) }}" style="color: #0078d4; text-decoration: none;">
+                                {{ transaction.id|truncate(12, True) }}
                             </a>
                         </td>
                         <td>
-                            <span class="gateway-badge">{{ tx.payment_method|upper }}</span>
-                        </td>
-                        <td class="amount">${{ "%.2f"|format(tx.amount) }}</td>
-                        <td>
-                            <span class="status-badge status-{{ tx.status }}">
-                                {{ tx.status|upper }}
-                            </span>
-                        </td>
-                        <td>
-                            <small>{{ tx.created_at.strftime('%b %d, %Y') }}<br>{{ tx.created_at.strftime('%I:%M %p') }}</small>
+                            {% if transaction.order %}
+                            <a href="{{ url_for('admin.order_detail', id=transaction.order.id) }}" style="color: #0078d4; text-decoration: none;">
+                                #{{ transaction.order.order_number }}
+                            </a>
+                            {% else %}
+                            <span style="color: #a19f9d;">N/A</span>
+                            {% endif %}
                         </td>
                         <td>
-                            <div class="action-buttons">
-                                <a href="{{ url_for('payment.admin_transaction_detail', tx_id=tx.id) }}" class="btn-small btn-view">
-                                    View
-                                </a>
-                                {% if tx.status == 'completed' and tx.payment_method == 'stripe' %}
-                                <button onclick="showRefundForm({{ tx.id }}, '{{ tx.payment_reference }}', {{ tx.amount }})" class="btn-small btn-refund">
-                                    Refund
-                                </button>
-                                {% endif %}
-                            </div>
+                            {% if transaction.order and transaction.order.customer %}
+                            {{ transaction.order.customer.email|truncate(30, True) }}
+                            {% else %}
+                            <span style="color: #a19f9d;">N/A</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if transaction.payment_method == 'stripe' %}
+                            <span class="badge-d365 badge-info">STRIPE</span>
+                            {% elif transaction.payment_method == 'payfast' %}
+                            <span class="badge-d365 badge-warning">PAYFAST</span>
+                            {% else %}
+                            <span class="badge-d365">{{ transaction.payment_method|upper }}</span>
+                            {% endif %}
+                        </td>
+                        <td style="font-weight: 600; color: #0078d4;">
+                            ${{ "%.2f"|format(transaction.amount) }}
+                        </td>
+                        <td>
+                            {% if transaction.status == 'completed' %}
+                            <span class="badge-d365 badge-success">COMPLETED</span>
+                            {% elif transaction.status == 'failed' %}
+                            <span class="badge-d365 badge-error">FAILED</span>
+                            {% elif transaction.status == 'pending' %}
+                            <span class="badge-d365 badge-pending">PENDING</span>
+                            {% elif transaction.status == 'refunded' %}
+                            <span class="badge-d365 badge-info">REFUNDED</span>
+                            {% else %}
+                            <span class="badge-d365">{{ transaction.status|upper }}</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {{ transaction.created_at.strftime('%Y-%m-%d %H:%M') }}
                         </td>
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
+            {% else %}
+            <div style="text-align: center; padding: 60px 20px; color: #605e5c;">
+                <i class="fas fa-receipt" style="font-size: 48px; color: #edebe9; margin-bottom: 16px;"></i>
+                <p style="font-size: 14px; margin: 0;">No transactions found.</p>
+                {% if search_query or current_gateway or current_status or date_from or date_to %}
+                <a href="{{ url_for('payment.admin_transactions_list') }}" style="color: #0078d4; text-decoration: none; font-size: 12px;">
+                    Clear filters
+                </a>
+                {% endif %}
+            </div>
+            {% endif %}
         </div>
     </div>
 
     <!-- Pagination -->
-    {% if transactions.pages > 1 %}
-    <div class="pagination">
-        {% if transactions.has_prev %}
-        <a href="{{ url_for('payment.admin_transactions_list', page=transactions.prev_num, gateway=current_gateway, status=current_status, order_by=current_sort) }}">← Previous</a>
+    {% if pagination and pagination.pages > 1 %}
+    <div style="display: flex; justify-content: center; align-items: center; gap: 8px; margin-top: 20px; font-size: 12px;">
+        {% if pagination.has_prev %}
+        <a href="{{ url_for('payment.admin_transactions_list', page=pagination.prev_num, search=search_query, gateway=current_gateway, status=current_status, order_by=current_sort, date_from=date_from, date_to=date_to) }}" 
+           class="btn-d365-secondary" style="min-width: 32px; height: 32px; padding: 0; display: flex; align-items: center; justify-content: center;">
+            <i class="fas fa-chevron-left"></i>
+        </a>
         {% endif %}
 
-        {% for page_num in transactions.iter_pages(left_edge=1, right_edge=2, left_margin=0, right_margin=0) %}
-            {% if page_num %}
-                {% if page_num == transactions.page %}
-                <span class="active">{{ page_num }}</span>
-                {% else %}
-                <a href="{{ url_for('payment.admin_transactions_list', page=page_num, gateway=current_gateway, status=current_status, order_by=current_sort) }}">{{ page_num }}</a>
-                {% endif %}
-            {% else %}
-            <span>...</span>
-            {% endif %}
-        {% endfor %}
+        <span style="color: #605e5c;">
+            Page {{ pagination.page }} of {{ pagination.pages }}
+        </span>
 
-        {% if transactions.has_next %}
-        <a href="{{ url_for('payment.admin_transactions_list', page=transactions.next_num, gateway=current_gateway, status=current_status, order_by=current_sort) }}">Next →</a>
+        {% if pagination.has_next %}
+        <a href="{{ url_for('payment.admin_transactions_list', page=pagination.next_num, search=search_query, gateway=current_gateway, status=current_status, order_by=current_sort, date_from=date_from, date_to=date_to) }}" 
+           class="btn-d365-secondary" style="min-width: 32px; height: 32px; padding: 0; display: flex; align-items: center; justify-content: center;">
+            <i class="fas fa-chevron-right"></i>
+        </a>
         {% endif %}
-    </div>
-    {% endif %}
-
-    {% else %}
-    <!-- No Results -->
-    <div class="no-results">
-        <div style="font-size: 48px; margin-bottom: 20px; opacity: 0.5;">💳</div>
-        <h3 style="color: #333;">No Transactions Found</h3>
-        <p>There are no transactions matching your filters. Try adjusting your search criteria.</p>
-        <a href="{{ url_for('payment.admin_transactions_list') }}" class="btn btn-primary" style="margin-top: 15px;">Reset Filters</a>
     </div>
     {% endif %}
 </div>
 
-<!-- Refund Modal (optional, can be expanded) -->
 <script>
-// Bulk action functions
-function selectAllTransactions(checkbox) {
-    const checkboxes = document.querySelectorAll('.transaction-checkbox');
+function toggleSelectAll(checkbox) {
+    const checkboxes = document.querySelectorAll('.row-select');
     checkboxes.forEach(cb => {
         cb.checked = checkbox.checked;
+        const row = cb.closest('tr');
+        if (checkbox.checked) {
+            row.classList.add('selected');
+        } else {
+            row.classList.remove('selected');
+        }
     });
-    updateSelectionCount();
+    updateCommandBar();
 }
 
-function updateSelectionCount() {
-    const checkboxes = document.querySelectorAll('.transaction-checkbox');
-    const checked = Array.from(checkboxes).filter(cb => cb.checked).length;
+function selectRow(row, event) {
+    if (event.target.type === 'checkbox' || event.target.tagName === 'A') {
+        return;
+    }
     
-    const bulkSection = document.getElementById('bulkActionsSection');
-    const countSpan = document.getElementById('selectionCount');
+    const checkbox = row.querySelector('.row-select');
+    checkbox.checked = !checkbox.checked;
     
-    if (checked > 0) {
-        bulkSection.style.display = 'block';
-        countSpan.textContent = `${checked} selected`;
+    if (checkbox.checked) {
+        row.classList.add('selected');
     } else {
-        bulkSection.style.display = 'none';
-        countSpan.textContent = '0 selected';
+        row.classList.remove('selected');
+    }
+    
+    updateCommandBar();
+}
+
+function updateCommandBar() {
+    const selected = document.querySelectorAll('.row-select:checked');
+    const viewBtn = document.getElementById('viewBtn');
+    const exportBtn = document.getElementById('exportBtn');
+    
+    if (selected.length > 0) {
+        viewBtn.disabled = false;
+        exportBtn.disabled = false;
+    } else {
+        viewBtn.disabled = true;
+        exportBtn.disabled = true;
     }
 }
 
-function getSelectedTransactionIds() {
-    const checkboxes = document.querySelectorAll('.transaction-checkbox:checked');
-    return Array.from(checkboxes).map(cb => cb.value).join(',');
+function viewSelected() {
+    const selected = document.querySelectorAll('.row-select:checked');
+    if (selected.length === 1) {
+        const row = selected[0].closest('tr');
+        const link = row.querySelector('a[href*="transaction_detail"]');
+        if (link) {
+            window.location.href = link.href;
+        }
+    } else if (selected.length > 1) {
+        alert('Please select only one transaction to view details.');
+    }
 }
 
 function exportSelected() {
-    const selectedIds = getSelectedTransactionIds();
+    const selected = document.querySelectorAll('.row-select:checked');
+    const ids = Array.from(selected).map(cb => cb.value);
     
-    if (!selectedIds) {
-        alert('Please select at least one transaction');
+    if (ids.length === 0) {
+        alert('Please select transactions to export.');
         return;
     }
     
-    fetch('/payment/admin/transactions/bulk-action', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: new URLSearchParams({
-            action: 'export',
-            transaction_ids: selectedIds
-        })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            // Create CSV download
-            const element = document.createElement('a');
-            element.setAttribute('href', 'data:text/csv;charset=utf-8,' + encodeURIComponent(data.data));
-            element.setAttribute('download', data.filename);
-            element.style.display = 'none';
-            document.body.appendChild(element);
-            element.click();
-            document.body.removeChild(element);
-            alert('CSV exported successfully');
-        } else {
-            alert(`Error: ${data.error}`);
-        }
-    })
-    .catch(err => {
-        alert(`Error exporting: ${err.message}`);
-    });
+    // Create CSV export
+    alert('Export functionality coming soon. Selected ' + ids.length + ' transaction(s).');
 }
 
-function checkStatusSelected() {
-    const selectedIds = getSelectedTransactionIds();
+function filterTable() {
+    const input = document.getElementById('quickFilter');
+    const filter = input.value.toLowerCase();
+    const table = document.querySelector('.table-d365');
+    const rows = table.getElementsByTagName('tr');
     
-    if (!selectedIds) {
-        alert('Please select at least one transaction');
-        return;
-    }
-    
-    fetch('/payment/admin/transactions/bulk-action', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: new URLSearchParams({
-            action: 'status-check',
-            transaction_ids: selectedIds
-        })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            const summary = data.statuses;
-            const message = `Status Summary (${data.total} transactions):\n\n` +
-                `✅ Completed: ${summary.completed}\n` +
-                `⏳ Pending: ${summary.pending}\n` +
-                `❌ Failed: ${summary.failed}\n` +
-                `💰 Refunded: ${summary.refunded}`;
-            alert(message);
+    for (let i = 1; i < rows.length; i++) {
+        const row = rows[i];
+        const text = row.textContent || row.innerText;
+        
+        if (text.toLowerCase().indexOf(filter) > -1) {
+            row.style.display = '';
         } else {
-            alert(`Error: ${data.error}`);
+            row.style.display = 'none';
         }
-    })
-    .catch(err => {
-        alert(`Error checking status: ${err.message}`);
-    });
+    }
 }
 
-function showRefundForm(txId, paymentRef, amount) {
-    const reason = prompt('Enter refund reason:', 'Customer request');
+function toggleFilters() {
+    const filterBody = document.getElementById('filterBody');
+    const filterIcon = document.getElementById('filterIcon');
     
-    if (reason === null) {
-        return; // User cancelled
+    if (filterBody.style.display === 'none') {
+        filterBody.style.display = 'block';
+        filterIcon.classList.remove('fa-chevron-down');
+        filterIcon.classList.add('fa-chevron-up');
+    } else {
+        filterBody.style.display = 'none';
+        filterIcon.classList.remove('fa-chevron-up');
+        filterIcon.classList.add('fa-chevron-down');
     }
-
-    const refundAmount = prompt(`Enter refund amount (max $${amount.toFixed(2)}):`, amount.toFixed(2));
-    
-    if (refundAmount === null) {
-        return; // User cancelled
-    }
-
-    // Submit refund request
-    fetch(`/payment/admin/transactions/${txId}/refund`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: new URLSearchParams({
-            amount: refundAmount,
-            reason: reason
-        })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            alert(`Refund processed successfully. Refund ID: ${data.refund_id}`);
-            location.reload();
-        } else {
-            alert(`Error: ${data.error}`);
-        }
-    })
-    .catch(err => {
-        alert(`Error processing refund: ${err.message}`);
-    });
 }
+
+// Initialize
+document.addEventListener('DOMContentLoaded', function() {
+    updateCommandBar();
+    
+    // Listen for checkbox changes
+    document.querySelectorAll('.row-select').forEach(checkbox => {
+        checkbox.addEventListener('change', updateCommandBar);
+    });
+});
 </script>
-
 {% endblock %}

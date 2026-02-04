@@ -4,27 +4,286 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Login - 360Degree Supply</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        :root {
-            --primary: #1a472a;
-            --secondary: #f39c12;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-        
+
         body {
-            background: linear-gradient(135deg, var(--primary) 0%, #2d5a3d 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0078d4 0%, #106ebe 50%, #005a9e 100%);
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 20px;
         }
-        
+
         .login-container {
             width: 100%;
-            max-width: 400px;
+            max-width: 440px;
         }
+
+        .login-card-d365 {
+            background: #ffffff;
+            border-radius: 2px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            overflow: hidden;
+        }
+
+        .login-header {
+            background: #323130;
+            color: #ffffff;
+            padding: 40px 32px;
+            text-align: center;
+            position: relative;
+        }
+
+        .brand-icon {
+            font-size: 56px;
+            margin-bottom: 16px;
+            color: #0078d4;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .brand-title {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .brand-subtitle {
+            font-size: 14px;
+            opacity: 0.8;
+            font-weight: 400;
+        }
+
+        .login-body {
+            padding: 32px;
+        }
+
+        .alert-d365 {
+            padding: 12px 16px;
+            border-radius: 2px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            font-size: 14px;
+        }
+
+        .alert-d365.alert-danger {
+            background-color: #fde7e9;
+            border-left: 4px solid #a4262c;
+            color: #323130;
+        }
+
+        .alert-d365.alert-success {
+            background-color: #dff6dd;
+            border-left: 4px solid #107c10;
+            color: #323130;
+        }
+
+        .alert-d365 i {
+            margin-top: 2px;
+        }
+
+        .form-group-d365 {
+            margin-bottom: 20px;
+        }
+
+        .form-label-d365 {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: #323130;
+            margin-bottom: 8px;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .form-control-d365 {
+            width: 100%;
+            padding: 10px 40px 10px 12px;
+            border: 1px solid #8a8886;
+            border-radius: 2px;
+            font-size: 14px;
+            color: #323130;
+            transition: border-color 0.2s;
+        }
+
+        .form-control-d365:focus {
+            outline: none;
+            border-color: #0078d4;
+            box-shadow: 0 0 0 1px #0078d4;
+        }
+
+        .form-control-d365::placeholder {
+            color: #a19f9d;
+        }
+
+        .input-icon {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #605e5c;
+            font-size: 14px;
+        }
+
+        .btn-login-d365 {
+            width: 100%;
+            padding: 12px;
+            background-color: #0078d4;
+            color: #ffffff;
+            border: none;
+            border-radius: 2px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-login-d365:hover {
+            background-color: #106ebe;
+        }
+
+        .btn-login-d365:active {
+            background-color: #005a9e;
+        }
+
+        .login-footer {
+            padding: 24px 32px;
+            background-color: #f3f2f1;
+            text-align: center;
+            font-size: 13px;
+            color: #605e5c;
+        }
+
+        .login-footer a {
+            color: #0078d4;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.2s;
+        }
+
+        .login-footer a:hover {
+            color: #106ebe;
+            text-decoration: underline;
+        }
+
+        .divider {
+            margin: 16px 0;
+            border-top: 1px solid #edebe9;
+        }
+
+        @media (max-width: 480px) {
+            .login-body {
+                padding: 24px;
+            }
+
+            .login-header {
+                padding: 32px 24px;
+            }
+
+            .brand-icon {
+                font-size: 48px;
+            }
+
+            .brand-title {
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-card-d365">
+            <!-- Login Header -->
+            <div class="login-header">
+                <div class="brand-icon">
+                    <i class="fas fa-cube"></i>
+                </div>
+                <div class="brand-title">360Degree Admin</div>
+                <div class="brand-subtitle">Supply Management System</div>
+            </div>
+            
+            <!-- Login Body -->
+            <div class="login-body">
+                <!-- Error Messages -->
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="alert-d365 alert-{{ 'danger' if category == 'error' else 'success' }}">
+                                <i class="fas fa-{{ 'exclamation-circle' if category == 'error' else 'check-circle' }}"></i>
+                                <div>
+                                    <strong>{{ 'Error' if category == 'error' else 'Success' }}:</strong> {{ message }}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+                
+                <!-- Login Form -->
+                <form method="POST" novalidate>
+                    <div class="form-group-d365">
+                        <label for="email" class="form-label-d365">
+                            <i class="fas fa-envelope"></i> Email Address
+                        </label>
+                        <div class="input-wrapper">
+                            <input type="email" 
+                                   class="form-control-d365" 
+                                   id="email" 
+                                   name="email" 
+                                   placeholder="admin@360degreesupply.co.za"
+                                   required 
+                                   autofocus>
+                            <i class="fas fa-user input-icon"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group-d365">
+                        <label for="password" class="form-label-d365">
+                            <i class="fas fa-lock"></i> Password
+                        </label>
+                        <div class="input-wrapper">
+                            <input type="password" 
+                                   class="form-control-d365" 
+                                   id="password" 
+                                   name="password" 
+                                   placeholder="Enter your password"
+                                   required>
+                            <i class="fas fa-key input-icon"></i>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn-login-d365">
+                        <i class="fas fa-sign-in-alt"></i> Sign In to Dashboard
+                    </button>
+                </form>
+            </div>
+            
+            <!-- Login Footer -->
+            <div class="login-footer">
+                <div>© 2024 360Degree Supply (Pty) Ltd</div>
+                <div class="divider"></div>
+                <a href="http://localhost:5000/">
+                    <i class="fas fa-arrow-left"></i> Back to Website
+                </a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
         
         .login-card {
             background: white;

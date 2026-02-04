@@ -4,152 +4,228 @@
 
 {% block extra_css %}
 <style>
-    /* Login Page Styling */
+    /* D365 Design System Styles for Login */
     .login-container {
-        min-height: auto;
-        display: block;
-        padding: 60px 0;
-        padding-bottom: 20px;
-        margin-bottom: 0;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 40px 20px;
+        background: #faf9f8;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
 
-    .login-card {
-        border: none !important;
-        border-radius: 12px !important;
-        box-shadow: 0 8px 24px rgba(0,0,0,0.12) !important;
+    .login-card-d365 {
+        width: 100%;
+        max-width: 440px;
+        background: #ffffff;
+        border: 1px solid #edebe9;
+        border-radius: 2px;
+        box-shadow: 0 3.2px 7.2px rgba(0, 0, 0, 0.132);
+        padding: 40px;
     }
 
-    .login-card .card-body {
-        padding: 40px !important;
+    .login-header {
+        text-align: center;
+        margin-bottom: 32px;
     }
 
-    .login-card .card-title {
-        color: var(--primary) !important;
-        font-weight: 700 !important;
-        font-size: 1.5rem !important;
-        margin-bottom: 10px !important;
+    .login-title {
+        font-size: 24px;
+        font-weight: 600;
+        color: #323130;
+        margin: 0 0 8px 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
     }
 
-    .login-card .text-muted {
-        font-size: 0.9rem !important;
+    .login-subtitle {
+        font-size: 14px;
+        color: #605e5c;
+        margin: 0;
     }
 
-    .login-container .row {
-        padding: 20px 0;
+    .form-group-d365 {
+        margin-bottom: 20px;
     }
 
-    .login-card .form-label {
-        color: var(--primary) !important;
-        font-weight: 600 !important;
-        font-size: 0.95rem !important;
-        margin-bottom: 8px !important;
+    .form-label-d365 {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        color: #323130;
+        margin-bottom: 8px;
     }
 
-    .login-card .form-control {
-        border: 1px solid #ddd !important;
-        border-radius: 8px !important;
-        padding: 10px 15px !important;
-        font-size: 0.9rem !important;
+    .form-control-d365 {
+        width: 100%;
+        padding: 10px 12px;
+        font-size: 14px;
+        line-height: 20px;
+        color: #323130;
+        background: #ffffff;
+        border: 1px solid #8a8886;
+        border-radius: 2px;
+        transition: all 0.1s ease;
     }
 
-    .login-card .form-control:focus {
-        border-color: var(--secondary) !important;
-        box-shadow: 0 0 0 0.2rem rgba(243, 156, 18, 0.25) !important;
+    .form-control-d365:focus {
+        outline: none;
+        border-color: #0078d4;
+        box-shadow: 0 0 0 1px #0078d4;
     }
 
-    .login-card .btn-primary {
-        background-color: var(--secondary) !important;
-        border-color: var(--secondary) !important;
-        color: white !important;
-        font-weight: 600 !important;
-        font-size: 0.95rem !important;
+    .form-control-d365::placeholder {
+        color: #a19f9d;
     }
 
-    .login-card .btn-primary:hover {
-        background-color: #e08a00 !important;
-        border-color: #e08a00 !important;
-        color: white !important;
+    .btn-login {
+        width: 100%;
+        background: #0078d4;
+        color: #ffffff;
+        border: 1px solid #0078d4;
+        border-radius: 2px;
+        padding: 10px 20px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.1s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
     }
 
-    .login-card a {
-        color: var(--secondary) !important;
+    .btn-login:hover {
+        background: #106ebe;
+        border-color: #106ebe;
+        color: #ffffff;
+    }
+
+    .divider {
+        height: 1px;
+        background: #edebe9;
+        margin: 24px 0;
+    }
+
+    .text-center-d365 {
+        text-align: center;
+        font-size: 14px;
+        color: #605e5c;
+    }
+
+    .link-d365 {
+        color: #0078d4;
         text-decoration: none;
+        font-weight: 600;
     }
 
-    .login-card a:hover {
+    .link-d365:hover {
+        text-decoration: underline;
+        color: #106ebe;
+    }
+
+    .link-secondary {
+        color: #605e5c;
+        text-decoration: none;
+        font-size: 13px;
+    }
+
+    .link-secondary:hover {
         text-decoration: underline;
     }
 
-    .login-card hr {
-        border-color: #ddd !important;
+    /* Alert */
+    .alert-d365 {
+        padding: 12px 16px;
+        border-radius: 2px;
+        font-size: 13px;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .alert-d365.alert-danger {
+        background: #fde7e9;
+        border-left: 3px solid #a4262c;
+        color: #a4262c;
+    }
+
+    .alert-d365.alert-success {
+        background: #dff6dd;
+        border-left: 3px solid #107c10;
+        color: #107c10;
+    }
+
+    .alert-d365.alert-info {
+        background: #deecf9;
+        border-left: 3px solid #0078d4;
+        color: #0078d4;
     }
 </style>
 {% endblock %}
 
 {% block content %}
 <div class="login-container">
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-5">
-                <div class="card login-card">
-                    <div class="card-body">
-                        <div class="text-center mb-4">
-                            <h2 class="card-title">
-                                <i class="fas fa-sign-in-alt"></i> Customer Login
-                            </h2>
-                            <p class="text-muted">Access your account</p>
-                        </div>
+    <div class="login-card-d365">
+        <div class="login-header">
+            <h1 class="login-title">
+                <i class="fas fa-sign-in-alt"></i> Customer Login
+            </h1>
+            <p class="login-subtitle">Access your account</p>
+        </div>
 
-                        {% with messages = get_flashed_messages(with_categories=true) %}
-                            {% if messages %}
-                                {% for category, message in messages %}
-                                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
-                                        {{ message }}
-                                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                                    </div>
-                                {% endfor %}
-                            {% endif %}
-                        {% endwith %}
-
-                        <form method="POST">
-                            <div class="mb-3">
-                                <label for="email" class="form-label">
-                                    <i class="fas fa-envelope"></i> Email Address
-                                </label>
-                                <input type="email" class="form-control form-control-lg" id="email" name="email" 
-                                       placeholder="your@email.com" required>
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="password" class="form-label">
-                                    <i class="fas fa-lock"></i> Password
-                                </label>
-                                <input type="password" class="form-control form-control-lg" id="password" name="password" 
-                                       placeholder="••••••••" required>
-                            </div>
-
-                            <button type="submit" class="btn btn-primary btn-lg w-100 mb-3">
-                                <i class="fas fa-sign-in-alt"></i> Sign In
-                            </button>
-                        </form>
-
-                        <hr>
-
-                        <p class="text-center mb-3">
-                            Don't have an account?
-                            <a href="{{ url_for('customer_register') }}" class="fw-bold">
-                                Create one now
-                            </a>
-                        </p>
-
-                        <div class="text-center">
-                            <a href="{{ url_for('index') }}" class="text-muted small">
-                                <i class="fas fa-arrow-left"></i> Back to Home
-                            </a>
-                        </div>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert-d365 alert-{{ category }}">
+                        <i class="fas fa-info-circle"></i>
+                        <div>{{ message }}</div>
                     </div>
-                </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <form method="POST">
+            <div class="form-group-d365">
+                <label for="email" class="form-label-d365">
+                    <i class="fas fa-envelope"></i> Email Address
+                </label>
+                <input type="email" class="form-control-d365" id="email" name="email" 
+                       placeholder="your@email.com" required>
             </div>
+
+            <div class="form-group-d365">
+                <label for="password" class="form-label-d365">
+                    <i class="fas fa-lock"></i> Password
+                </label>
+                <input type="password" class="form-control-d365" id="password" name="password" 
+                       placeholder="Enter your password" required>
+            </div>
+
+            <button type="submit" class="btn-login">
+                <i class="fas fa-sign-in-alt"></i> Sign In
+            </button>
+        </form>
+
+        <div class="divider"></div>
+
+        <p class="text-center-d365">
+            Don't have an account?
+            <a href="{{ url_for('customer_register') }}" class="link-d365">
+                Create one now
+            </a>
+        </p>
+
+        <div class="text-center-d365" style="margin-top: 16px;">
+            <a href="{{ url_for('index') }}" class="link-secondary">
+                <i class="fas fa-arrow-left"></i> Back to Home
+            </a>
         </div>
     </div>
 </div>

@@ -1,0 +1,492 @@
+{% extends "base.html" %}
+
+{% block title %}360Degree Supply - Industrial Supplies{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* D365 Home Page Styling */
+    
+    /* Hero Section - D365 */
+    .hero-d365 {
+        background: linear-gradient(135deg, #0078d4 0%, #005a9e 100%);
+        color: white;
+        padding: 60px 0;
+        text-align: center;
+        margin-bottom: 40px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .hero-d365 h1 {
+        font-size: 32px;
+        font-weight: 600;
+        margin-bottom: 16px;
+        color: white;
+    }
+
+    .hero-d365 p {
+        font-size: 16px;
+        margin-bottom: 24px;
+        opacity: 0.95;
+        color: white;
+    }
+
+    .hero-d365 .btn-d365 {
+        padding: 10px 32px;
+        font-size: 14px;
+        font-weight: 600;
+        background: white;
+        color: #0078d4;
+        border: none;
+        border-radius: 2px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    .hero-d365 .btn-d365:hover {
+        background: #f3f2f1;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+
+    /* Services Section - D365 */
+    .services-section-d365 {
+        background-color: #faf9f8;
+        padding: 60px 0;
+    }
+
+    .section-title-d365 {
+        text-align: center;
+        margin-bottom: 48px;
+    }
+
+    .section-title-d365 h2 {
+        font-size: 28px;
+        font-weight: 600;
+        color: #323130;
+        margin-bottom: 12px;
+    }
+
+    .section-title-d365 .divider-d365 {
+        width: 60px;
+        height: 4px;
+        background-color: #0078d4;
+        margin: 16px auto;
+        border-radius: 2px;
+    }
+
+    .section-title-d365 p {
+        font-size: 14px;
+        color: #605e5c;
+        margin-bottom: 0;
+    }
+
+    .service-card-d365 {
+        background: white;
+        border: 1px solid #edebe9;
+        border-radius: 2px;
+        padding: 32px 24px;
+        text-align: center;
+        transition: all 0.2s ease;
+        box-shadow: 0 1.6px 3.6px 0 rgba(0,0,0,.132), 0 0.3px 0.9px 0 rgba(0,0,0,.108);
+        height: 100%;
+        margin-bottom: 24px;
+    }
+
+    .service-card-d365:hover {
+        box-shadow: 0 6.4px 14.4px 0 rgba(0,0,0,.132), 0 1.2px 3.6px 0 rgba(0,0,0,.108);
+        transform: translateY(-4px);
+        border-color: #0078d4;
+    }
+
+    .service-icon-d365 {
+        font-size: 48px;
+        color: #0078d4;
+        margin-bottom: 20px;
+    }
+
+    .service-card-d365 h4 {
+        font-size: 16px;
+        font-weight: 600;
+        color: #323130;
+        margin-bottom: 12px;
+    }
+
+    .service-card-d365 p {
+        font-size: 12px;
+        color: #605e5c;
+        line-height: 1.6;
+        margin-bottom: 0;
+    }
+
+    /* Products Section - D365 */
+    .products-section-d365 {
+        background-color: white;
+        padding: 60px 0;
+    }
+
+    .product-card-d365 {
+        background: white;
+        border: 1px solid #edebe9;
+        border-radius: 2px;
+        overflow: hidden;
+        transition: all 0.2s ease;
+        height: 100%;
+        box-shadow: 0 1.6px 3.6px 0 rgba(0,0,0,.132), 0 0.3px 0.9px 0 rgba(0,0,0,.108);
+        margin-bottom: 24px;
+    }
+
+    .product-card-d365:hover {
+        box-shadow: 0 6.4px 14.4px 0 rgba(0,0,0,.132), 0 1.2px 3.6px 0 rgba(0,0,0,.108);
+        transform: translateY(-4px);
+        border-color: #0078d4;
+    }
+
+    .product-image-d365 {
+        background: linear-gradient(135deg, #0078d4, #005a9e);
+        height: 200px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 64px;
+    }
+
+    .product-details-d365 {
+        padding: 24px;
+    }
+
+    .product-name-d365 {
+        color: #323130;
+        font-weight: 600;
+        margin-bottom: 8px;
+        font-size: 14px;
+    }
+
+    .product-category-d365 {
+        color: #605e5c;
+        font-size: 11px;
+        margin-bottom: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .product-price-d365 {
+        font-size: 20px;
+        color: #0078d4;
+        font-weight: 600;
+        margin-bottom: 12px;
+    }
+
+    .product-details-d365 p {
+        font-size: 12px;
+        color: #605e5c;
+        margin-bottom: 16px;
+        line-height: 1.6;
+    }
+
+    .btn-add-cart-d365 {
+        width: 100%;
+        padding: 8px 16px;
+        background: #0078d4;
+        color: white;
+        border: none;
+        border-radius: 2px;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .btn-add-cart-d365:hover {
+        background: #106ebe;
+    }
+
+    /* Testimonials Section - D365 */
+    .testimonials-section-d365 {
+        background-color: #faf9f8;
+        padding: 60px 0;
+    }
+
+    .testimonial-card-d365 {
+        background: white;
+        border: 1px solid #edebe9;
+        border-radius: 2px;
+        padding: 24px;
+        box-shadow: 0 1.6px 3.6px 0 rgba(0,0,0,.132), 0 0.3px 0.9px 0 rgba(0,0,0,.108);
+        height: 100%;
+        transition: all 0.2s ease;
+        margin-bottom: 24px;
+    }
+
+    .testimonial-card-d365:hover {
+        box-shadow: 0 6.4px 14.4px 0 rgba(0,0,0,.132), 0 1.2px 3.6px 0 rgba(0,0,0,.108);
+        transform: translateY(-4px);
+    }
+
+    .testimonial-quote-d365 {
+        font-size: 32px;
+        color: #0078d4;
+        margin-bottom: 16px;
+    }
+
+    .testimonial-content-d365 {
+        font-style: italic;
+        color: #605e5c;
+        margin-bottom: 16px;
+        line-height: 1.6;
+        font-size: 12px;
+    }
+
+    .testimonial-rating-d365 {
+        margin-bottom: 16px;
+    }
+
+    .testimonial-rating-d365 i {
+        color: #0078d4;
+        margin-right: 4px;
+        font-size: 12px;
+    }
+
+    .testimonial-author-d365 {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding-top: 16px;
+        border-top: 1px solid #edebe9;
+    }
+
+    .testimonial-avatar-d365 {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+    .testimonial-avatar-placeholder-d365 {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #0078d4 0%, #005a9e 100%);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        font-size: 20px;
+    }
+
+    .testimonial-name-d365 {
+        font-weight: 600;
+        color: #323130;
+        font-size: 14px;
+        margin-bottom: 2px;
+    }
+
+    .testimonial-title-d365 {
+        font-size: 11px;
+        color: #605e5c;
+    }
+
+    /* Contact CTA Section - D365 */
+    .contact-cta-d365 {
+        background: white;
+        padding: 60px 0;
+        text-align: center;
+    }
+
+    .contact-cta-d365 h2 {
+        font-size: 28px;
+        font-weight: 600;
+        color: #323130;
+        margin-bottom: 16px;
+    }
+
+    .contact-cta-d365 p {
+        font-size: 14px;
+        color: #605e5c;
+        margin-bottom: 32px;
+    }
+
+    .btn-contact-d365 {
+        padding: 10px 32px;
+        font-size: 14px;
+        font-weight: 600;
+        background: #0078d4;
+        color: white;
+        border: none;
+        border-radius: 2px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    .btn-contact-d365:hover {
+        background: #106ebe;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0,120,212,0.3);
+        color: white;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+    <!-- Hero Section -->
+    {% if hero_sections %}
+        {% for hero in hero_sections %}
+            <section class="hero-d365">
+                <div class="container">
+                    <h1>{{ hero.title }}</h1>
+                    <p>{{ hero.subtitle }}</p>
+                    <a href="{{ hero.cta_link or '#services' }}" class="btn-d365">
+                        {{ hero.cta_text or 'Learn More' }}
+                    </a>
+                </div>
+            </section>
+        {% endfor %}
+    {% else %}
+        <section class="hero-d365">
+            <div class="container">
+                <h1>Welcome to 360Degree Supply</h1>
+                <p>Your trusted partner for industrial supplies and services</p>
+                <a href="#services" class="btn-d365">Explore Our Services</a>
+            </div>
+        </section>
+    {% endif %}
+
+    <!-- Services Section -->
+    <section class="services-section-d365" id="services">
+        <div class="container">
+            <div class="section-title-d365">
+                <h2>Our Services</h2>
+                <div class="divider-d365"></div>
+                <p>Comprehensive industrial solutions tailored to your needs</p>
+            </div>
+            
+            <div class="row">
+                {% if services %}
+                    {% for service in services %}
+                        <div class="col-md-6 col-lg-4">
+                            <div class="service-card-d365">
+                                <div class="service-icon-d365">
+                                    <i class="fas fa-{{ service.icon or 'cog' }}"></i>
+                                </div>
+                                <h4>{{ service.title }}</h4>
+                                <p>{{ service.description or 'Professional service description' }}</p>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="col-12 text-center">
+                        <p style="color: #605e5c; font-size: 14px;">No services available yet.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+
+    <!-- Products Section -->
+    <section class="products-section-d365">
+        <div class="container">
+            <div class="section-title-d365">
+                <h2>Featured Products</h2>
+                <div class="divider-d365"></div>
+                <p>Quality products for your industrial needs</p>
+            </div>
+            
+            <div class="row">
+                {% if products %}
+                    {% for product in products %}
+                        <div class="col-md-6 col-lg-4">
+                            <div class="product-card-d365">
+                                <div class="product-image-d365">
+                                    <i class="fas fa-box"></i>
+                                </div>
+                                <div class="product-details-d365">
+                                    <div class="product-name-d365">{{ product.name }}</div>
+                                    <div class="product-category-d365">{{ product.category or 'Uncategorized' }}</div>
+                                    <div class="product-price-d365">R{{ "%.2f"|format(product.price or 0) }}</div>
+                                    <p>{{ product.description|truncate(80) or 'Quality industrial product' }}</p>
+                                    <form method="POST" action="{{ url_for('add_to_cart', product_id=product.id) }}" style="margin: 0;">
+                                        <button type="submit" class="btn-add-cart-d365">
+                                            <i class="fas fa-shopping-cart"></i> Add to Cart
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="col-12 text-center">
+                        <p style="color: #605e5c; font-size: 14px;">No products available yet.</p>
+                    </div>
+                {% endif %}
+            </div>
+            
+            {% if products %}
+            <div class="text-center mt-4">
+                <a href="{{ url_for('products_page') }}" class="btn-contact-d365">
+                    View All Products
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    {% if testimonials %}
+    <section class="testimonials-section-d365">
+        <div class="container">
+            <div class="section-title-d365">
+                <h2>What Our Clients Say</h2>
+                <div class="divider-d365"></div>
+                <p>Trusted by businesses across South Africa</p>
+            </div>
+            
+            <div class="row">
+                {% for testimonial in testimonials %}
+                    <div class="col-md-6 col-lg-4">
+                        <div class="testimonial-card-d365">
+                            <div class="testimonial-quote-d365">"</div>
+                            <div class="testimonial-content-d365">
+                                {{ testimonial.content }}
+                            </div>
+                            <div class="testimonial-rating-d365">
+                                {% for i in range(testimonial.rating or 5) %}
+                                    <i class="fas fa-star"></i>
+                                {% endfor %}
+                            </div>
+                            <div class="testimonial-author-d365">
+                                {% if testimonial.avatar %}
+                                    <img src="{{ testimonial.avatar }}" alt="{{ testimonial.client_name }}" class="testimonial-avatar-d365">
+                                {% else %}
+                                    <div class="testimonial-avatar-placeholder-d365">
+                                        {{ testimonial.client_name[0]|upper if testimonial.client_name else 'A' }}
+                                    </div>
+                                {% endif %}
+                                <div>
+                                    <div class="testimonial-name-d365">{{ testimonial.client_name }}</div>
+                                    <div class="testimonial-title-d365">{{ testimonial.client_title or 'Client' }}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+    {% endif %}
+
+    <!-- Contact CTA Section -->
+    <section class="contact-cta-d365">
+        <div class="container">
+            <h2>Ready to Get Started?</h2>
+            <p>Contact us today for a quote or to discuss your requirements</p>
+            <a href="{{ url_for('contact') }}" class="btn-contact-d365">
+                <i class="fas fa-envelope"></i> Contact Us
+            </a>
+        </div>
+    </section>
+{% endblock %}

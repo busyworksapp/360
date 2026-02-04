@@ -1,103 +1,418 @@
 {% extends "base.html" %}
 
 {% block extra_css %}
-    <style>
-        .btn-primary {
-            background-color: var(--secondary);
-            border: none;
+<style>
+    .dashboard-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 24px;
+        background-color: #faf9f8;
+        min-height: 100vh;
+    }
+
+    .page-header-d365 {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+        padding-bottom: 16px;
+        border-bottom: 2px solid #0078d4;
+    }
+
+    .page-title-d365 {
+        font-size: 28px;
+        font-weight: 600;
+        color: #323130;
+        margin: 0;
+    }
+
+    .d365-card {
+        background: #ffffff;
+        border: 1px solid #edebe9;
+        border-radius: 2px;
+        padding: 24px;
+        margin-bottom: 16px;
+    }
+
+    .card-header-d365 {
+        font-size: 18px;
+        font-weight: 600;
+        color: #323130;
+        margin-bottom: 16px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid #edebe9;
+    }
+
+    .alert-d365 {
+        padding: 12px 16px;
+        border-radius: 2px;
+        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .alert-d365.alert-info {
+        background-color: #f3f2f1;
+        border-left: 4px solid #0078d4;
+        color: #323130;
+    }
+
+    .alert-d365.alert-warning {
+        background-color: #fff4ce;
+        border-left: 4px solid #ffaa44;
+        color: #323130;
+    }
+
+    .cart-layout {
+        display: grid;
+        grid-template-columns: 1fr 400px;
+        gap: 24px;
+    }
+
+    .cart-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .cart-table thead {
+        background-color: #f3f2f1;
+        border-bottom: 2px solid #edebe9;
+    }
+
+    .cart-table th {
+        padding: 12px;
+        text-align: left;
+        font-weight: 600;
+        color: #323130;
+        font-size: 14px;
+    }
+
+    .cart-table td {
+        padding: 16px 12px;
+        border-bottom: 1px solid #edebe9;
+        vertical-align: middle;
+    }
+
+    .cart-table tr:last-child td {
+        border-bottom: none;
+    }
+
+    .product-info {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .product-image {
+        width: 60px;
+        height: 60px;
+        object-fit: cover;
+        border-radius: 2px;
+        border: 1px solid #edebe9;
+    }
+
+    .product-placeholder {
+        width: 60px;
+        height: 60px;
+        background-color: #f3f2f1;
+        border-radius: 2px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #605e5c;
+    }
+
+    .product-name {
+        font-weight: 600;
+        color: #323130;
+        margin-bottom: 4px;
+    }
+
+    .product-unit {
+        font-size: 12px;
+        color: #605e5c;
+    }
+
+    .qty-controls {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        width: 120px;
+    }
+
+    .qty-btn {
+        width: 32px;
+        height: 32px;
+        border: 1px solid #8a8886;
+        background: #ffffff;
+        border-radius: 2px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #323130;
+        transition: all 0.2s;
+    }
+
+    .qty-btn:hover {
+        background-color: #f3f2f1;
+        border-color: #323130;
+    }
+
+    .qty-input {
+        width: 48px;
+        height: 32px;
+        border: 1px solid #8a8886;
+        border-radius: 2px;
+        text-align: center;
+        font-weight: 600;
+    }
+
+    .btn-remove {
+        padding: 6px 12px;
+        background-color: #a4262c;
+        color: #ffffff;
+        border: none;
+        border-radius: 2px;
+        cursor: pointer;
+        font-size: 14px;
+        transition: background-color 0.2s;
+    }
+
+    .btn-remove:hover {
+        background-color: #8b0a14;
+    }
+
+    .btn-d365-primary {
+        padding: 12px 24px;
+        background-color: #0078d4;
+        color: #ffffff;
+        border: none;
+        border-radius: 2px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.2s;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        justify-content: center;
+    }
+
+    .btn-d365-primary:hover {
+        background-color: #106ebe;
+        color: #ffffff;
+    }
+
+    .btn-d365-secondary {
+        padding: 12px 24px;
+        background-color: #ffffff;
+        color: #323130;
+        border: 1px solid #8a8886;
+        border-radius: 2px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        justify-content: center;
+    }
+
+    .btn-d365-secondary:hover {
+        background-color: #f3f2f1;
+        border-color: #323130;
+        color: #323130;
+    }
+
+    .btn-d365-success {
+        padding: 12px 24px;
+        background-color: #107c10;
+        color: #ffffff;
+        border: none;
+        border-radius: 2px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.2s;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        justify-content: center;
+        width: 100%;
+    }
+
+    .btn-d365-success:hover {
+        background-color: #094509;
+        color: #ffffff;
+    }
+
+    .summary-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 12px;
+        font-size: 14px;
+        color: #323130;
+    }
+
+    .summary-row.total {
+        padding-top: 12px;
+        border-top: 2px solid #edebe9;
+        font-size: 18px;
+        font-weight: 600;
+        margin-top: 12px;
+    }
+
+    .info-card {
+        background: #f3f2f1;
+        padding: 16px;
+        border-radius: 2px;
+        margin-top: 16px;
+    }
+
+    .info-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 13px;
+        color: #323130;
+        margin-bottom: 8px;
+    }
+
+    .info-item:last-child {
+        margin-bottom: 0;
+    }
+
+    .empty-cart {
+        text-align: center;
+        padding: 60px 24px;
+    }
+
+    .empty-cart i {
+        font-size: 64px;
+        color: #605e5c;
+        margin-bottom: 16px;
+    }
+
+    .empty-cart h4 {
+        font-size: 20px;
+        font-weight: 600;
+        color: #323130;
+        margin-bottom: 8px;
+    }
+
+    .empty-cart p {
+        color: #605e5c;
+        margin-bottom: 24px;
+    }
+
+    @media (max-width: 992px) {
+        .cart-layout {
+            grid-template-columns: 1fr;
         }
-        
-        .btn-primary:hover {
-            background-color: #e67e22;
-            color: white;
+    }
+
+    @media (max-width: 768px) {
+        .page-header-d365 {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 12px;
         }
-    </style>
+    }
+</style>
 {% endblock %}
 
 {% block content %}
-<div class="container mt-5 mb-5">
-    <div class="row mb-4">
-        <div class="col-md-8">
-            <h1 class="display-5">
-                <i class="fas fa-shopping-cart"></i> Shopping Cart
-            </h1>
-        </div>
-        <div class="col-md-4 text-end">
-            <a href="{{ url_for('products') }}" class="btn btn-outline-primary btn-lg">
-                <i class="fas fa-arrow-left"></i> Continue Shopping
-            </a>
-        </div>
+<div class="dashboard-container">
+    <div class="page-header-d365">
+        <h1 class="page-title-d365">
+            <i class="fas fa-shopping-cart"></i> Shopping Cart
+        </h1>
+        <a href="{{ url_for('products') }}" class="btn-d365-secondary">
+            <i class="fas fa-arrow-left"></i> Continue Shopping
+        </a>
     </div>
 
-    {% if not current_user or not current_user.__class__.__name__ == 'Customer' %}
-    <div class="alert alert-info alert-dismissible fade show" role="alert">
-        <i class="fas fa-info-circle"></i> 
-        <strong>Sign in required</strong> to add items to cart.
-        <a href="{{ url_for('customer_login') }}" class="alert-link">Login</a> or 
-        <a href="{{ url_for('customer_register') }}" class="alert-link">Register</a>
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    {% if not current_user.is_authenticated %}
+    <div class="alert-d365 alert-info">
+        <i class="fas fa-info-circle"></i>
+        <div>
+            <strong>Sign in to checkout</strong> - You can browse and add items to cart. Please 
+            <a href="{{ url_for('customer_login', next=url_for('checkout')) }}" style="color: #0078d4; font-weight: 600;">Login</a> or 
+            <a href="{{ url_for('customer_register') }}" style="color: #0078d4; font-weight: 600;">Register</a> to complete your purchase.
+        </div>
     </div>
     {% endif %}
 
-    <div class="row">
-<!-- Cart Items -->
-        <div class="col-md-8">
-            {% if cart and cart.items %}
+    <div class="cart-layout">
+        <!-- Cart Items -->
+        <div>
+            {% if (cart and cart.items) or session_cart %}
                 <!-- Location-Based Pricing Info -->
                 {% if pricing_context %}
-                <div class="alert alert-info mb-3" role="alert">
+                <div class="alert-d365 alert-info">
                     <i class="fas fa-globe"></i>
-                    {% if pricing_context.is_local %}
-                        <strong>Prices shown in South African Rand (ZAR)</strong>
-                        {% if pricing_context.location_detected %}
-                            for {{ pricing_context.country_name }}
+                    <div>
+                        {% if pricing_context.is_local %}
+                            <strong>Prices shown in South African Rand (ZAR)</strong>
+                            {% if pricing_context.location_detected %}
+                                for {{ pricing_context.country_name }}
+                            {% endif %}
+                        {% else %}
+                            <strong>Prices shown in US Dollars (USD)</strong>
+                            {% if pricing_context.location_detected %}
+                                for {{ pricing_context.country_name }}
+                            {% endif %}
                         {% endif %}
-                    {% else %}
-                        <strong>Prices shown in US Dollars (USD)</strong>
-                        {% if pricing_context.location_detected %}
-                            for {{ pricing_context.country_name }}
-                        {% endif %}
-                    {% endif %}
+                    </div>
                 </div>
                 {% endif %}
 
-                <div class="card shadow-sm">
-                    <div class="card-header bg-primary text-white">
-                        <h5 class="mb-0">
-                            <i class="fas fa-box"></i> 
+                <div class="d365-card">
+                    <div class="card-header-d365">
+                        <i class="fas fa-box"></i>
+                        {% if cart %}
                             {{ cart.get_item_count() }} Item{% if cart.get_item_count() != 1 %}s{% endif %}
-                        </h5>
+                        {% else %}
+                            {{ session_cart|length }} Item{% if session_cart|length != 1 %}s{% endif %}
+                        {% endif %}
                     </div>
-                    <div class="table-responsive">
-                        <table class="table table-hover mb-0">
-                            <thead class="table-light">
-                                <tr>
-                                    <th>Product</th>
-                                    <th>Unit Price</th>
-                                    <th>Quantity</th>
-                                    <th>Total</th>
-                                    <th></th>
-                                </tr>
-                            </thead>
-                            <tbody>
+                    
+                    <table class="cart-table">
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Unit Price</th>
+                                <th>Quantity</th>
+                                <th>Total</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% if cart %}
+                                {# Database cart for logged-in users #}
                                 {% for item in cart.items %}
                                 <tr data-item-id="{{ item.id }}">
                                     <td>
-                                        <div class="d-flex align-items-center">
+                                        <div class="product-info">
                                             {% if item.product.image_url %}
                                             <img src="{{ item.product.image_url }}" 
                                                  alt="{{ item.product.name }}"
-                                                 style="width: 60px; height: 60px; object-fit: cover; border-radius: 5px; margin-right: 15px;">
+                                                 class="product-image">
                                             {% else %}
-                                            <div style="width: 60px; height: 60px; background-color: #f0f0f0; border-radius: 5px; margin-right: 15px; display: flex; align-items: center; justify-content: center;">
-                                                <i class="fas fa-box text-muted"></i>
+                                            <div class="product-placeholder">
+                                                <i class="fas fa-box"></i>
                                             </div>
                                             {% endif %}
                                             <div>
-                                                <strong>{{ item.product.name }}</strong>
+                                                <div class="product-name">{{ item.product.name }}</div>
                                                 {% if item.product.unit %}
-                                                <br>
-                                                <small class="text-muted">per {{ item.product.unit }}</small>
+                                                <div class="product-unit">per {{ item.product.unit }}</div>
                                                 {% endif %}
                                             </div>
                                         </div>
@@ -106,13 +421,13 @@
                                         <strong>{{ pricing_context.currency_symbol if pricing_context else 'R' }} {{ "%.2f"|format(item.price_at_add or item.product.price) }}</strong>
                                     </td>
                                     <td>
-                                        <div class="input-group" style="width: 120px;">
-                                            <button class="btn btn-sm btn-outline-secondary qty-minus" type="button">
+                                        <div class="qty-controls">
+                                            <button class="qty-btn qty-minus" type="button">
                                                 <i class="fas fa-minus"></i>
                                             </button>
-                                            <input type="number" class="form-control qty-input text-center" 
+                                            <input type="number" class="qty-input" 
                                                    value="{{ item.quantity }}" min="1" max="1000">
-                                            <button class="btn btn-sm btn-outline-secondary qty-plus" type="button">
+                                            <button class="qty-btn qty-plus" type="button">
                                                 <i class="fas fa-plus"></i>
                                             </button>
                                         </div>
@@ -121,104 +436,155 @@
                                         <strong>{{ pricing_context.currency_symbol if pricing_context else 'R' }} <span class="item-total">{{ "%.2f"|format(item.get_total()) }}</span></strong>
                                     </td>
                                     <td>
-                                        <button class="btn btn-sm btn-danger remove-item" title="Remove item">
+                                        <button class="btn-remove remove-item" title="Remove item">
                                             <i class="fas fa-trash"></i>
                                         </button>
                                     </td>
                                 </tr>
                                 {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
+                            {% else %}
+                                {# Session cart for guest users #}
+                                {% for item in session_cart %}
+                                <tr data-product-id="{{ item.product.id }}" class="session-cart-item">
+                                    <td>
+                                        <div class="product-info">
+                                            {% if item.product.image_url %}
+                                            <img src="{{ item.product.image_url }}" 
+                                                 alt="{{ item.product.name }}"
+                                                 class="product-image">
+                                            {% else %}
+                                            <div class="product-placeholder">
+                                                <i class="fas fa-box"></i>
+                                            </div>
+                                            {% endif %}
+                                            <div>
+                                                <div class="product-name">{{ item.product.name }}</div>
+                                                {% if item.product.unit %}
+                                                <div class="product-unit">per {{ item.product.unit }}</div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <strong>{{ pricing_context.currency_symbol if pricing_context else 'R' }} {{ "%.2f"|format(item.price) }}</strong>
+                                    </td>
+                                    <td>
+                                        <span class="session-qty">{{ item.quantity }}</span>
+                                        <div class="product-unit">Login to edit</div>
+                                    </td>
+                                    <td>
+                                        <strong>{{ pricing_context.currency_symbol if pricing_context else 'R' }} <span class="item-total">{{ "%.2f"|format(item.price * item.quantity) }}</span></strong>
+                                    </td>
+                                    <td>
+                                        <small style="color: #605e5c; font-size: 12px;">Login to remove</small>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            {% endif %}
+                        </tbody>
+                    </table>
                 </div>
 
-                <div class="mt-3">
-                    <button class="btn btn-outline-secondary" onclick="clearCart()">
+                {% if cart %}
+                <div style="margin-top: 16px;">
+                    <button class="btn-d365-secondary" onclick="clearCart()">
                         <i class="fas fa-times"></i> Clear Cart
                     </button>
                 </div>
+                {% endif %}
             {% else %}
-            <div class="alert alert-warning text-center py-5">
-                <i class="fas fa-inbox fa-3x mb-3 d-block text-muted"></i>
+            <div class="d365-card empty-cart">
+                <i class="fas fa-inbox"></i>
                 <h4>Your cart is empty</h4>
-                <p class="text-muted mb-3">Start shopping to add items to your cart</p>
-                <a href="{{ url_for('products') }}" class="btn btn-primary btn-lg">
-                    <i class="fas fa-shopping-bag"></i> Browse Products
+                <p>Visit our store to add items to your cart</p>
+                <a href="{{ url_for('products') }}" class="btn-d365-primary">
+                    <i class="fas fa-store"></i> Visit Store
                 </a>
             </div>
             {% endif %}
         </div>
 
         <!-- Cart Summary -->
-        <div class="col-md-4">
-            <div class="card shadow-sm">
-                <div class="card-header bg-success text-white">
-                    <h5 class="mb-0">
-                        <i class="fas fa-receipt"></i> Order Summary
-                    </h5>
+        <div>
+            <div class="d365-card">
+                <div class="card-header-d365">
+                    <i class="fas fa-receipt"></i> Order Summary
                 </div>
-                <div class="card-body">
-                    {% if cart and cart.items %}
-                        <div class="d-flex justify-content-between mb-2">
+                
+                {% if (cart and cart.items) or session_cart %}
+                    {% if cart %}
+                        {# Logged-in user cart #}
+                        <div class="summary-row">
                             <span>Subtotal:</span>
                             <strong>{{ pricing_context.currency_symbol if pricing_context else 'R' }} <span id="subtotal">{{ "%.2f"|format(cart.get_subtotal()) }}</span></strong>
                         </div>
-                        <div class="d-flex justify-content-between mb-2">
-                            <span>Shipping:</span>
-                            <strong>TBD</strong>
-                        </div>
-                        <div class="d-flex justify-content-between mb-3">
-                            <span>Tax:</span>
-                            <strong>TBD</strong>
-                        </div>
-                        <hr>
-                        <div class="d-flex justify-content-between mb-4">
-                            <h5 class="mb-0">Total:</h5>
-                            <h5 class="mb-0">{{ pricing_context.currency_symbol if pricing_context else 'R' }} <span id="total">{{ "%.2f"|format(cart.get_subtotal()) }}</span></h5>
-                        </div>
-
-                        {% if current_user and current_user.__class__.__name__ == 'Customer' %}
-                        <a href="{{ url_for('payment') }}" class="btn btn-success btn-lg w-100 mb-2">
-                            <i class="fas fa-credit-card"></i> Proceed to Checkout
-                        </a>
-                        {% else %}
-                        <a href="{{ url_for('customer_login') }}" class="btn btn-success btn-lg w-100 mb-2">
-                            <i class="fas fa-sign-in-alt"></i> Login to Checkout
-                        </a>
-                        {% endif %}
-
-                        <a href="{{ url_for('customer_orders') }}" class="btn btn-info btn-lg w-100 mb-2">
-                            <i class="fas fa-history"></i> My Orders
-                        </a>
-
-                        <a href="{{ url_for('products') }}" class="btn btn-outline-primary btn-lg w-100">
-                            <i class="fas fa-arrow-left"></i> Continue Shopping
-                        </a>
                     {% else %}
-                        <p class="text-center text-muted">No items in cart</p>
-                        <a href="{{ url_for('products') }}" class="btn btn-primary btn-lg w-100">
-                            <i class="fas fa-shopping-bag"></i> Start Shopping
-                        </a>
+                        {# Guest user session cart #}
+                        {% set cart_total = namespace(value=0) %}
+                        {% for item in session_cart %}
+                            {% set cart_total.value = cart_total.value + (item.price * item.quantity) %}
+                        {% endfor %}
+                        <div class="summary-row">
+                            <span>Subtotal:</span>
+                            <strong>{{ pricing_context.currency_symbol if pricing_context else 'R' }} <span id="subtotal">{{ "%.2f"|format(cart_total.value) }}</span></strong>
+                        </div>
                     {% endif %}
-                </div>
+                    
+                    <div class="summary-row">
+                        <span>Shipping:</span>
+                        <strong>TBD</strong>
+                    </div>
+                    <div class="summary-row">
+                        <span>Tax:</span>
+                        <strong>TBD</strong>
+                    </div>
+                    
+                    <div class="summary-row total">
+                        <span>Total:</span>
+                        {% if cart %}
+                            <span>{{ pricing_context.currency_symbol if pricing_context else 'R' }} <span id="total">{{ "%.2f"|format(cart.get_subtotal()) }}</span></span>
+                        {% else %}
+                            <span>{{ pricing_context.currency_symbol if pricing_context else 'R' }} <span id="total">{{ "%.2f"|format(cart_total.value) }}</span></span>
+                        {% endif %}
+                    </div>
+
+                    <div style="margin-top: 24px;">
+                        {% if current_user.is_authenticated and current_user.__class__.__name__ == 'Customer' %}
+                            <a href="{{ url_for('checkout') }}" class="btn-d365-success">
+                                <i class="fas fa-credit-card"></i> Proceed to Checkout
+                            </a>
+                            <a href="{{ url_for('customer_orders') }}" class="btn-d365-primary" style="margin-top: 12px;">
+                                <i class="fas fa-history"></i> My Orders
+                            </a>
+                        {% else %}
+                            <a href="{{ url_for('customer_login', next=url_for('checkout')) }}" class="btn-d365-success">
+                                <i class="fas fa-sign-in-alt"></i> Login to Checkout
+                            </a>
+                            <a href="{{ url_for('customer_register') }}" class="btn-d365-secondary" style="margin-top: 12px; width: 100%;">
+                                <i class="fas fa-user-plus"></i> Create Account
+                            </a>
+                        {% endif %}
+                    </div>
+                {% else %}
+                    <p style="text-align: center; color: #605e5c;">No items in cart</p>
+                    <a href="{{ url_for('products') }}" class="btn-d365-primary" style="width: 100%;">
+                        <i class="fas fa-store"></i> Visit Store
+                    </a>
+                {% endif %}
             </div>
 
-            <!-- Order Notes -->
-            <div class="card shadow-sm mt-3">
-                <div class="card-header bg-info text-white">
-                    <h5 class="mb-0">
-                        <i class="fas fa-sticky-note"></i> Delivery Info
-                    </h5>
+            <!-- Delivery Info -->
+            <div class="info-card">
+                <div class="card-header-d365" style="margin-bottom: 12px;">
+                    <i class="fas fa-truck"></i> Delivery Info
                 </div>
-                <div class="card-body">
-                    <p class="small mb-0">
-                        <i class="fas fa-truck text-primary"></i>
-                        <strong>Free Shipping</strong> on orders over R 5,000
-                    </p>
-                    <p class="small mb-0 mt-2">
-                        <i class="fas fa-clock text-primary"></i>
-                        <strong>Delivery:</strong> 3-5 business days
-                    </p>
+                <div class="info-item">
+                    <i class="fas fa-check" style="color: #107c10;"></i>
+                    <span><strong>Free Shipping</strong> on orders over R 5,000</span>
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-clock" style="color: #0078d4;"></i>
+                    <span><strong>Delivery:</strong> 3-5 business days</span>
                 </div>
             </div>
         </div>
@@ -226,10 +592,10 @@
 </div>
 
 <script>
-// Add to cart quantity controls
+// Quantity controls
 document.querySelectorAll('.qty-plus').forEach(btn => {
     btn.addEventListener('click', function() {
-        const input = this.closest('.input-group').querySelector('.qty-input');
+        const input = this.closest('.qty-controls').querySelector('.qty-input');
         input.value = parseInt(input.value) + 1;
         updateCartItem(this.closest('tr'));
     });
@@ -237,7 +603,7 @@ document.querySelectorAll('.qty-plus').forEach(btn => {
 
 document.querySelectorAll('.qty-minus').forEach(btn => {
     btn.addEventListener('click', function() {
-        const input = this.closest('.input-group').querySelector('.qty-input');
+        const input = this.closest('.qty-controls').querySelector('.qty-input');
         if (parseInt(input.value) > 1) {
             input.value = parseInt(input.value) - 1;
             updateCartItem(this.closest('tr'));

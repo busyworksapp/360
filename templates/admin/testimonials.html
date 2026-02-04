@@ -3,82 +3,239 @@
 {% block title %}Testimonials - Admin{% endblock %}
 
 {% block content %}
-<div class="container-fluid mt-4">
-    <div class="row mb-4">
-        <div class="col-md-8">
-            <h2><i class="fas fa-comments"></i> Manage Testimonials</h2>
-            <p class="text-muted">Manage customer testimonials and reviews</p>
-        </div>
-        <div class="col-md-4 text-end">
-            <a href="{{ url_for('admin_testimonial_add') }}" class="btn btn-primary">
-                <i class="fas fa-plus"></i> Add Testimonial
+<div style="padding: 16px; background: #faf9f8;">
+    <!-- Breadcrumb Navigation -->
+    <div class="breadcrumb-d365">
+        <a href="{{ url_for('admin_dashboard') }}">Home</a>
+        <span class="separator">/</span>
+        <span>Testimonials</span>
+    </div>
+    
+    <!-- Page Title -->
+    <h1 style="font-size: 20px; font-weight: 600; margin: 4px 0 16px 0; color: #323130;">
+        Testimonials
+    </h1>
+    
+    <!-- Command Bar -->
+    <div class="command-bar-d365">
+        <div class="command-bar-left">
+            <a href="{{ url_for('admin_testimonial_add') }}" class="btn-d365-primary">
+                <i class="fas fa-plus"></i> New
             </a>
+            <button class="btn-d365-secondary" id="editBtn" disabled onclick="editSelected()">
+                <i class="fas fa-edit"></i> Edit
+            </button>
+            <button class="btn-d365-secondary" id="deleteBtn" disabled onclick="deleteSelected()">
+                <i class="fas fa-trash"></i> Delete
+            </button>
+            <button class="btn-d365-secondary" onclick="location.reload()">
+                <i class="fas fa-sync-alt"></i> Refresh
+            </button>
+        </div>
+        <div class="command-bar-right">
+            <div class="search-box-d365">
+                <i class="fas fa-search"></i>
+                <input type="text" id="filterInput" placeholder="Filter" onkeyup="filterTable()">
+            </div>
         </div>
     </div>
-
-    {% if testimonials %}
-    <div class="table-responsive">
-        <table class="table table-hover">
-            <thead class="table-light">
-                <tr>
-                    <th>Client Name</th>
-                    <th>Company</th>
-                    <th>Position</th>
-                    <th>Rating</th>
-                    <th>Status</th>
-                    <th>Order</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for testimonial in testimonials %}
-                <tr>
-                    <td>
-                        {% if testimonial.avatar_url %}
-                            <img src="{{ testimonial.avatar_url }}" alt="{{ testimonial.client_name }}" class="rounded-circle me-2" style="width: 30px; height: 30px; object-fit: cover;">
-                        {% endif %}
-                        {{ testimonial.client_name }}
-                    </td>
-                    <td>{{ testimonial.company or '-' }}</td>
-                    <td>{{ testimonial.position or '-' }}</td>
-                    <td>
-                        <div class="rating">
-                            {% for i in range(5) %}
-                                {% if i < testimonial.rating %}
-                                    <i class="fas fa-star text-warning"></i>
-                                {% else %}
-                                    <i class="fas fa-star text-muted"></i>
+    
+    <!-- Table Card -->
+    <div class="d365-card">
+        <div class="card-body-d365" style="padding: 0;">
+            <table class="table-d365" id="testimonialsTable">
+                <thead>
+                    <tr>
+                        <th class="row-checkbox">
+                            <input type="checkbox" id="selectAll" onchange="toggleSelectAll(this)">
+                        </th>
+                        <th class="sortable">
+                            <div class="column-header">
+                                <span class="column-title">Client Name</span>
+                                <span class="column-icons">
+                                    <i class="fas fa-filter filter-icon"></i>
+                                    <i class="fas fa-sort sort-icon"></i>
+                                </span>
+                            </div>
+                        </th>
+                        <th class="sortable">
+                            <div class="column-header">
+                                <span class="column-title">Company</span>
+                                <span class="column-icons">
+                                    <i class="fas fa-filter filter-icon"></i>
+                                    <i class="fas fa-sort sort-icon"></i>
+                                </span>
+                            </div>
+                        </th>
+                        <th class="sortable">
+                            <div class="column-header">
+                                <span class="column-title">Position</span>
+                                <span class="column-icons">
+                                    <i class="fas fa-filter filter-icon"></i>
+                                    <i class="fas fa-sort sort-icon"></i>
+                                </span>
+                            </div>
+                        </th>
+                        <th class="sortable">
+                            <div class="column-header">
+                                <span class="column-title">Rating</span>
+                                <span class="column-icons">
+                                    <i class="fas fa-filter filter-icon"></i>
+                                    <i class="fas fa-sort sort-icon"></i>
+                                </span>
+                            </div>
+                        </th>
+                        <th class="sortable">
+                            <div class="column-header">
+                                <span class="column-title">Status</span>
+                                <span class="column-icons">
+                                    <i class="fas fa-filter filter-icon"></i>
+                                    <i class="fas fa-sort sort-icon"></i>
+                                </span>
+                            </div>
+                        </th>
+                        <th class="sortable" style="text-align: center;">
+                            <div class="column-header">
+                                <span class="column-title">Order</span>
+                                <span class="column-icons">
+                                    <i class="fas fa-filter filter-icon"></i>
+                                    <i class="fas fa-sort sort-icon"></i>
+                                </span>
+                            </div>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for testimonial in testimonials %}
+                    <tr onclick="selectRow(this, event)">
+                        <td class="row-checkbox">
+                            <input type="checkbox" class="row-select" value="{{ testimonial.id }}">
+                        </td>
+                        <td>
+                            <a href="{{ url_for('admin_testimonial_edit', id=testimonial.id) }}" style="display: flex; align-items: center; gap: 8px;">
+                                {% if testimonial.avatar_url %}
+                                <img src="{{ testimonial.avatar_url }}" alt="{{ testimonial.client_name }}" 
+                                     style="width: 24px; height: 24px; border-radius: 50%; object-fit: cover;">
                                 {% endif %}
-                            {% endfor %}
-                        </div>
-                    </td>
-                    <td>
-                        {% if testimonial.is_active %}
-                            <span class="badge bg-success">Active</span>
-                        {% else %}
-                            <span class="badge bg-secondary">Inactive</span>
-                        {% endif %}
-                    </td>
-                    <td>{{ testimonial.order_position }}</td>
-                    <td>
-                        <a href="{{ url_for('admin_testimonial_edit', id=testimonial.id) }}" class="btn btn-sm btn-warning">
-                            <i class="fas fa-edit"></i>
-                        </a>
-                        <form method="POST" action="{{ url_for('admin_testimonial_delete', id=testimonial.id) }}" class="d-inline">
-                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Delete this testimonial?')">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </form>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+                                {{ testimonial.client_name }}
+                            </a>
+                        </td>
+                        <td>{{ testimonial.company or '-' }}</td>
+                        <td>{{ testimonial.position or '-' }}</td>
+                        <td>
+                            <div style="display: flex; gap: 2px;">
+                                {% for i in range(5) %}
+                                    {% if i < testimonial.rating %}
+                                        <i class="fas fa-star" style="color: #ffb900; font-size: 11px;"></i>
+                                    {% else %}
+                                        <i class="far fa-star" style="color: #a19f9d; font-size: 11px;"></i>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </td>
+                        <td>
+                            {% if testimonial.is_active %}
+                                <span class="badge-d365 badge-success">Active</span>
+                            {% else %}
+                                <span class="badge-d365 badge-secondary">Inactive</span>
+                            {% endif %}
+                        </td>
+                        <td style="text-align: center;">{{ testimonial.order_position }}</td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="7" style="text-align: center; padding: 24px; color: #605e5c;">
+                            No testimonials found. <a href="{{ url_for('admin_testimonial_add') }}" style="color: #0078d4;">Add one now</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
-    {% else %}
-    <div class="alert alert-info">
-        <i class="fas fa-info-circle"></i> No testimonials yet. <a href="{{ url_for('admin_testimonial_add') }}">Add one now</a>
+    
+    <!-- Footer -->
+    <div style="margin-top: 12px; font-size: 12px; color: #605e5c;">
+        <span>Total records: {{ testimonials|length }}</span>
     </div>
-    {% endif %}
 </div>
+
+<script>
+function toggleSelectAll(checkbox) {
+    const checkboxes = document.querySelectorAll('.row-select');
+    checkboxes.forEach(cb => {
+        cb.checked = checkbox.checked;
+        if (checkbox.checked) {
+            cb.closest('tr').classList.add('selected');
+        } else {
+            cb.closest('tr').classList.remove('selected');
+        }
+    });
+    updateCommandBar();
+}
+
+function selectRow(row, event) {
+    if (event.target.tagName === 'A' || event.target.type === 'checkbox' || event.target.tagName === 'IMG') {
+        return;
+    }
+    
+    const checkbox = row.querySelector('.row-select');
+    checkbox.checked = !checkbox.checked;
+    
+    if (checkbox.checked) {
+        row.classList.add('selected');
+    } else {
+        row.classList.remove('selected');
+    }
+    
+    updateCommandBar();
+}
+
+function updateCommandBar() {
+    const checkedCount = document.querySelectorAll('.row-select:checked').length;
+    const editBtn = document.getElementById('editBtn');
+    const deleteBtn = document.getElementById('deleteBtn');
+    
+    editBtn.disabled = checkedCount !== 1;
+    deleteBtn.disabled = checkedCount === 0;
+}
+
+function editSelected() {
+    const checked = document.querySelector('.row-select:checked');
+    if (checked) {
+        window.location.href = "{{ url_for('admin_testimonial_edit', id=0) }}".replace('0', checked.value);
+    }
+}
+
+function deleteSelected() {
+    const checked = document.querySelectorAll('.row-select:checked');
+    if (checked.length > 0 && confirm('Delete ' + checked.length + ' testimonial(s)?')) {
+        checked.forEach(cb => {
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = "{{ url_for('admin_testimonial_delete', id=0) }}".replace('0', cb.value);
+            document.body.appendChild(form);
+            form.submit();
+        });
+    }
+}
+
+function filterTable() {
+    const input = document.getElementById('filterInput');
+    const filter = input.value.toLowerCase();
+    const table = document.getElementById('testimonialsTable');
+    const rows = table.getElementsByTagName('tr');
+    
+    for (let i = 1; i < rows.length; i++) {
+        const row = rows[i];
+        const text = row.textContent || row.innerText;
+        
+        if (text.toLowerCase().indexOf(filter) > -1) {
+            row.style.display = '';
+        } else {
+            row.style.display = 'none';
+        }
+    }
+}
+</script>
 {% endblock %}

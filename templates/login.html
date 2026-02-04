@@ -4,240 +4,316 @@
 
 {% block extra_css %}
 <style>
-    /* Unified Login Page Styling */
-    .login-wrapper {
-        min-height: calc(100vh - 300px);
+    /* D365 Login Page Styling */
+    
+    .login-wrapper-d365 {
+        min-height: calc(100vh - 200px);
         display: flex;
         align-items: center;
         padding: 60px 0;
+        background-color: #faf9f8;
     }
 
-    .login-card {
-        border: none !important;
-        border-radius: 12px !important;
-        box-shadow: 0 8px 32px rgba(0,0,0,0.15) !important;
+    .login-card-d365 {
+        background: white;
+        border: 1px solid #edebe9;
+        border-radius: 2px;
+        box-shadow: 0 6.4px 14.4px 0 rgba(0,0,0,.132), 0 1.2px 3.6px 0 rgba(0,0,0,.108);
         overflow: hidden;
+        max-width: 500px;
+        margin: 0 auto;
     }
 
-    .login-header {
-        background: linear-gradient(135deg, var(--primary) 0%, #2d5a3d 100%);
-        padding: 30px;
+    .login-header-d365 {
+        background: linear-gradient(135deg, #0078d4 0%, #005a9e 100%);
+        padding: 32px 24px;
         text-align: center;
     }
 
-    .login-header h2 {
-        color: white !important;
-        margin-bottom: 5px !important;
-        font-size: 1.8rem !important;
-    }
-
-    .login-header p {
-        color: rgba(255,255,255,0.8);
-        margin: 0;
-        font-size: 0.95rem;
-    }
-
-    /* Nav Tabs */
-    .nav-tabs {
-        border-bottom: 2px solid #ddd !important;
-        background: #f8f9fa;
-    }
-
-    .nav-tabs .nav-link {
-        color: var(--primary) !important;
+    .login-header-d365 h2 {
+        color: white;
+        margin-bottom: 8px;
+        font-size: 24px;
         font-weight: 600;
-        border: none !important;
-        border-bottom: 3px solid transparent !important;
-        padding: 15px 25px !important;
-        transition: all 0.3s ease;
-        font-size: 0.95rem;
     }
 
-    .nav-tabs .nav-link:hover {
-        color: var(--secondary) !important;
-        border-bottom-color: var(--secondary) !important;
+    .login-header-d365 p {
+        color: rgba(255,255,255,0.9);
+        margin: 0;
+        font-size: 14px;
     }
 
-    .nav-tabs .nav-link.active {
-        background-color: transparent !important;
-        color: var(--secondary) !important;
-        border-bottom-color: var(--secondary) !important;
-        box-shadow: none;
+    .login-header-d365 i {
+        margin-right: 8px;
     }
 
-    .tab-content {
-        padding: 35px;
+    /* Tabs - D365 */
+    .nav-tabs-d365 {
+        border-bottom: 1px solid #edebe9;
+        background: #f3f2f1;
+        display: flex;
+        margin: 0;
+        padding: 0;
     }
 
-    /* Form Styling */
-    .login-form .form-label {
-        color: var(--primary) !important;
-        font-weight: 600 !important;
-        font-size: 0.95rem !important;
-        margin-bottom: 8px !important;
+    .nav-tabs-d365 .nav-item {
+        flex: 1;
+        list-style: none;
     }
 
-    .login-form .form-control {
-        border: 1px solid #ddd !important;
-        border-radius: 8px !important;
-        padding: 10px 15px !important;
-        font-size: 0.9rem !important;
-        margin-bottom: 15px !important;
-    }
-
-    .login-form .form-control:focus {
-        border-color: var(--secondary) !important;
-        box-shadow: 0 0 0 0.2rem rgba(243, 156, 18, 0.25) !important;
-    }
-
-    .login-form .btn-submit {
-        background-color: var(--secondary) !important;
-        border-color: var(--secondary) !important;
-        color: white !important;
-        font-weight: 600 !important;
-        font-size: 0.95rem !important;
-        padding: 10px 20px !important;
-        width: 100%;
-        transition: all 0.3s ease;
-    }
-
-    .login-form .btn-submit:hover {
-        background-color: #e08a00 !important;
-        border-color: #e08a00 !important;
-        color: white !important;
-        transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-    }
-
-    .login-form hr {
-        border-color: #ddd !important;
-        margin: 20px 0 !important;
-    }
-
-    .form-footer {
+    .nav-tabs-d365 .nav-link-d365 {
+        display: block;
+        padding: 16px 24px;
         text-align: center;
-        font-size: 0.9rem;
+        color: #605e5c;
+        font-size: 14px;
+        font-weight: 600;
+        border: none;
+        border-bottom: 3px solid transparent;
+        background: transparent;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        width: 100%;
     }
 
-    .form-footer a {
-        color: var(--secondary) !important;
+    .nav-tabs-d365 .nav-link-d365:hover {
+        color: #0078d4;
+        background: #faf9f8;
+    }
+
+    .nav-tabs-d365 .nav-link-d365.active {
+        color: #0078d4;
+        border-bottom-color: #0078d4;
+        background: white;
+    }
+
+    .nav-tabs-d365 .nav-link-d365 i {
+        margin-right: 8px;
+    }
+
+    /* Tab Content */
+    .tab-content-d365 {
+        padding: 32px 24px;
+    }
+
+    .tab-pane-d365 {
+        display: none;
+    }
+
+    .tab-pane-d365.active {
+        display: block;
+    }
+
+    /* Info Box - D365 */
+    .info-box-d365 {
+        background: #f3f2f1;
+        border-left: 4px solid #0078d4;
+        padding: 16px;
+        margin-bottom: 24px;
+        font-size: 12px;
+        color: #323130;
+        border-radius: 2px;
+    }
+
+    .info-box-d365 i {
+        color: #0078d4;
+        margin-right: 8px;
+        font-size: 14px;
+    }
+
+    .info-box-d365 strong {
+        font-weight: 600;
+    }
+
+    /* Form - D365 */
+    .login-form-d365 .form-label-d365 {
+        font-size: 12px;
+        font-weight: 600;
+        color: #323130;
+        margin-bottom: 6px;
+        display: block;
+    }
+
+    .login-form-d365 .form-label-d365 i {
+        color: #0078d4;
+        margin-right: 6px;
+    }
+
+    .login-form-d365 .form-control-d365 {
+        width: 100%;
+        padding: 10px 12px;
+        font-size: 14px;
+        color: #323130;
+        background: white;
+        border: 1px solid #8a8886;
+        border-radius: 2px;
+        transition: all 0.2s ease;
+        margin-bottom: 16px;
+    }
+
+    .login-form-d365 .form-control-d365:focus {
+        outline: none;
+        border-color: #0078d4;
+        box-shadow: 0 0 0 1px #0078d4;
+    }
+
+    .login-form-d365 .form-control-d365::placeholder {
+        color: #a19f9d;
+    }
+
+    .btn-submit-d365 {
+        width: 100%;
+        padding: 12px 24px;
+        font-size: 14px;
+        font-weight: 600;
+        background: #0078d4;
+        color: white;
+        border: none;
+        border-radius: 2px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        margin-bottom: 16px;
+    }
+
+    .btn-submit-d365:hover {
+        background: #106ebe;
+    }
+
+    .btn-submit-d365 i {
+        margin-right: 8px;
+    }
+
+    /* Alerts - D365 */
+    .alert-d365 {
+        padding: 12px 16px;
+        margin-bottom: 20px;
+        border-radius: 2px;
+        font-size: 12px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .alert-d365-danger {
+        background: #fde7e9;
+        border: 1px solid #a80000;
+        border-left: 4px solid #a80000;
+        color: #323130;
+    }
+
+    .alert-d365-danger i {
+        color: #a80000;
+    }
+
+    .alert-d365-success {
+        background: #dff6dd;
+        border: 1px solid #107c10;
+        border-left: 4px solid #107c10;
+        color: #323130;
+    }
+
+    .alert-d365-success i {
+        color: #107c10;
+    }
+
+    /* Divider */
+    .divider-d365 {
+        height: 1px;
+        background: #edebe9;
+        margin: 20px 0;
+    }
+
+    /* Form Footer */
+    .form-footer-d365 {
+        text-align: center;
+        font-size: 12px;
+        color: #605e5c;
+    }
+
+    .form-footer-d365 a {
+        color: #0078d4;
         text-decoration: none;
         font-weight: 600;
     }
 
-    .form-footer a:hover {
+    .form-footer-d365 a:hover {
         text-decoration: underline;
-    }
-
-    .alert {
-        border-radius: 8px !important;
-        margin-bottom: 15px !important;
-    }
-
-    .input-icon {
-        position: relative;
-    }
-
-    .input-icon i {
-        position: absolute;
-        right: 15px;
-        top: 50%;
-        transform: translateY(-50%);
-        color: var(--secondary);
-        font-size: 0.9rem;
-    }
-
-    .info-text {
-        background: #ecf0f1;
-        padding: 15px;
-        border-left: 4px solid var(--secondary);
-        border-radius: 4px;
-        margin-bottom: 20px;
-        font-size: 0.9rem;
-        color: var(--dark);
-    }
-
-    .info-text i {
-        color: var(--secondary);
-        margin-right: 8px;
-        font-weight: bold;
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="login-wrapper">
+<div class="login-wrapper-d365">
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-6">
-                <div class="card login-card">
+                <div class="login-card-d365">
                     <!-- Header -->
-                    <div class="login-header">
+                    <div class="login-header-d365">
                         <h2><i class="fas fa-sign-in-alt"></i> 360Degree Supply</h2>
                         <p>Unified Login Portal</p>
                     </div>
 
                     <!-- Tabs -->
-                    <ul class="nav nav-tabs" role="tablist">
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link active" id="admin-tab" data-bs-toggle="tab" data-bs-target="#admin-pane" type="button" role="tab">
+                    <ul class="nav-tabs-d365" role="tablist">
+                        <li class="nav-item">
+                            <button class="nav-link-d365 active" id="admin-tab" data-tab="admin-pane" type="button" onclick="switchTab('admin-pane', this)">
                                 <i class="fas fa-user-shield"></i> Admin Login
                             </button>
                         </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="customer-tab" data-bs-toggle="tab" data-bs-target="#customer-pane" type="button" role="tab">
+                        <li class="nav-item">
+                            <button class="nav-link-d365" id="customer-tab" data-tab="customer-pane" type="button" onclick="switchTab('customer-pane', this)">
                                 <i class="fas fa-user"></i> Customer Login
                             </button>
                         </li>
                     </ul>
 
                     <!-- Tab Content -->
-                    <div class="tab-content">
+                    <div class="tab-content-d365">
                         <!-- Admin Login Tab -->
-                        <div class="tab-pane fade show active" id="admin-pane" role="tabpanel">
+                        <div class="tab-pane-d365 active" id="admin-pane">
                             {% with messages = get_flashed_messages(with_categories=true) %}
                                 {% if messages %}
                                     {% for category, message in messages %}
-                                        <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
+                                        <div class="alert-d365 alert-d365-{{ 'danger' if category == 'error' else 'success' }}">
                                             <i class="fas fa-{% if category == 'error' %}exclamation-circle{% else %}check-circle{% endif %}"></i>
-                                            {{ message }}
-                                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                            <span>{{ message }}</span>
                                         </div>
                                     {% endfor %}
                                 {% endif %}
                             {% endwith %}
 
-                            <div class="info-text">
+                            <div class="info-box-d365">
                                 <i class="fas fa-shield-alt"></i>
                                 <strong>Admin Access:</strong> Access the administration panel to manage your business content, products, services, and operations.
                             </div>
 
-                            <form method="POST" action="{{ url_for('admin_login') }}" class="login-form">
+                            <form method="POST" action="{{ url_for('admin_login') }}" class="login-form-d365">
                                 <div class="mb-3">
-                                    <label for="admin-email" class="form-label">
+                                    <label for="admin-email" class="form-label-d365">
                                         <i class="fas fa-envelope"></i> Email Address
                                     </label>
-                                    <input type="email" class="form-control form-control-lg" id="admin-email" name="email" 
+                                    <input type="email" class="form-control-d365" id="admin-email" name="email" 
                                            placeholder="admin@example.com" required autofocus>
                                 </div>
 
                                 <div class="mb-3">
-                                    <label for="admin-password" class="form-label">
+                                    <label for="admin-password" class="form-label-d365">
                                         <i class="fas fa-lock"></i> Password
                                     </label>
-                                    <input type="password" class="form-control form-control-lg" id="admin-password" name="password" 
+                                    <input type="password" class="form-control-d365" id="admin-password" name="password" 
                                            placeholder="••••••••" required>
                                 </div>
 
-                                <button type="submit" class="btn btn-primary btn-submit">
+                                <button type="submit" class="btn-submit-d365">
                                     <i class="fas fa-sign-in-alt"></i> Admin Login
                                 </button>
                             </form>
 
-                            <hr>
+                            <div class="divider-d365"></div>
 
-                            <div class="form-footer">
-                                <p class="mb-0">
+                            <div class="form-footer-d365">
+                                <p>
                                     <a href="{{ url_for('index') }}">
                                         <i class="fas fa-arrow-left"></i> Back to Home
                                     </a>
@@ -246,45 +322,45 @@
                         </div>
 
                         <!-- Customer Login Tab -->
-                        <div class="tab-pane fade" id="customer-pane" role="tabpanel">
-                            <div class="info-text">
+                        <div class="tab-pane-d365" id="customer-pane">
+                            <div class="info-box-d365">
                                 <i class="fas fa-user-circle"></i>
                                 <strong>Customer Access:</strong> Log in to your customer account to track orders, save preferences, and access exclusive offers.
                             </div>
 
-                            <form method="POST" action="{{ url_for('customer_login') }}" class="login-form">
+                            <form method="POST" action="{{ url_for('customer_login') }}" class="login-form-d365">
                                 <div class="mb-3">
-                                    <label for="customer-email" class="form-label">
+                                    <label for="customer-email" class="form-label-d365">
                                         <i class="fas fa-envelope"></i> Email Address
                                     </label>
-                                    <input type="email" class="form-control form-control-lg" id="customer-email" name="email" 
+                                    <input type="email" class="form-control-d365" id="customer-email" name="email" 
                                            placeholder="your@email.com" required>
                                 </div>
 
                                 <div class="mb-3">
-                                    <label for="customer-password" class="form-label">
+                                    <label for="customer-password" class="form-label-d365">
                                         <i class="fas fa-lock"></i> Password
                                     </label>
-                                    <input type="password" class="form-control form-control-lg" id="customer-password" name="password" 
+                                    <input type="password" class="form-control-d365" id="customer-password" name="password" 
                                            placeholder="••••••••" required>
                                 </div>
 
-                                <button type="submit" class="btn btn-primary btn-submit">
+                                <button type="submit" class="btn-submit-d365">
                                     <i class="fas fa-sign-in-alt"></i> Customer Login
                                 </button>
                             </form>
 
-                            <hr>
+                            <div class="form-footer-d365" style="margin-bottom: 16px;">
+                                <p>
+                                    Don't have an account?
+                                    <a href="{{ url_for('customer_register') }}">Create one now</a>
+                                </p>
+                            </div>
 
-                            <p class="text-center mb-3">
-                                Don't have an account?
-                                <a href="{{ url_for('customer_register') }}" class="fw-bold">
-                                    Create one now
-                                </a>
-                            </p>
+                            <div class="divider-d365"></div>
 
-                            <div class="form-footer">
-                                <p class="mb-0">
+                            <div class="form-footer-d365">
+                                <p>
                                     <a href="{{ url_for('index') }}">
                                         <i class="fas fa-arrow-left"></i> Back to Home
                                     </a>
@@ -297,4 +373,16 @@
         </div>
     </div>
 </div>
+
+<script>
+    function switchTab(tabId, button) {
+        // Remove active class from all tabs and panes
+        document.querySelectorAll('.nav-link-d365').forEach(link => link.classList.remove('active'));
+        document.querySelectorAll('.tab-pane-d365').forEach(pane => pane.classList.remove('active'));
+        
+        // Add active class to clicked tab and corresponding pane
+        button.classList.add('active');
+        document.getElementById(tabId).classList.add('active');
+    }
+</script>
 {% endblock %}

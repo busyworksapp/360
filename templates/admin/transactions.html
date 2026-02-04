@@ -3,170 +3,248 @@
 {% block title %}Transaction Management{% endblock %}
 
 {% block content %}
-<div class="mb-4">
-    <h3><i class="fas fa-credit-card"></i> Transaction Management</h3>
-    <p class="text-muted">View and manage all payment transactions</p>
-</div>
-
-<div class="card">
-    <div class="card-header bg-dark text-white">
-        <div class="row align-items-center">
-            <div class="col">
-                <h6 class="mb-0"><i class="fas fa-list"></i> All Transactions</h6>
-            </div>
-            <div class="col-auto">
-                <a href="#" class="btn btn-sm btn-secondary">
-                    <i class="fas fa-download"></i> Export
-                </a>
+<div style="padding: 16px; background: #faf9f8;">
+    <!-- Breadcrumb Navigation -->
+    <div class="breadcrumb-d365">
+        <a href="{{ url_for('admin_dashboard') }}">Home</a>
+        <span class="separator">/</span>
+        <span>Transactions</span>
+    </div>
+    
+    <!-- Page Title -->
+    <h1 style="font-size: 20px; font-weight: 600; margin: 4px 0 16px 0; color: #323130;">
+        Transactions
+    </h1>
+    
+    <!-- Command Bar -->
+    <div class="command-bar-d365">
+        <div class="command-bar-left">
+            <button class="btn-d365-secondary" id="viewBtn" disabled onclick="viewSelected()">
+                <i class="fas fa-eye"></i> View
+            </button>
+            <button class="btn-d365-secondary" onclick="location.reload()">
+                <i class="fas fa-sync-alt"></i> Refresh
+            </button>
+            <button class="btn-d365-secondary">
+                <i class="fas fa-download"></i> Export
+            </button>
+        </div>
+        <div class="command-bar-right">
+            <div class="search-box-d365">
+                <i class="fas fa-search"></i>
+                <input type="text" id="filterInput" placeholder="Filter" onkeyup="filterTable()">
             </div>
         </div>
     </div>
-    <div class="table-responsive">
-        <table class="table table-hover mb-0">
-            <thead class="table-light">
-                <tr>
-                    <th>Transaction ID</th>
-                    <th>Customer</th>
-                    <th>Amount</th>
-                    <th>Gateway</th>
-                    <th>Status</th>
-                    <th>Date</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for transaction in transactions.items %}
-                <tr>
-                    <td><code>{{ transaction.transaction_id }}</code></td>
-                    <td>
-                        <strong>{{ transaction.customer_name }}</strong><br>
-                        <small class="text-muted">{{ transaction.customer_email }}</small>
-                    </td>
-                    <td><strong>R {{ "%.2f"|format(transaction.amount) }}</strong></td>
-                    <td>
-                        {% if transaction.payment_gateway == 'stripe' %}
-                            <span class="badge bg-info">Stripe</span>
-                        {% elif transaction.payment_gateway == 'payfast' %}
-                            <span class="badge bg-warning">PayFast</span>
-                        {% endif %}
-                    </td>
-                    <td>
-                        {% if transaction.status == 'completed' %}
-                            <span class="badge bg-success"><i class="fas fa-check"></i> Completed</span>
-                        {% elif transaction.status == 'pending' %}
-                            <span class="badge bg-warning"><i class="fas fa-clock"></i> Pending</span>
-                        {% elif transaction.status == 'failed' %}
-                            <span class="badge bg-danger"><i class="fas fa-times"></i> Failed</span>
-                        {% endif %}
-                    </td>
-                    <td>{{ transaction.created_at.strftime('%d %b %Y %H:%M') }}</td>
-                    <td>
-                        <a href="#" class="btn btn-sm btn-info" data-bs-toggle="modal" 
-                           data-bs-target="#txnModal{{ transaction.id }}">
-                            <i class="fas fa-eye"></i> View
-                        </a>
-                    </td>
-                </tr>
-                
-                <!-- Transaction Details Modal -->
-                <div class="modal fade" id="txnModal{{ transaction.id }}" tabindex="-1">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header bg-dark text-white">
-                                <h5 class="modal-title">Transaction Details</h5>
-                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+    
+    <!-- Table Card -->
+    <div class="d365-card">
+        <div class="card-body-d365" style="padding: 0;">
+            <table class="table-d365" id="transactionsTable">
+                <thead>
+                    <tr>
+                        <th class="row-checkbox">
+                            <input type="checkbox" id="selectAll" onchange="toggleSelectAll(this)">
+                        </th>
+                        <th class="sortable">
+                            <div class="column-header">
+                                <span class="column-title">Payment Reference</span>
+                                <span class="column-icons">
+                                    <i class="fas fa-filter filter-icon"></i>
+                                    <i class="fas fa-sort sort-icon"></i>
+                                </span>
                             </div>
-                            <div class="modal-body">
-                                <div class="row mb-3">
-                                    <div class="col-sm-5"><strong>Transaction ID:</strong></div>
-                                    <div class="col-sm-7"><code>{{ transaction.transaction_id }}</code></div>
-                                </div>
-                                <div class="row mb-3">
-                                    <div class="col-sm-5"><strong>Customer Name:</strong></div>
-                                    <div class="col-sm-7">{{ transaction.customer_name }}</div>
-                                </div>
-                                <div class="row mb-3">
-                                    <div class="col-sm-5"><strong>Email:</strong></div>
-                                    <div class="col-sm-7">{{ transaction.customer_email }}</div>
-                                </div>
-                                <div class="row mb-3">
-                                    <div class="col-sm-5"><strong>Phone:</strong></div>
-                                    <div class="col-sm-7">{{ transaction.customer_phone }}</div>
-                                </div>
-                                <div class="row mb-3">
-                                    <div class="col-sm-5"><strong>Amount:</strong></div>
-                                    <div class="col-sm-7"><strong>R {{ "%.2f"|format(transaction.amount) }}</strong></div>
-                                </div>
-                                <div class="row mb-3">
-                                    <div class="col-sm-5"><strong>Invoice #:</strong></div>
-                                    <div class="col-sm-7">{{ transaction.invoice_number }}</div>
-                                </div>
-                                <div class="row mb-3">
-                                    <div class="col-sm-5"><strong>Material Type:</strong></div>
-                                    <div class="col-sm-7">{{ transaction.material_type }}</div>
-                                </div>
-                                <div class="row mb-3">
-                                    <div class="col-sm-5"><strong>Status:</strong></div>
-                                    <div class="col-sm-7">
-                                        {% if transaction.status == 'completed' %}
-                                            <span class="badge bg-success">Completed</span>
-                                        {% elif transaction.status == 'pending' %}
-                                            <span class="badge bg-warning">Pending</span>
-                                        {% else %}
-                                            <span class="badge bg-danger">Failed</span>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                                <div class="row mb-3">
-                                    <div class="col-sm-5"><strong>Date:</strong></div>
-                                    <div class="col-sm-7">{{ transaction.created_at.strftime('%d %B %Y %H:%M:%S') }}</div>
-                                </div>
+                        </th>
+                        <th class="sortable">
+                            <div class="column-header">
+                                <span class="column-title">Customer</span>
+                                <span class="column-icons">
+                                    <i class="fas fa-filter filter-icon"></i>
+                                    <i class="fas fa-sort sort-icon"></i>
+                                </span>
                             </div>
-                        </div>
-                    </div>
-                </div>
-                {% else %}
-                <tr>
-                    <td colspan="7" class="text-center text-muted py-4">No transactions found</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+                        </th>
+                        <th class="sortable" style="text-align: right;">
+                            <div class="column-header">
+                                <span class="column-title">Amount</span>
+                                <span class="column-icons">
+                                    <i class="fas fa-filter filter-icon"></i>
+                                    <i class="fas fa-sort sort-icon"></i>
+                                </span>
+                            </div>
+                        </th>
+                        <th class="sortable">
+                            <div class="column-header">
+                                <span class="column-title">Gateway</span>
+                                <span class="column-icons">
+                                    <i class="fas fa-filter filter-icon"></i>
+                                    <i class="fas fa-sort sort-icon"></i>
+                                </span>
+                            </div>
+                        </th>
+                        <th class="sortable">
+                            <div class="column-header">
+                                <span class="column-title">Status</span>
+                                <span class="column-icons">
+                                    <i class="fas fa-filter filter-icon"></i>
+                                    <i class="fas fa-sort sort-icon"></i>
+                                </span>
+                            </div>
+                        </th>
+                        <th class="sortable">
+                            <div class="column-header">
+                                <span class="column-title">Date</span>
+                                <span class="column-icons">
+                                    <i class="fas fa-filter filter-icon"></i>
+                                    <i class="fas fa-sort sort-icon"></i>
+                                </span>
+                            </div>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for transaction in transactions.items %}
+                    <tr onclick="selectRow(this, event)">
+                        <td class="row-checkbox">
+                            <input type="checkbox" class="row-select" value="{{ transaction.id }}">
+                        </td>
+                        <td>
+                            <a href="{{ url_for('admin_transaction_detail', transaction_id=transaction.id) }}">
+                                {{ transaction.payment_reference }}
+                            </a>
+                        </td>
+                        <td>
+                            <div style="font-weight: 600;">{{ transaction.customer_name }}</div>
+                            <div style="font-size: 11px; color: #605e5c;">{{ transaction.customer_email }}</div>
+                        </td>
+                        <td style="text-align: right; font-weight: 600;">
+                            R {{ "%.2f"|format(transaction.amount) }}
+                        </td>
+                        <td>
+                            {% if transaction.payment_method == 'stripe' %}
+                                <span class="badge-d365 badge-info">Stripe</span>
+                            {% elif transaction.payment_method == 'payfast' %}
+                                <span class="badge-d365 badge-warning">PayFast</span>
+                            {% elif transaction.payment_method == 'card' %}
+                                <span class="badge-d365 badge-primary">Card</span>
+                            {% elif transaction.payment_method == 'eft' %}
+                                <span class="badge-d365 badge-secondary">EFT</span>
+                            {% else %}
+                                <span class="badge-d365 badge-secondary">{{ transaction.payment_method|title }}</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if transaction.status == 'completed' %}
+                                <span class="badge-d365 badge-success">Completed</span>
+                            {% elif transaction.status == 'pending' %}
+                                <span class="badge-d365 badge-warning">Pending</span>
+                            {% elif transaction.status == 'failed' %}
+                                <span class="badge-d365 badge-danger">Failed</span>
+                            {% endif %}
+                        </td>
+                        <td style="font-size: 11px;">
+                            {{ transaction.created_at.strftime('%d %b %Y %H:%M') }}
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="7" style="text-align: center; padding: 24px; color: #605e5c;">
+                            No transactions found
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
     
     <!-- Pagination -->
-    {% if transactions.pages > 1 %}
-    <div class="card-footer bg-light">
-        <nav>
-            <ul class="pagination mb-0 justify-content-center">
-                {% if transactions.has_prev %}
-                    <li class="page-item">
-                        <a class="page-link" href="{{ url_for('admin_transactions', page=transactions.prev_num) }}">Previous</a>
-                    </li>
-                {% endif %}
-                
-                {% for page_num in transactions.iter_pages() %}
-                    {% if page_num %}
-                        {% if page_num == transactions.page %}
-                            <li class="page-item active">
-                                <span class="page-link">{{ page_num }}</span>
-                            </li>
-                        {% else %}
-                            <li class="page-item">
-                                <a class="page-link" href="{{ url_for('admin_transactions', page=page_num) }}">{{ page_num }}</a>
-                            </li>
-                        {% endif %}
-                    {% endif %}
-                {% endfor %}
-                
-                {% if transactions.has_next %}
-                    <li class="page-item">
-                        <a class="page-link" href="{{ url_for('admin_transactions', page=transactions.next_num) }}">Next</a>
-                    </li>
-                {% endif %}
-            </ul>
-        </nav>
+    {% if transactions.has_prev or transactions.has_next %}
+    <div style="margin-top: 12px; display: flex; justify-content: space-between; align-items: center;">
+        <div style="font-size: 12px; color: #605e5c;">
+            <span>Page {{ transactions.page }} of {{ transactions.pages }} | Total records: {{ transactions.total }}</span>
+        </div>
+        <div style="display: flex; gap: 8px;">
+            {% if transactions.has_prev %}
+            <a href="{{ url_for('admin_transactions', page=transactions.prev_num) }}" class="btn-d365-secondary" style="padding: 6px 12px; font-size: 12px;">
+                <i class="fas fa-chevron-left"></i> Previous
+            </a>
+            {% endif %}
+            {% if transactions.has_next %}
+            <a href="{{ url_for('admin_transactions', page=transactions.next_num) }}" class="btn-d365-primary" style="padding: 6px 12px; font-size: 12px;">
+                Next <i class="fas fa-chevron-right"></i>
+            </a>
+            {% endif %}
+        </div>
+    </div>
+    {% else %}
+    <div style="margin-top: 12px; font-size: 12px; color: #605e5c;">
+        <span>Total records: {{ transactions.total }}</span>
     </div>
     {% endif %}
 </div>
+
+<script>
+function toggleSelectAll(checkbox) {
+    const checkboxes = document.querySelectorAll('.row-select');
+    checkboxes.forEach(cb => {
+        cb.checked = checkbox.checked;
+        if (checkbox.checked) {
+            cb.closest('tr').classList.add('selected');
+        } else {
+            cb.closest('tr').classList.remove('selected');
+        }
+    });
+    updateCommandBar();
+}
+
+function selectRow(row, event) {
+    if (event.target.tagName === 'A' || event.target.type === 'checkbox') {
+        return;
+    }
+    
+    const checkbox = row.querySelector('.row-select');
+    checkbox.checked = !checkbox.checked;
+    
+    if (checkbox.checked) {
+        row.classList.add('selected');
+    } else {
+        row.classList.remove('selected');
+    }
+    
+    updateCommandBar();
+}
+
+function updateCommandBar() {
+    const checkedCount = document.querySelectorAll('.row-select:checked').length;
+    const viewBtn = document.getElementById('viewBtn');
+    
+    viewBtn.disabled = checkedCount !== 1;
+}
+
+function viewSelected() {
+    const checked = document.querySelector('.row-select:checked');
+    if (checked) {
+        window.location.href = "{{ url_for('admin_transaction_detail', transaction_id=0) }}".replace('0', checked.value);
+    }
+}
+
+function filterTable() {
+    const input = document.getElementById('filterInput');
+    const filter = input.value.toLowerCase();
+    const table = document.getElementById('transactionsTable');
+    const rows = table.getElementsByTagName('tr');
+    
+    for (let i = 1; i < rows.length; i++) {
+        const row = rows[i];
+        const text = row.textContent || row.innerText;
+        
+        if (text.toLowerCase().indexOf(filter) > -1) {
+            row.style.display = '';
+        } else {
+            row.style.display = 'none';
+        }
+    }
+}
+</script>
 {% endblock %}

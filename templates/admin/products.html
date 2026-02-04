@@ -1,177 +1,167 @@
 {% extends "admin/base.html" %}
 
-{% block title %}Products Management{% endblock %}
+{% block title %}Products Management - Admin{% endblock %}
 
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h3><i class="fas fa-box"></i> Products Management</h3>
-    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addProductModal">
-        <i class="fas fa-plus"></i> Add Product
-    </button>
-</div>
-
-<div class="card">
-    <div class="table-responsive">
-        <table class="table table-hover">
-            <thead class="table-dark">
-                <tr>
-                    <th>Product Name</th>
-                    <th>Category</th>
-                    <th>
-                        <i class="fas fa-rand"></i> Local Price (ZAR)
-                    </th>
-                    <th>
-                        <i class="fas fa-dollar-sign"></i> International (USD)
-                    </th>
-                    <th>Unit</th>
-                    <th>Status</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for product in products %}
-                <tr>
-                    <td><strong>{{ product.name }}</strong></td>
-                    <td><span class="badge bg-secondary">{{ product.category }}</span></td>
-                    <td>
-                        {% if product.price_zar %}
-                            <strong>R {{ "%.2f"|format(product.price_zar) }}</strong>
-                        {% elif product.price %}
-                            <strong>R {{ "%.2f"|format(product.price) }}</strong>
-                            <small class="text-muted">(legacy)</small>
-                        {% else %}
-                            <span class="text-muted">—</span>
-                        {% endif %}
-                    </td>
-                    <td>
-                        {% if product.price_usd %}
-                            <strong>${{ "%.2f"|format(product.price_usd) }}</strong>
-                        {% else %}
-                            <span class="text-muted">—</span>
-                        {% endif %}
-                    </td>
-                    <td>{{ product.unit }}</td>
-                    <td>
-                        {% if product.is_active %}
-                            <span class="badge bg-success">Active</span>
-                        {% else %}
-                            <span class="badge bg-secondary">Inactive</span>
-                        {% endif %}
-                    </td>
-                    <td>
-                        <a href="{{ url_for('admin_product_edit', id=product.id) }}" 
-                           class="btn btn-sm btn-info">
-                            <i class="fas fa-edit"></i>
-                        </a>
-                        <button class="btn btn-sm btn-danger" 
-                                onclick="deleteProduct({{ product.id }})">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </td>
-                </tr>
-                {% else %}
-                <tr>
-                    <td colspan="7" class="text-center text-muted py-4">
-                        No products found
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+<div class="dashboard-container">
+    <!-- Page Header -->
+    <div class="page-header-d365">
+        <div class="header-content">
+            <h1><i class="fas fa-box"></i> Products Management</h1>
+            <p class="header-subtitle">Manage your product catalog and pricing</p>
+        </div>
+        <div class="header-actions">
+            <a href="{{ url_for('admin_product_add') }}" class="btn-d365-primary">
+                <i class="fas fa-plus"></i>
+                <span>Add Product</span>
+            </a>
+        </div>
     </div>
-</div>
 
-<!-- Add Product Modal -->
-<div class="modal fade" id="addProductModal" tabindex="-1">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header bg-dark text-white">
-                <h5 class="modal-title">Add New Product</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-            </div>
-            <form method="POST" enctype="multipart/form-data">
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="name" class="form-label">Product Name</label>
-                                <input type="text" class="form-control" id="name" name="name" required>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="category" class="form-label">Category</label>
-                                <select class="form-select" id="category" name="category">
-                                    <option value="Chrome ROM">Chrome ROM</option>
-                                    <option value="Chrome Concentrate">Chrome Concentrate</option>
-                                    <option value="Diesel">Diesel</option>
-                                    <option value="Fuel">Fuel</option>
-                                    <option value="Minerals">Minerals</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label for="description" class="form-label">Description</label>
-                        <textarea class="form-control" id="description" name="description" rows="2"></textarea>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label for="specifications" class="form-label">Specifications</label>
-                        <textarea class="form-control" id="specifications" name="specifications" rows="2"></textarea>
-                    </div>
-                    
-                    <div class="row">
-                        <div class="col-md-4">
-                            <div class="mb-3">
-                                <label for="price" class="form-label">Price (ZAR)</label>
-                                <input type="number" class="form-control" id="price" name="price" step="0.01">
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="mb-3">
-                                <label for="unit" class="form-label">Unit</label>
-                                <input type="text" class="form-control" id="unit" name="unit" placeholder="Liter, Ton, kg">
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="mb-3">
-                                <label for="order_position" class="form-label">Order</label>
-                                <input type="number" class="form-control" id="order_position" name="order_position" value="0">
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="is_active" name="is_active" checked>
-                            <label class="form-check-label" for="is_active">Active</label>
-                        </div>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label for="image" class="form-label">Product Image</label>
-                        <input type="file" class="form-control" id="image" name="image" accept=".png,.jpg,.jpeg,.gif,.webp">
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Create Product</button>
-                </div>
-            </form>
+    <!-- Products Card -->
+    <div class="d365-card">
+        <div class="card-header-d365">
+            <h2>All Products</h2>
+        </div>
+        <div class="card-body-d365" style="padding: 0;">
+            <table class="table-d365">
+                <thead>
+                    <tr>
+                        <th>Product Name</th>
+                        <th>Category</th>
+                        <th><i class="fas fa-coins"></i> ZAR Price</th>
+                        <th><i class="fas fa-dollar-sign"></i> USD Price</th>
+                        <th>Unit</th>
+                        <th>Status</th>
+                        <th style="text-align: right;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for product in products %}
+                    <tr>
+                        <td><strong>{{ product.name }}</strong></td>
+                        <td>
+                            <span class="badge-d365 info">{{ product.category }}</span>
+                        </td>
+                        <td>
+                            {% if product.price_zar %}
+                                <strong>R {{ "%.2f"|format(product.price_zar) }}</strong>
+                            {% elif product.price %}
+                                <strong>R {{ "%.2f"|format(product.price) }}</strong>
+                            {% else %}
+                                <span style="color: var(--d365-neutral-tertiary);">—</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if product.price_usd %}
+                                <strong>${{ "%.2f"|format(product.price_usd) }}</strong>
+                            {% else %}
+                                <span style="color: var(--d365-neutral-tertiary);">—</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ product.unit }}</td>
+                        <td>
+                            {% if product.is_active %}
+                                <span class="badge-d365 success">Active</span>
+                            {% else %}
+                                <span class="badge-d365 warning">Inactive</span>
+                            {% endif %}
+                        </td>
+                        <td style="text-align: right;">
+                            <a href="{{ url_for('admin_product_edit', id=product.id) }}" 
+                               class="btn-d365-secondary" style="padding: 6px 12px; font-size: 13px;">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <button class="btn-d365-secondary" 
+                                    style="padding: 6px 12px; font-size: 13px; margin-left: 4px; border-color: var(--d365-red); color: var(--d365-red);"
+                                    onclick="deleteProduct({{ product.id }})">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="7" style="text-align: center; padding: 48px; color: var(--d365-neutral-tertiary);">
+                            <i class="fas fa-box" style="font-size: 48px; margin-bottom: 16px; display: block; opacity: 0.3;"></i>
+                            <p style="margin: 0;">No products found. Add your first product to get started.</p>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
 
+<style>
+    .dashboard-container {
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    .page-header-d365 {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 24px;
+        padding-bottom: 16px;
+        border-bottom: 1px solid var(--d365-neutral-light);
+    }
+
+    .header-content h1 {
+        font-size: 28px;
+        font-weight: 600;
+        color: var(--d365-neutral-primary);
+        margin: 0 0 4px 0;
+    }
+
+    .header-content h1 i {
+        color: var(--d365-theme-primary);
+        margin-right: 8px;
+    }
+
+    .header-subtitle {
+        color: var(--d365-neutral-secondary);
+        font-size: 14px;
+        margin: 0;
+    }
+
+    .header-actions {
+        display: flex;
+        gap: 8px;
+    }
+
+    .btn-d365-secondary:hover {
+        background: var(--d365-neutral-light);
+    }
+
+    button.btn-d365-secondary[style*="border-color: var(--d365-red)"]:hover {
+        background: rgba(255, 0, 0, 0.05);
+        border-color: darkred !important;
+        color: darkred !important;
+    }
+</style>
+
 <script>
-function deleteProduct(id) {
-    if (confirm('Delete this product?')) {
-        fetch(`/admin/products/${id}`, {method: 'DELETE'})
-            .then(r => r.json())
-            .then(d => {
-                if (d.success) location.reload();
-            });
+function deleteProduct(productId) {
+    if (confirm('Are you sure you want to delete this product? This action cannot be undone.')) {
+        fetch(`/admin/products/${productId}/delete`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            } else {
+                alert('Error deleting product: ' + (data.error || 'Unknown error'));
+            }
+        })
+        .catch(error => {
+            alert('Error deleting product: ' + error);
+        });
     }
 }
 </script>

@@ -341,7 +341,7 @@ class Order(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     customer_id = db.Column(
-        db.Integer, db.ForeignKey('users.id'),
+        db.Integer, db.ForeignKey('customers.id'),
         nullable=False
     )
     order_number = db.Column(db.String(50), unique=True, nullable=False)
@@ -365,25 +365,25 @@ class Order(db.Model):
     billing_address = db.Column(db.Text)
     notes = db.Column(db.Text)
     
-    # ===== PAYMENT TRACKING (Phase 6) =====
-    payment_method = db.Column(
-        db.String(50),
-        nullable=True
-    )
-    # Payment method used: 'stripe', 'payfast', etc.
+    # ===== PAYMENT TRACKING (Phase 6) - COMMENTED OUT UNTIL DATABASE MIGRATION =====
+    # payment_method = db.Column(
+    #     db.String(50),
+    #     nullable=True
+    # )
+    # # Payment method used: 'stripe', 'payfast', etc.
     
-    payment_reference = db.Column(
-        db.String(255),
-        nullable=True,
-        index=True
-    )
-    # Payment reference from gateway (for easy lookup)
+    # payment_reference = db.Column(
+    #     db.String(255),
+    #     nullable=True,
+    #     index=True
+    # )
+    # # Payment reference from gateway (for easy lookup)
     
-    payment_confirmed_at = db.Column(
-        db.DateTime,
-        nullable=True
-    )
-    # When payment was confirmed by gateway
+    # payment_confirmed_at = db.Column(
+    #     db.DateTime,
+    #     nullable=True
+    # )
+    # # When payment was confirmed by gateway
     
     created_at = db.Column(
         db.DateTime, default=datetime.utcnow
@@ -395,7 +395,7 @@ class Order(db.Model):
 
     # Relationships
     customer = db.relationship(
-        'User', backref=db.backref(
+        'Customer', backref=db.backref(
             'orders', lazy=True, cascade='all, delete-orphan'
         )
     )
@@ -656,6 +656,7 @@ class Invoice(db.Model):
     customer = db.relationship('Customer', backref='invoices')
     order = db.relationship('Order', backref='invoices')
     payments = db.relationship('InvoicePayment', backref='invoice', cascade='all, delete-orphan')
+    items = db.relationship('InvoiceItem', backref='invoice', cascade='all, delete-orphan', lazy=True)
 
     def __repr__(self):
         return f'<Invoice {self.invoice_number}>'
@@ -702,6 +703,72 @@ class InvoicePayment(db.Model):
 
     def __repr__(self):
         return f'<InvoicePayment {self.id}>'
+
+
+class InvoiceItem(db.Model):
+    """Invoice line items model"""
+    __tablename__ = 'invoice_items'
+
+    id = db.Column(db.Integer, primary_key=True)
+    invoice_id = db.Column(db.Integer, db.ForeignKey('invoices.id'), nullable=False)
+    order_id = db.Column(db.Integer, db.ForeignKey('orders.id'), nullable=True)
+    description = db.Column(db.String(500), nullable=False)
+    quantity = db.Column(db.Integer, default=1, nullable=False)
+    unit_price = db.Column(db.Numeric(10, 2), nullable=False)
+    total = db.Column(db.Numeric(10, 2), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    # Relationships
+    order = db.relationship('Order', backref='invoice_items')
+
+    def __repr__(self):
+        return f'<InvoiceItem {self.id}>'
+
+
+class ProofOfPayment(db.Model):
+    """Proof of Payment model for EFT/Bank Transfer"""
+    __tablename__ = 'proof_of_payments'
+
+    id = db.Column(db.Integer, primary_key=True)
+    invoice_payment_id = db.Column(db.Integer, db.ForeignKey('invoice_payments.id'), nullable=False)
+    invoice_id = db.Column(db.Integer, db.ForeignKey('invoices.id'), nullable=False)
+    customer_id = db.Column(db.Integer, db.ForeignKey('customers.id'), nullable=False)
+    
+    # File information
+    file_path = db.Column(db.String(500), nullable=False)
+    file_name = db.Column(db.String(255), nullable=False)
+    file_type = db.Column(db.String(50), nullable=False)  # pdf, jpg, png
+    file_size = db.Column(db.Integer)  # in bytes
+    
+    # OCR extracted data
+    extracted_amount = db.Column(db.Numeric(10, 2))
+    extracted_reference = db.Column(db.String(255))
+    extracted_date = db.Column(db.DateTime)
+    extracted_payer_name = db.Column(db.String(255))
+    extracted_payer_account = db.Column(db.String(100))
+    extracted_bank_name = db.Column(db.String(100))
+    ocr_confidence = db.Column(db.Float)  # Confidence score 0-1
+    ocr_raw_text = db.Column(db.Text)  # Full extracted text for review
+    
+    # Validation status
+    verification_status = db.Column(db.String(50), default='pending')  # pending, verified, rejected, manual_review
+    amount_matched = db.Column(db.Boolean, default=False)
+    verification_notes = db.Column(db.Text)
+    verified_by = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
+    verified_at = db.Column(db.DateTime)
+    
+    # Timestamps
+    uploaded_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    processed_at = db.Column(db.DateTime)  # When OCR processing completed
+    
+    # Relationships
+    invoice = db.relationship('Invoice', backref='proof_of_payments')
+    customer = db.relationship('Customer', backref='proof_of_payments')
+    invoice_payment = db.relationship('InvoicePayment', backref='proof_of_payment', uselist=False)
+    
+    def __repr__(self):
+        return f'<ProofOfPayment {self.id} - Invoice {self.invoice_id}>'
+
 
 
 

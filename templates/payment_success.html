@@ -2,81 +2,236 @@
 
 {% block title %}Payment Successful - 360Degree Supply{% endblock %}
 
+{% block extra_css %}
+<style>
+    /* D365 Success Page Styling */
+    
+    .success-wrapper-d365 {
+        background-color: #faf9f8;
+        min-height: calc(100vh - 200px);
+        display: flex;
+        align-items: center;
+        padding: 60px 0;
+    }
+
+    .success-card-d365 {
+        background: white;
+        border: 1px solid #edebe9;
+        border-radius: 2px;
+        box-shadow: 0 6.4px 14.4px 0 rgba(0,0,0,.132), 0 1.2px 3.6px 0 rgba(0,0,0,.108);
+        padding: 48px 32px;
+        text-align: center;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    .success-icon-d365 {
+        font-size: 72px;
+        color: #107c10;
+        margin-bottom: 24px;
+    }
+
+    .success-card-d365 h1 {
+        font-size: 28px;
+        font-weight: 600;
+        color: #323130;
+        margin-bottom: 16px;
+    }
+
+    .success-card-d365 .lead-text {
+        font-size: 14px;
+        color: #605e5c;
+        margin-bottom: 32px;
+    }
+
+    .details-box-d365 {
+        background-color: #f3f2f1;
+        padding: 24px;
+        border-radius: 2px;
+        margin-bottom: 32px;
+        border: 1px solid #edebe9;
+    }
+
+    .details-box-d365 h5 {
+        font-size: 16px;
+        font-weight: 600;
+        color: #323130;
+        margin-bottom: 20px;
+    }
+
+    .detail-row-d365 {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 12px;
+        text-align: left;
+    }
+
+    .detail-row-d365 .label {
+        font-size: 12px;
+        color: #605e5c;
+    }
+
+    .detail-row-d365 .value {
+        font-size: 12px;
+        font-weight: 600;
+        color: #323130;
+    }
+
+    .info-alert-d365 {
+        background: #f3f9fd;
+        border: 1px solid #0078d4;
+        border-left: 4px solid #0078d4;
+        border-radius: 2px;
+        padding: 16px 20px;
+        margin-bottom: 32px;
+        text-align: left;
+        font-size: 12px;
+    }
+
+    .info-alert-d365 i {
+        color: #0078d4;
+        margin-right: 8px;
+        font-size: 14px;
+    }
+
+    .info-alert-d365 strong {
+        font-weight: 600;
+        color: #323130;
+    }
+
+    .info-alert-d365 p {
+        margin: 8px 0 0 0;
+        color: #605e5c;
+    }
+
+    .btn-primary-d365 {
+        background: #0078d4;
+        color: white;
+        border: none;
+        padding: 12px 32px;
+        font-size: 14px;
+        font-weight: 600;
+        border-radius: 2px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        text-decoration: none;
+        display: inline-block;
+        margin: 0 8px 16px;
+    }
+
+    .btn-primary-d365:hover {
+        background: #106ebe;
+        color: white;
+    }
+
+    .btn-secondary-d365 {
+        background: white;
+        color: #323130;
+        border: 1px solid #8a8886;
+        padding: 12px 32px;
+        font-size: 14px;
+        font-weight: 600;
+        border-radius: 2px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        text-decoration: none;
+        display: inline-block;
+        margin: 0 8px 16px;
+    }
+
+    .btn-secondary-d365:hover {
+        background: #f3f2f1;
+        color: #323130;
+    }
+
+    .divider-d365 {
+        height: 1px;
+        background: #edebe9;
+        margin: 24px 0;
+    }
+
+    .support-text-d365 {
+        font-size: 12px;
+        color: #605e5c;
+        margin: 0;
+    }
+
+    .support-text-d365 a {
+        color: #0078d4;
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+    .support-text-d365 a:hover {
+        text-decoration: underline;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<div class="container my-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card shadow-lg border-0">
-                <div class="card-body text-center py-5">
+<div class="success-wrapper-d365">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="success-card-d365">
                     <!-- Success Icon -->
-                    <div class="mb-4">
-                        <i class="fas fa-check-circle" style="font-size: 4rem; color: #28a745;"></i>
+                    <div class="success-icon-d365">
+                        <i class="fas fa-check-circle"></i>
                     </div>
 
                     <!-- Title -->
-                    <h1 class="display-5 mb-3" style="color: var(--primary);">
-                        <strong>Payment Successful!</strong>
-                    </h1>
+                    <h1>Payment Successful!</h1>
 
                     <!-- Message -->
-                    <p class="lead text-muted mb-4">
+                    <p class="lead-text">
                         Thank you for your payment. Your transaction has been completed successfully.
                     </p>
 
                     <!-- Order Details -->
-                    <div style="background-color: #f8f9fa; padding: 20px; border-radius: 12px; margin-bottom: 30px;">
-                        <h5 class="mb-3" style="color: var(--primary);">Payment Details</h5>
-                        <div class="row text-start">
-                            <div class="col-6">
-                                <p><small class="text-muted">Transaction ID:</small></p>
-                                <p><strong>#TXN-{{ range(10000, 99999)|random }}</strong></p>
-                            </div>
-                            <div class="col-6">
-                                <p><small class="text-muted">Date & Time:</small></p>
-                                <p><strong>{{ now.strftime('%d %b %Y, %H:%M') if now else 'N/A' }}</strong></p>
-                            </div>
+                    <div class="details-box-d365">
+                        <h5>Payment Details</h5>
+                        <div class="detail-row-d365">
+                            <span class="label">Transaction ID:</span>
+                            <span class="value">#TXN-{{ range(10000, 99999)|random }}</span>
+                        </div>
+                        <div class="detail-row-d365">
+                            <span class="label">Date & Time:</span>
+                            <span class="value">{{ now.strftime('%d %b %Y, %H:%M') if now else 'N/A' }}</span>
+                        </div>
+                        <div class="detail-row-d365">
+                            <span class="label">Status:</span>
+                            <span class="value" style="color: #107c10;">Completed</span>
                         </div>
                     </div>
 
                     <!-- Next Steps -->
-                    <div class="alert alert-info mb-4">
-                        <i class="fas fa-info-circle"></i>
-                        <strong> What's Next?</strong>
-                        <p class="mb-0 mt-2">A confirmation email has been sent to your registered email address. You can track your order status in your dashboard.</p>
+                    <div class="info-alert-d365">
+                        <div>
+                            <i class="fas fa-info-circle"></i>
+                            <strong>What's Next?</strong>
+                        </div>
+                        <p>A confirmation email has been sent to your registered email address. You can track your order status in your dashboard.</p>
                     </div>
 
                     <!-- Action Buttons -->
-                    <div class="d-grid gap-2">
-                        <a href="{{ url_for('index') }}" class="btn btn-lg" style="background-color: var(--primary); color: white;">
+                    <div>
+                        <a href="{{ url_for('index') }}" class="btn-primary-d365">
                             <i class="fas fa-home"></i> Return to Home
                         </a>
-                        <a href="{{ url_for('customer_orders') if current_user.is_authenticated else url_for('login') }}" class="btn btn-lg btn-outline-primary">
+                        <a href="{{ url_for('customer_orders') if current_user.is_authenticated else url_for('login') }}" class="btn-secondary-d365">
                             <i class="fas fa-box"></i> View My Orders
                         </a>
                     </div>
 
                     <!-- Contact Support -->
-                    <div class="mt-4 pt-3 border-top">
-                        <p class="text-muted small mb-0">
-                            Need help? 
-                            <a href="{{ url_for('contact') }}" style="color: var(--secondary); text-decoration: none;">
-                                Contact our support team
-                            </a>
-                        </p>
-                    </div>
+                    <div class="divider-d365"></div>
+                    <p class="support-text-d365">
+                        Need help? 
+                        <a href="{{ url_for('contact') }}">Contact our support team</a>
+                    </p>
                 </div>
             </div>
         </div>
     </div>
 </div>
-
-<style>
-    .card {
-        border-radius: 16px !important;
-    }
-    
-    .display-5 {
-        font-weight: 700;
-    }
-</style>
 {% endblock %}

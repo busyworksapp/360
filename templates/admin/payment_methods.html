@@ -3,59 +3,159 @@
 {% block title %}Payment Methods Management - Admin{% endblock %}
 
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h3><i class="fas fa-credit-card"></i> Payment Methods</h3>
-    <span class="badge bg-primary">{{ payment_methods|length }} Active</span>
-</div>
-
-{% if payment_methods %}
-<div class="card">
-    <div class="table-responsive">
-        <table class="table table-hover">
-            <thead class="table-dark">
-                <tr>
-                    <th>Payment Method</th>
-                    <th>Description</th>
-                    <th>Instructions</th>
-                    <th>Order</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for method in payment_methods %}
-                <tr>
-                    <td><strong>{{ method.name }}</strong></td>
-                    <td>{{ method.description[:60] if method.description else 'N/A' }}...</td>
-                    <td>
-                        {% if method.description %}
-                            <small>{{ method.description[:40] }}...</small>
-                        {% else %}
-                            <small class="text-muted">No description</small>
-                        {% endif %}
-                    </td>
-                    <td>
-                        <span class="badge bg-info">{{ method.order_position }}</span>
-                    </td>
-                    <td>
-                        {% if method.is_active %}
-                            <span class="badge bg-success">Active</span>
-                        {% else %}
-                            <span class="badge bg-secondary">Inactive</span>
-                        {% endif %}
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+<div style="padding: 16px; background: #faf9f8;">
+    <!-- Breadcrumb Navigation -->
+    <div class="breadcrumb-d365">
+        <a href="{{ url_for('admin_dashboard') }}">Home</a>
+        <span class="separator">/</span>
+        <span>Payment Methods</span>
+    </div>
+    
+    <!-- Page Title -->
+    <h1 style="font-size: 20px; font-weight: 600; margin: 4px 0 16px 0; color: #323130;">
+        Payment Methods
+    </h1>
+    
+    <!-- Command Bar -->
+    <div class="command-bar-d365">
+        <div class="command-bar-left">
+            <button class="btn-d365-secondary" onclick="location.reload()">
+                <i class="fas fa-sync-alt"></i> Refresh
+            </button>
+        </div>
+        <div class="command-bar-right">
+            <div class="search-box-d365">
+                <i class="fas fa-search"></i>
+                <input type="text" id="filterInput" placeholder="Filter" onkeyup="filterTable()">
+            </div>
+        </div>
+    </div>
+    
+    <!-- Table Card -->
+    <div class="d365-card">
+        <div class="card-body-d365" style="padding: 0;">
+            <table class="table-d365" id="paymentMethodsTable">
+                <thead>
+                    <tr>
+                        <th class="sortable">
+                            <div class="column-header">
+                                <span class="column-title">Payment Method</span>
+                                <span class="column-icons">
+                                    <i class="fas fa-filter filter-icon"></i>
+                                    <i class="fas fa-sort sort-icon"></i>
+                                </span>
+                            </div>
+                        </th>
+                        <th class="sortable">
+                            <div class="column-header">
+                                <span class="column-title">Description</span>
+                                <span class="column-icons">
+                                    <i class="fas fa-filter filter-icon"></i>
+                                    <i class="fas fa-sort sort-icon"></i>
+                                </span>
+                            </div>
+                        </th>
+                        <th class="sortable">
+                            <div class="column-header">
+                                <span class="column-title">Instructions</span>
+                                <span class="column-icons">
+                                    <i class="fas fa-filter filter-icon"></i>
+                                    <i class="fas fa-sort sort-icon"></i>
+                                </span>
+                            </div>
+                        </th>
+                        <th class="sortable" style="text-align: center;">
+                            <div class="column-header">
+                                <span class="column-title">Order</span>
+                                <span class="column-icons">
+                                    <i class="fas fa-filter filter-icon"></i>
+                                    <i class="fas fa-sort sort-icon"></i>
+                                </span>
+                            </div>
+                        </th>
+                        <th class="sortable">
+                            <div class="column-header">
+                                <span class="column-title">Status</span>
+                                <span class="column-icons">
+                                    <i class="fas fa-filter filter-icon"></i>
+                                    <i class="fas fa-sort sort-icon"></i>
+                                </span>
+                            </div>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for method in payment_methods %}
+                    <tr>
+                        <td style="font-weight: 600;">{{ method.name }}</td>
+                        <td>
+                            {% if method.description %}
+                                {{ method.description[:60] }}{% if method.description|length > 60 %}...{% endif %}
+                            {% else %}
+                                <span style="color: #a19f9d;">N/A</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if method.description %}
+                                <span style="font-size: 11px; color: #605e5c;">{{ method.description[:40] }}{% if method.description|length > 40 %}...{% endif %}</span>
+                            {% else %}
+                                <span style="font-size: 11px; color: #a19f9d;">No description</span>
+                            {% endif %}
+                        </td>
+                        <td style="text-align: center;">{{ method.order_position }}</td>
+                        <td>
+                            {% if method.is_active %}
+                                <span class="badge-d365 badge-success">Active</span>
+                            {% else %}
+                                <span class="badge-d365 badge-secondary">Inactive</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="5" style="text-align: center; padding: 24px; color: #605e5c;">
+                            No payment methods configured yet
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <!-- Footer -->
+    <div style="margin-top: 12px; font-size: 12px; color: #605e5c;">
+        <span>Total records: {{ payment_methods|length }}</span>
+    </div>
+    
+    <!-- Info Message -->
+    <div style="margin-top: 16px; padding: 12px; background: #e7f3ff; border-left: 3px solid #0078d4; border-radius: 2px;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+            <i class="fas fa-info-circle" style="color: #0078d4;"></i>
+            <span style="font-size: 12px; color: #323130;">
+                Payment methods are currently managed through the database. Contact your system administrator to add or modify payment methods.
+            </span>
+        </div>
     </div>
 </div>
-{% else %}
-<div class="alert alert-info" role="alert">
-    <i class="fas fa-info-circle"></i> No payment methods configured yet.
-</div>
-{% endif %}
 
-<div class="mt-4">
-    <p class="text-muted"><i class="fas fa-info-circle"></i> Payment methods are currently managed through the database. Contact your system administrator to add or modify payment methods.</p>
-</div>
+<script>
+function filterTable() {
+    const input = document.getElementById('filterInput');
+    const filter = input.value.toLowerCase();
+    const table = document.getElementById('paymentMethodsTable');
+    const rows = table.getElementsByTagName('tr');
+    
+    for (let i = 1; i < rows.length; i++) {
+        const row = rows[i];
+        const text = row.textContent || row.innerText;
+        
+        if (text.toLowerCase().indexOf(filter) > -1) {
+            row.style.display = '';
+        } else {
+            row.style.display = 'none';
+        }
+    }
+}
+</script>
 {% endblock %}

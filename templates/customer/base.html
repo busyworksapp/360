@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Customer Portal - 360Degree Supply{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    {% block extra_css %}{% endblock %}
+    <style>
+        /* D365 Color System */
+        :root {
+            --d365-neutral-primary: #323130;
+            --d365-neutral-secondary: #605e5c;
+            --d365-neutral-tertiary: #a19f9d;
+            --d365-neutral-light: #edebe9;
+            --d365-neutral-lighter: #f3f2f1;
+            --d365-neutral-lightest: #faf9f8;
+            --d365-white: #ffffff;
+            --d365-theme-primary: #0078d4;
+            --d365-theme-dark: #106ebe;
+            --d365-red: #a4262c;
+            --d365-green: #107c10;
+            --d365-orange: #d83b01;
+            --sidebar-width: 48px;
+            --sidebar-expanded-width: 220px;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Roboto', 'Helvetica Neue', sans-serif;
+            font-size: 14px;
+            color: var(--d365-neutral-primary);
+            background: var(--d365-neutral-lightest);
+            line-height: 1.5;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* D365 Sidebar */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            height: 100vh;
+            width: var(--sidebar-width);
+            background: var(--d365-neutral-primary);
+            transition: width 0.2s cubic-bezier(0.1, 0.9, 0.2, 1);
+            z-index: 1000;
+            overflow: hidden;
+            border-right: 1px solid var(--d365-neutral-light);
+        }
+
+        .sidebar:hover {
+            width: var(--sidebar-expanded-width);
+            box-shadow: 0 6.4px 14.4px rgba(0,0,0,0.132);
+        }
+
+        .sidebar-header {
+            height: 48px;
+            display: flex;
+            align-items: center;
+            padding: 0 12px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            background: var(--d365-neutral-primary);
+        }
+
+        .sidebar-header i {
+            color: var(--d365-theme-primary);
+            font-size: 20px;
+            min-width: 24px;
+            text-align: center;
+        }
+
+        .sidebar-header .brand-text {
+            color: var(--d365-white);
+            font-size: 14px;
+            font-weight: 600;
+            margin-left: 12px;
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .sidebar:hover .sidebar-header .brand-text {
+            opacity: 1;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 8px 0;
+            margin: 0;
+        }
+
+        .sidebar-menu li {
+            margin: 0;
+        }
+
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            height: 40px;
+            padding: 0 12px;
+            color: var(--d365-white);
+            text-decoration: none;
+            transition: background 0.1s;
+            position: relative;
+            font-size: 14px;
+        }
+
+        .sidebar-menu a:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        .sidebar-menu a.active {
+            background: var(--d365-theme-primary);
+        }
+
+        .sidebar-menu a.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: var(--d365-white);
+        }
+
+        .sidebar-menu a i {
+            min-width: 24px;
+            text-align: center;
+            font-size: 16px;
+        }
+
+        .sidebar-menu a span {
+            margin-left: 12px;
+            opacity: 0;
+            transition: opacity 0.2s;
+            white-space: nowrap;
+        }
+
+        .sidebar:hover .sidebar-menu a span {
+            opacity: 1;
+        }
+
+        .sidebar-footer {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            padding: 8px 0;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            transition: margin-left 0.2s;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Top Bar - D365 Style */
+        .topbar {
+            background: var(--d365-white);
+            height: 48px;
+            border-bottom: 1px solid var(--d365-neutral-light);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 24px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .topbar-left h4 {
+            margin: 0;
+            color: var(--d365-neutral-primary);
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .topbar-icon-btn {
+            background: transparent;
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--d365-neutral-primary);
+            transition: background 0.1s;
+        }
+
+        .topbar-icon-btn:hover {
+            background: var(--d365-neutral-lighter);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 2px;
+            transition: background 0.1s;
+        }
+
+        .user-info:hover {
+            background: var(--d365-neutral-lighter);
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--d365-theme-primary);
+            color: var(--d365-white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 12px;
+        }
+
+        .user-name {
+            font-size: 14px;
+            color: var(--d365-neutral-primary);
+            font-weight: 400;
+        }
+
+        /* Content Wrapper */
+        .content-wrapper {
+            flex: 1;
+            background: var(--d365-neutral-lightest);
+        }
+
+        /* Cards - D365 Style */
+        .card {
+            border: 1px solid var(--d365-neutral-light);
+            border-radius: 2px;
+            background: var(--d365-white);
+            box-shadow: none;
+            margin-bottom: 16px;
+        }
+
+        .card-header {
+            background: var(--d365-white);
+            color: var(--d365-neutral-primary);
+            border-bottom: 1px solid var(--d365-neutral-light);
+            padding: 12px 16px;
+            font-weight: 600;
+            font-size: 14px;
+            border-radius: 2px 2px 0 0;
+        }
+
+        .card-body {
+            padding: 16px;
+        }
+
+        /* Buttons - D365 Style */
+        .btn {
+            font-size: 14px;
+            font-weight: 400;
+            padding: 5px 16px;
+            border-radius: 2px;
+            border: 1px solid var(--d365-neutral-tertiary);
+            transition: all 0.1s;
+            height: 32px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-primary {
+            background: var(--d365-theme-primary);
+            border-color: var(--d365-theme-primary);
+            color: var(--d365-white);
+        }
+
+        .btn-primary:hover {
+            background: var(--d365-theme-dark);
+            border-color: var(--d365-theme-dark);
+            color: var(--d365-white);
+        }
+
+        .btn-secondary {
+            background: var(--d365-white);
+            border-color: var(--d365-neutral-tertiary);
+            color: var(--d365-neutral-primary);
+        }
+
+        .btn-secondary:hover {
+            background: var(--d365-neutral-lighter);
+            border-color: var(--d365-neutral-secondary);
+            color: var(--d365-neutral-primary);
+        }
+
+        .btn-outline-primary {
+            background: transparent;
+            border-color: var(--d365-theme-primary);
+            color: var(--d365-theme-primary);
+        }
+
+        .btn-outline-primary:hover {
+            background: var(--d365-theme-primary);
+            color: var(--d365-white);
+        }
+
+        /* Tables - D365 Style */
+        .table {
+            font-size: 14px;
+            color: var(--d365-neutral-primary);
+        }
+
+        .table thead th {
+            background: var(--d365-neutral-lightest);
+            font-weight: 600;
+            border-bottom: 1px solid var(--d365-neutral-light);
+            padding: 8px 12px;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--d365-neutral-secondary);
+        }
+
+        .table tbody td {
+            padding: 12px;
+            border-bottom: 1px solid var(--d365-neutral-lighter);
+        }
+
+        .table-hover tbody tr:hover {
+            background: var(--d365-neutral-lightest);
+        }
+
+        /* Badges - D365 Style */
+        .badge {
+            font-size: 12px;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 2px;
+        }
+
+        /* Footer - D365 Style */
+        .footer {
+            background: var(--d365-white);
+            border-top: 1px solid var(--d365-neutral-light);
+            padding: 12px 24px;
+            margin-left: var(--sidebar-width);
+            text-align: center;
+            font-size: 12px;
+            color: var(--d365-neutral-secondary);
+        }
+
+        .footer a {
+            color: var(--d365-theme-primary);
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Stat Cards - Remove old colorful style */
+        .stat-card {
+            background: var(--d365-white);
+            border: 1px solid var(--d365-neutral-light);
+            border-radius: 2px;
+            padding: 16px;
+            transition: box-shadow 0.1s;
+        }
+
+        .stat-card:hover {
+            box-shadow: 0 3.2px 7.2px rgba(0,0,0,0.132);
+        }
+
+        .stat-card h5 {
+            font-size: 12px;
+            color: var(--d365-neutral-secondary);
+            margin-bottom: 8px;
+            font-weight: 400;
+        }
+
+        .stat-card .value {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--d365-neutral-primary);
+        }
+
+        .stat-card i:last-child {
+            display: none;
+        }
+
+        .content-card {
+            background: var(--d365-white);
+            border: 1px solid var(--d365-neutral-light);
+            border-radius: 2px;
+            padding: 16px;
+        }
+
+        .content-card h3 {
+            font-size: 16px;
+            color: var(--d365-neutral-primary);
+            margin-bottom: 16px;
+            font-weight: 600;
+        }
+
+        /* D365 Authentic Tables */
+        .table-d365 {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+            background: var(--d365-white);
+        }
+
+        .table-d365 thead {
+            background: var(--d365-neutral-lightest);
+        }
+
+        .table-d365 th {
+            padding: 8px 12px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--d365-neutral-primary);
+            border-bottom: 1px solid var(--d365-neutral-light);
+            border-right: 1px solid var(--d365-neutral-light);
+            height: 36px;
+            position: relative;
+        }
+
+        .table-d365 th:last-child {
+            border-right: none;
+        }
+
+        .table-d365 th.sortable {
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .table-d365 th.sortable:hover {
+            background: var(--d365-neutral-lighter);
+        }
+
+        .table-d365 th .column-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+        }
+
+        .table-d365 th .column-title {
+            flex: 1;
+        }
+
+        .table-d365 th .column-icons {
+            display: flex;
+            gap: 4px;
+            opacity: 0;
+            transition: opacity 0.1s;
+        }
+
+        .table-d365 th:hover .column-icons {
+            opacity: 1;
+        }
+
+        .table-d365 th .filter-icon,
+        .table-d365 th .sort-icon {
+            font-size: 10px;
+            color: var(--d365-neutral-secondary);
+            cursor: pointer;
+        }
+
+        .table-d365 td {
+            padding: 8px 12px;
+            border-bottom: 1px solid var(--d365-neutral-lighter);
+            border-right: 1px solid var(--d365-neutral-lighter);
+            height: 36px;
+            color: var(--d365-neutral-primary);
+        }
+
+        .table-d365 td:last-child {
+            border-right: none;
+        }
+
+        .table-d365 tbody tr:hover {
+            background: var(--d365-neutral-lighter);
+            cursor: pointer;
+        }
+
+        .table-d365 tbody tr.selected {
+            background: #deecf9;
+        }
+
+        .table-d365 a {
+            color: var(--d365-theme-primary);
+            text-decoration: none;
+        }
+
+        .table-d365 a:hover {
+            text-decoration: underline;
+        }
+
+        .table-d365 .row-checkbox {
+            width: 36px;
+            text-align: center;
+            padding: 8px;
+        }
+
+        .table-d365 input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+            accent-color: var(--d365-theme-primary);
+        }
+
+        /* Command Bar - D365 Style */
+        .command-bar-d365 {
+            background: var(--d365-neutral-lightest);
+            border: 1px solid var(--d365-neutral-light);
+            padding: 8px 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            min-height: 44px;
+            margin-bottom: 1px;
+        }
+
+        .command-bar-left {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .command-bar-right {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .btn-d365-primary {
+            background: var(--d365-theme-primary);
+            color: var(--d365-white);
+            border: 1px solid var(--d365-theme-primary);
+            padding: 6px 12px;
+            font-size: 12px;
+            border-radius: 2px;
+            cursor: pointer;
+            transition: background 0.1s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            text-decoration: none;
+        }
+
+        .btn-d365-primary:hover {
+            background: var(--d365-theme-dark);
+            border-color: var(--d365-theme-dark);
+            color: var(--d365-white);
+        }
+
+        .btn-d365-secondary {
+            background: var(--d365-white);
+            color: var(--d365-neutral-primary);
+            border: 1px solid var(--d365-neutral-tertiary);
+            padding: 6px 12px;
+            font-size: 12px;
+            border-radius: 2px;
+            cursor: pointer;
+            transition: all 0.1s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            text-decoration: none;
+        }
+
+        .btn-d365-secondary:hover {
+            background: var(--d365-neutral-lighter);
+            color: var(--d365-neutral-primary);
+        }
+
+        .btn-d365-secondary:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        /* Search Box - D365 Style */
+        .search-box-d365 {
+            display: flex;
+            align-items: center;
+            background: var(--d365-white);
+            border: 1px solid #8a8886;
+            border-radius: 2px;
+            padding: 6px 12px;
+            min-width: 200px;
+        }
+
+        .search-box-d365 i {
+            color: var(--d365-neutral-secondary);
+            margin-right: 8px;
+            font-size: 12px;
+        }
+
+        .search-box-d365 input {
+            border: none;
+            outline: none;
+            flex: 1;
+            font-size: 12px;
+            color: var(--d365-neutral-primary);
+            background: transparent;
+        }
+
+        .search-box-d365 input::placeholder {
+            color: var(--d365-neutral-tertiary);
+        }
+
+        /* Breadcrumb - D365 Style */
+        .breadcrumb-d365 {
+            font-size: 12px;
+            color: var(--d365-neutral-secondary);
+            margin-bottom: 8px;
+        }
+
+        .breadcrumb-d365 a {
+            color: var(--d365-theme-primary);
+            text-decoration: none;
+        }
+
+        .breadcrumb-d365 a:hover {
+            text-decoration: underline;
+        }
+
+        .breadcrumb-d365 .separator {
+            margin: 0 8px;
+            color: var(--d365-neutral-tertiary);
+        }
+
+        /* D365 Card */
+        .d365-card {
+            background: var(--d365-white);
+            border: 1px solid var(--d365-neutral-light);
+            border-radius: 2px;
+            margin-bottom: 16px;
+        }
+
+        .card-body-d365 {
+            padding: 16px;
+        }
+
+        /* D365 Badges */
+        .badge-d365 {
+            display: inline-block;
+            padding: 2px 8px;
+            font-size: 11px;
+            font-weight: 400;
+            border-radius: 2px;
+            line-height: 16px;
+        }
+
+        .badge-success {
+            background: #dff6dd;
+            color: #107c10;
+        }
+
+        .badge-warning {
+            background: #fff4ce;
+            color: #797673;
+        }
+
+        .badge-danger {
+            background: #fde7e9;
+            color: #a4262c;
+        }
+
+        .badge-info {
+            background: #e7f3ff;
+            color: #0078d4;
+        }
+
+        .badge-primary {
+            background: #e7f3ff;
+            color: #0078d4;
+        }
+
+        .badge-secondary {
+            background: var(--d365-neutral-lighter);
+            color: var(--d365-neutral-secondary);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 0;
+            }
+            .sidebar:hover {
+                width: var(--sidebar-expanded-width);
+            }
+            .main-content,
+            .footer {
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <i class="fas fa-user-circle"></i>
+            <span class="brand-text">Customer Portal</span>
+        </div>
+        <ul class="sidebar-menu">
+            <li>
+                <a href="{{ url_for('customer_dashboard') }}" class="{% if request.endpoint == 'customer_dashboard' %}active{% endif %}">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li>
+                <a href="{{ url_for('customer_orders') }}" class="{% if request.endpoint == 'customer_orders' or request.endpoint == 'customer_order_detail' %}active{% endif %}">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span>My Orders</span>
+                </a>
+            </li>
+            <li>
+                <a href="{{ url_for('customer_invoices') }}" class="{% if request.endpoint == 'customer_invoices' or request.endpoint == 'customer_invoice_detail' %}active{% endif %}">
+                    <i class="fas fa-file-invoice"></i>
+                    <span>Invoices</span>
+                </a>
+            </li>
+            <li>
+                <a href="{{ url_for('customer_transactions') }}" class="{% if request.endpoint == 'customer_transactions' or request.endpoint == 'customer_transaction_detail' %}active{% endif %}">
+                    <i class="fas fa-receipt"></i>
+                    <span>Transactions</span>
+                </a>
+            </li>
+            <li>
+                <a href="{{ url_for('customer_profile') }}" class="{% if request.endpoint == 'customer_profile' %}active{% endif %}">
+                    <i class="fas fa-user-cog"></i>
+                    <span>My Profile</span>
+                </a>
+            </li>
+            <li>
+                <a href="{{ url_for('customer_products') }}" class="{% if request.endpoint == 'customer_products' %}active{% endif %}">
+                    <i class="fas fa-store"></i>
+                    <span>Store</span>
+                </a>
+            </li>
+            <li>
+                <a href="{{ url_for('customer_services') }}" class="{% if request.endpoint == 'customer_services' %}active{% endif %}">
+                    <i class="fas fa-cogs"></i>
+                    <span>Services</span>
+                </a>
+            </li>
+        </ul>
+        <div class="sidebar-footer">
+            <a href="{{ url_for('customer_logout') }}" style="color: rgba(255,255,255,0.8); text-decoration: none;">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Top Bar -->
+        <div class="topbar">
+            <div class="topbar-left">
+                <h4>360Degree Supply</h4>
+            </div>
+            <div class="topbar-right">
+                <!-- Cart Icon -->
+                <a href="{{ url_for('view_cart') }}" class="topbar-icon-btn" style="position: relative;" title="Shopping Cart">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span id="cart-badge" class="badge bg-danger" style="position: absolute; top: 2px; right: 2px; font-size: 10px; padding: 2px 4px; border-radius: 10px; display: none; min-width: 16px;">0</span>
+                </a>
+                
+                <!-- Notifications Icon -->
+                <button class="topbar-icon-btn" title="Notifications">
+                    <i class="fas fa-bell"></i>
+                </button>
+                
+                <!-- User Info -->
+                <div class="user-info">
+                    <div class="user-avatar">
+                        {{ current_user.first_name[0] if current_user.first_name else 'U' }}{{ current_user.last_name[0] if current_user.last_name else '' }}
+                    </div>
+                    <span class="user-name">{{ current_user.get_full_name() }}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Page Content -->
+        <div class="content-wrapper">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert" style="margin: 16px 24px;">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            {% block content %}{% endblock %}
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div>© 2024 360Degree Supply (Pty) Ltd. All rights reserved. | <a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a></div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        // Update cart count on page load
+        function updateCartCount() {
+            fetch('/api/cart/count')
+                .then(response => response.json())
+                .then(data => {
+                    const badge = document.getElementById('cart-badge');
+                    if (data.cart_count > 0) {
+                        badge.textContent = data.cart_count;
+                        badge.style.display = 'inline-block';
+                    } else {
+                        badge.style.display = 'none';
+                    }
+                })
+                .catch(error => console.error('Error fetching cart count:', error));
+        }
+
+        // Update cart count on page load
+        updateCartCount();
+
+        // Update every 5 seconds if on products page
+        if (window.location.pathname.includes('/products')) {
+            setInterval(updateCartCount, 5000);
+        }
+    </script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

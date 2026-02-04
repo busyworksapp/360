@@ -1,0 +1,531 @@
+{% extends "customer/base.html" %}
+
+{% block title %}Pay Invoice {{ invoice.invoice_number }} - 360Degree Supply{% endblock %}
+
+{% block extra_css %}
+<style>
+    .dashboard-container {
+        background: #faf9f8;
+        padding: 0;
+    }
+
+    .dashboard-header {
+        background: white;
+        border-bottom: 1px solid #edebe9;
+        padding: 16px 24px;
+        margin-bottom: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .dashboard-header h1 {
+        font-size: 20px;
+        font-weight: 600;
+        color: #323130;
+        margin: 0;
+    }
+
+    .dashboard-header .subtitle {
+        font-size: 12px;
+        color: #605e5c;
+        margin-top: 4px;
+    }
+
+    .info-section {
+        background: white;
+        border: 1px solid #edebe9;
+        padding: 16px;
+        margin-bottom: 20px;
+    }
+
+    .info-section h3 {
+        font-size: 14px;
+        font-weight: 600;
+        color: #323130;
+        margin-bottom: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        padding-bottom: 8px;
+        border-bottom: 1px solid #edebe9;
+    }
+
+    .info-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 8px 0;
+        border-bottom: 1px solid #edebe9;
+    }
+
+    .info-row:last-child {
+        border-bottom: none;
+    }
+
+    .info-label {
+        font-size: 12px;
+        color: #605e5c;
+    }
+
+    .info-value {
+        font-size: 14px;
+        color: #323130;
+        font-weight: 600;
+    }
+
+    .status-badge {
+        display: inline-block;
+        padding: 2px 8px;
+        border-radius: 2px;
+        font-size: 12px;
+        font-weight: 400;
+    }
+
+    .form-label {
+        font-size: 12px;
+        color: #605e5c;
+        margin-bottom: 4px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .form-control {
+        border: 1px solid #8a8886;
+        padding: 8px 12px;
+        font-size: 14px;
+        transition: all 0.1s ease;
+    }
+
+    .form-control:focus {
+        border-color: #0078d4;
+        box-shadow: 0 0 0 1px #0078d4;
+        outline: none;
+    }
+
+    .grid-action-btn {
+        background: white;
+        border: 1px solid #8a8886;
+        color: #323130;
+        padding: 8px 16px;
+        font-size: 14px;
+        cursor: pointer;
+        transition: all 0.1s ease;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    .grid-action-btn:hover {
+        background: #f3f2f1;
+        border-color: #323130;
+    }
+
+    .grid-action-btn.btn-primary {
+        background: #0078d4;
+        border-color: #0078d4;
+        color: white;
+    }
+
+    .grid-action-btn.btn-primary:hover {
+        background: #106ebe;
+    }
+
+    .grid-action-btn.btn-success {
+        background: #107c10;
+        border-color: #107c10;
+        color: white;
+    }
+
+    .grid-action-btn.btn-success:hover {
+        background: #0b5a08;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <!-- Page Header -->
+    <div class="dashboard-header">
+        <div>
+            <h1>Pay Invoice</h1>
+            <div class="subtitle">Complete your payment for Invoice {{ invoice.invoice_number }}</div>
+        </div>
+        <div>
+            <a href="{{ url_for('customer_invoice_detail', invoice_id=invoice.id) }}" class="grid-action-btn">
+                Back to Invoice
+            </a>
+        </div>
+    </div>
+
+    <div class="container-fluid" style="padding: 0 24px;">    <div class="row">
+        <!-- Invoice Summary -->
+        <div class="col-md-4">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header" style="background-color: var(--primary); color: white;">
+                    <h5 class="mb-0">
+                        <i class="fas fa-file-invoice"></i> Invoice Summary
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <h6 class="text-muted">Invoice Number</h6>
+                        <p class="h5" style="color: var(--primary);">{{ invoice.invoice_number }}</p>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <h6 class="text-muted">Issue Date</h6>
+                        <p>{{ invoice.issue_date.strftime('%d %B %Y') }}</p>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <h6 class="text-muted">Due Date</h6>
+                        <p class="{% if invoice.is_overdue() %}text-danger{% endif %}">
+                            {{ invoice.due_date.strftime('%d %B %Y') }}
+                            {% if invoice.is_overdue() %}
+                                <span class="badge bg-danger">Overdue</span>
+                            {% endif %}
+                        </p>
+                    </div>
+                    
+                    <hr>
+                    
+                    <div class="mb-2">
+                        <div class="d-flex justify-content-between">
+                            <span>Subtotal:</span>
+                            <strong>R{{ "%.2f"|format(invoice.subtotal) }}</strong>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-2">
+                        <div class="d-flex justify-content-between">
+                            <span>Tax (VAT):</span>
+                            <strong>R{{ "%.2f"|format(invoice.tax_amount) }}</strong>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-2">
+                        <div class="d-flex justify-content-between">
+                            <span>Total:</span>
+                            <strong>R{{ "%.2f"|format(invoice.total_amount) }}</strong>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-2">
+                        <div class="d-flex justify-content-between" style="background-color: rgba(26, 71, 42, 0.05); padding: 8px; border-radius: 4px;">
+                            <span>Paid:</span>
+                            <strong style="color: #28a745;">R{{ "%.2f"|format(invoice.paid_amount) }}</strong>
+                        </div>
+                    </div>
+                    
+                    <hr style="border-width: 2px;">
+                    
+                    <div class="mb-0">
+                        <div class="d-flex justify-content-between" style="background-color: rgba(220, 53, 69, 0.1); padding: 12px; border-radius: 8px;">
+                            <span><strong>Amount Due:</strong></span>
+                            <strong style="font-size: 1.3rem; color: #dc3545;">
+                                R{{ "%.2f"|format(invoice.remaining_balance()) }}
+                            </strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Payment Form -->
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-header" style="background-color: var(--secondary); color: white;">
+                    <h5 class="mb-0">
+                        <i class="fas fa-lock"></i> Payment Information
+                    </h5>
+                </div>
+                <div class="card-body p-4">
+                    <form method="POST" enctype="multipart/form-data" id="paymentForm">
+                        <div class="alert alert-info mb-4">
+                            <i class="fas fa-info-circle"></i>
+                            <strong>Secure Payment:</strong> Your payment information is encrypted and secure.
+                        </div>
+
+                        <!-- Payment Method Selection -->
+                        <div class="mb-4">
+                            <label class="form-label"><strong>Select Payment Method</strong></label>
+                            
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="form-check payment-option">
+                                        <input class="form-check-input" type="radio" name="payment_method" id="card" value="card" checked>
+                                        <label class="form-check-label w-100" for="card">
+                                            <div class="payment-card">
+                                                <i class="fas fa-credit-card fa-2x mb-2" style="color: var(--primary);"></i>
+                                                <div><strong>Credit/Debit Card</strong></div>
+                                                <small class="text-muted">Visa, Mastercard, Amex</small>
+                                            </div>
+                                        </label>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <div class="form-check payment-option">
+                                        <input class="form-check-input" type="radio" name="payment_method" id="eft" value="eft">
+                                        <label class="form-check-label w-100" for="eft">
+                                            <div class="payment-card">
+                                                <i class="fas fa-university fa-2x mb-2" style="color: var(--primary);"></i>
+                                                <div><strong>EFT / Bank Transfer</strong></div>
+                                                <small class="text-muted">Direct bank payment</small>
+                                            </div>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Card Payment Details -->
+                        <div id="cardDetails" class="payment-details">
+                            <h6 class="mb-3" style="color: var(--primary);">Card Details</h6>
+                            
+                            <div class="mb-3">
+                                <label for="cardNumber" class="form-label">Card Number</label>
+                                <input type="text" class="form-control" id="cardNumber" placeholder="1234 5678 9012 3456" maxlength="19">
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="expiryDate" class="form-label">Expiry Date</label>
+                                    <input type="text" class="form-control" id="expiryDate" placeholder="MM/YY" maxlength="5">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="cvv" class="form-label">CVV</label>
+                                    <input type="text" class="form-control" id="cvv" placeholder="123" maxlength="4">
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="cardName" class="form-label">Cardholder Name</label>
+                                <input type="text" class="form-control" id="cardName" placeholder="John Doe">
+                            </div>
+                        </div>
+
+                        <!-- EFT Details -->
+                        <div id="eftDetails" class="payment-details" style="display: none;">
+                            <div class="alert alert-warning">
+                                <h6 class="mb-3"><i class="fas fa-info-circle"></i> Bank Transfer Instructions</h6>
+                                <p class="mb-2"><strong>Bank Name:</strong> First National Bank</p>
+                                <p class="mb-2"><strong>Account Name:</strong> 360 Degree Supply (Pty) Ltd</p>
+                                <p class="mb-2"><strong>Account Number:</strong> 62123456789</p>
+                                <p class="mb-2"><strong>Branch Code:</strong> 250655</p>
+                                <p class="mb-0"><strong>Reference:</strong> <code class="bg-white px-2">{{ invoice.invoice_number }}</code></p>
+                                <hr>
+                                <p class="mb-0"><small><i class="fas fa-exclamation-triangle"></i> Please use your invoice number as the payment reference.</small></p>
+                            </div>
+
+                            <!-- Proof of Payment Upload -->
+                            <div class="mb-3">
+                                <label for="proofOfPayment" class="form-label">
+                                    <i class="fas fa-upload"></i> <strong>Upload Proof of Payment *</strong>
+                                </label>
+                                <input type="file" class="form-control" id="proofOfPayment" name="proof_of_payment" 
+                                       accept=".pdf,.jpg,.jpeg,.png">
+                                <div class="form-text">
+                                    <i class="fas fa-file-pdf text-danger"></i> PDF or 
+                                    <i class="fas fa-file-image text-info"></i> Image (JPG, PNG) - Max 16MB
+                                </div>
+                                <div class="mt-2 p-2 bg-light rounded">
+                                    <small class="text-success">
+                                        <i class="fas fa-magic"></i> <strong>Intelligent Processing:</strong> 
+                                        Our system will automatically read and verify your payment details from the uploaded document
+                                    </small>
+                                </div>
+                            </div>
+
+                            <!-- File Preview -->
+                            <div id="filePreview" class="mb-3" style="display: none;">
+                                <div class="card bg-light">
+                                    <div class="card-body py-2">
+                                        <div class="d-flex align-items-center">
+                                            <div class="me-3">
+                                                <i class="fas fa-file-alt fa-2x text-secondary"></i>
+                                            </div>
+                                            <div class="flex-grow-1">
+                                                <h6 class="mb-0" id="fileName"></h6>
+                                                <small class="text-muted" id="fileSize"></small>
+                                            </div>
+                                            <button type="button" class="btn btn-sm btn-outline-danger" onclick="clearFile()">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="alert alert-secondary mt-4">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="termsAccept" required>
+                                <label class="form-check-label" for="termsAccept">
+                                    I agree to the <a href="#">terms and conditions</a> and authorize this payment
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2 mt-4">
+                            <button type="submit" class="btn btn-lg" style="background-color: var(--secondary); color: white;">
+                                <i class="fas fa-lock"></i> Pay R{{ "%.2f"|format(invoice.remaining_balance()) }}
+                            </button>
+                            <a href="{{ url_for('customer_invoice_detail', invoice_id=invoice.id) }}" class="btn btn-outline-secondary">
+                                Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="text-center mt-4">
+                <p class="text-muted">
+                    <i class="fas fa-shield-alt"></i> Secured by 256-bit SSL encryption
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .payment-option {
+        height: 100%;
+    }
+    
+    .payment-card {
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        padding: 20px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s;
+        height: 100%;
+    }
+    
+    .payment-card:hover {
+        border-color: var(--primary);
+        background-color: rgba(26, 71, 42, 0.05);
+    }
+    
+    .form-check-input:checked ~ .form-check-label .payment-card {
+        border-color: var(--primary);
+        border-width: 3px;
+        background-color: rgba(26, 71, 42, 0.1);
+    }
+    
+    .card {
+        border: none;
+        border-radius: 12px;
+    }
+</style>
+
+<script>
+    // Toggle payment details based on selected method
+    document.querySelectorAll('input[name="payment_method"]').forEach(radio => {
+        radio.addEventListener('change', function() {
+            document.getElementById('cardDetails').style.display = 
+                this.value === 'card' ? 'block' : 'none';
+            document.getElementById('eftDetails').style.display = 
+                this.value === 'eft' ? 'block' : 'none';
+            
+            // Update file input required attribute
+            const fileInput = document.getElementById('proofOfPayment');
+            if (this.value === 'eft') {
+                fileInput.setAttribute('required', 'required');
+            } else {
+                fileInput.removeAttribute('required');
+            }
+        });
+    });
+    
+    // File upload preview and validation
+    const fileInput = document.getElementById('proofOfPayment');
+    if (fileInput) {
+        fileInput.addEventListener('change', function() {
+            const file = this.files[0];
+            if (file) {
+                // Validate file size (16MB max)
+                const maxSize = 16 * 1024 * 1024;
+                if (file.size > maxSize) {
+                    alert('File size exceeds 16MB. Please upload a smaller file.');
+                    this.value = '';
+                    return;
+                }
+
+                // Validate file type
+                const allowedTypes = ['application/pdf', 'image/jpeg', 'image/jpg', 'image/png'];
+                if (!allowedTypes.includes(file.type)) {
+                    alert('Invalid file type. Please upload PDF, JPG, or PNG only.');
+                    this.value = '';
+                    return;
+                }
+
+                // Show preview
+                document.getElementById('fileName').textContent = file.name;
+                document.getElementById('fileSize').textContent = formatFileSize(file.size);
+                document.getElementById('filePreview').style.display = 'block';
+            }
+        });
+    }
+    
+    // Clear file function
+    function clearFile() {
+        document.getElementById('proofOfPayment').value = '';
+        document.getElementById('filePreview').style.display = 'none';
+    }
+    
+    // Format file size helper
+    function formatFileSize(bytes) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+    }
+    
+    // Format card number with spaces
+    document.getElementById('cardNumber')?.addEventListener('input', function(e) {
+        let value = e.target.value.replace(/\s/g, '');
+        let formattedValue = value.match(/.{1,4}/g)?.join(' ') || value;
+        e.target.value = formattedValue;
+    });
+    
+    // Format expiry date
+    document.getElementById('expiryDate')?.addEventListener('input', function(e) {
+        let value = e.target.value.replace(/\D/g, '');
+        if (value.length >= 2) {
+            e.target.value = value.slice(0, 2) + '/' + value.slice(2, 4);
+        } else {
+            e.target.value = value;
+        }
+    });
+    
+    // Form submission validation
+    document.getElementById('paymentForm')?.addEventListener('submit', function(e) {
+        const termsAccept = document.getElementById('termsAccept');
+        if (!termsAccept.checked) {
+            e.preventDefault();
+            alert('Please accept the terms and conditions to proceed with payment.');
+            return false;
+        }
+
+        // Extra validation for EFT payment
+        const eftRadio = document.getElementById('eft');
+        if (eftRadio && eftRadio.checked) {
+            const fileInput = document.getElementById('proofOfPayment');
+            if (!fileInput.files || !fileInput.files[0]) {
+                e.preventDefault();
+                alert('Please upload proof of payment for EFT/Bank Transfer.');
+                return false;
+            }
+        }
+
+        // Show loading state
+        const submitBtn = e.target.querySelector('button[type="submit"]');
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Processing...';
+        }
+    });
+</script>
+{% endblock %}

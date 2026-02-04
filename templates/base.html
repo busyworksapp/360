@@ -9,27 +9,42 @@
     <!-- <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet"> -->
     {% block extra_css %}{% endblock %}
     <style>
+        /* D365 Design System - Global Variables */
         :root {
-            --primary: #1a472a;
-            --secondary: #f39c12;
-            --light: #ecf0f1;
-            --dark: #2c3e50;
-            --border-color: #ddd;
+            --d365-primary: #0078d4;
+            --d365-primary-hover: #106ebe;
+            --d365-text: #323130;
+            --d365-text-secondary: #605e5c;
+            --d365-bg: #faf9f8;
+            --d365-bg-secondary: #f3f2f1;
+            --d365-border: #edebe9;
+            --d365-border-dark: #8a8886;
+            --d365-white: #ffffff;
+            --d365-success: #107c10;
+            --d365-error: #a80000;
+            --d365-warning: #ffaa44;
         }
         
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            color: var(--dark);
-            background-color: #f8f9fa;
-            font-size: 0.95rem;
+            color: var(--d365-text);
+            background-color: var(--d365-bg);
+            font-size: 14px;
             line-height: 1.5;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            margin: 0;
+            padding: 0;
         }
 
         /* Full-width containers */
         .container {
-            max-width: 100% !important;
-            padding-left: 15px !important;
-            padding-right: 15px !important;
+            max-width: 1400px !important;
+            padding-left: 16px !important;
+            padding-right: 16px !important;
+            margin-left: auto !important;
+            margin-right: auto !important;
         }
 
         @media (min-width: 1200px) {
@@ -38,212 +53,496 @@
             }
         }
 
+        /* Typography - D365 Scale */
         h1, .h1 {
-            font-size: 2.0rem !important;
+            font-size: 28px !important;
+            font-weight: 600 !important;
+            color: var(--d365-text) !important;
         }
 
         h2, .h2 {
-            font-size: 1.6rem !important;
+            font-size: 20px !important;
+            font-weight: 600 !important;
+            color: var(--d365-text) !important;
         }
 
         h3, .h3 {
-            font-size: 1.3rem !important;
+            font-size: 18px !important;
+            font-weight: 600 !important;
+            color: var(--d365-text) !important;
         }
 
         h4, .h4 {
-            font-size: 1.1rem !important;
+            font-size: 16px !important;
+            font-weight: 600 !important;
+            color: var(--d365-text) !important;
         }
 
         h5, .h5 {
-            font-size: 0.95rem !important;
+            font-size: 14px !important;
+            font-weight: 600 !important;
+            color: var(--d365-text) !important;
         }
 
         h6, .h6 {
-            font-size: 0.85rem !important;
+            font-size: 12px !important;
+            font-weight: 600 !important;
+            color: var(--d365-text) !important;
         }
 
         p {
-            font-size: 0.95rem !important;
-            margin-bottom: 1rem;
+            font-size: 14px !important;
+            color: var(--d365-text) !important;
+            margin-bottom: 12px;
         }
 
         .lead {
-            font-size: 1.1rem !important;
+            font-size: 16px !important;
+            color: var(--d365-text-secondary) !important;
         }
 
-        /* Smaller button fonts */
+        a {
+            color: var(--d365-primary);
+            text-decoration: none;
+        }
+
+        a:hover {
+            color: var(--d365-primary-hover);
+            text-decoration: underline;
+        }
+
+        /* Buttons - D365 Style */
         .btn {
-            font-size: 0.9rem !important;
-            padding: 0.5rem 1.2rem !important;
+            font-size: 14px !important;
+            font-weight: 600 !important;
+            padding: 8px 16px !important;
+            border-radius: 2px !important;
+            transition: all 0.2s ease !important;
         }
 
         .btn-lg {
-            font-size: 1.0rem !important;
-            padding: 0.7rem 1.5rem !important;
+            font-size: 16px !important;
+            padding: 12px 24px !important;
         }
 
         .btn-sm {
-            font-size: 0.8rem !important;
-            padding: 0.4rem 0.8rem !important;
+            font-size: 12px !important;
+            padding: 6px 12px !important;
+        }
+
+        .btn-primary {
+            background-color: var(--d365-primary) !important;
+            border-color: var(--d365-primary) !important;
+            color: white !important;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--d365-primary-hover) !important;
+            border-color: var(--d365-primary-hover) !important;
+        }
+
+        .btn-secondary {
+            background-color: var(--d365-white) !important;
+            border: 1px solid var(--d365-border-dark) !important;
+            color: var(--d365-text) !important;
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--d365-bg-secondary) !important;
+        }
+
+        .btn-success {
+            background-color: var(--d365-success) !important;
+            border-color: var(--d365-success) !important;
+        }
+
+        .btn-danger {
+            background-color: var(--d365-error) !important;
+            border-color: var(--d365-error) !important;
         }
 
         /* Card text sizing */
         .card-text {
-            font-size: 0.9rem !important;
+            font-size: 14px !important;
+            color: var(--d365-text) !important;
         }
 
         .card-title {
-            font-size: 1.1rem !important;
+            font-size: 16px !important;
+            font-weight: 600 !important;
+            color: var(--d365-text) !important;
         }
 
-        /* Navigation */
+        /* Navigation - D365 Style */
         .navbar {
-            background: linear-gradient(135deg, var(--primary) 0%, #2d5a3d 100%);
+            background: linear-gradient(135deg, var(--d365-primary) 0%, #005a9e 100%);
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
         }
 
         .navbar-brand {
-            font-weight: 700;
-            font-size: 1.5em;
+            font-weight: 600;
+            font-size: 18px;
             color: white !important;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
+            transition: all 0.2s ease;
         }
 
-        .navbar-brand i {
-            font-size: 1.8em;
-        }
-
-        .nav-link {
-            color: rgba(255,255,255,0.85) !important;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            padding: 0.5rem 1rem !important;
-        }
-
-        .nav-link:hover {
-            color: var(--secondary) !important;
-            transform: translateY(-2px);
-        }
-
-        /* Page Header */
-        .page-header {
-            background: linear-gradient(135deg, var(--primary) 0%, #2d5a3d 100%);
-            color: white;
-            padding: 40px 0;
-            text-align: center;
-            margin-bottom: 40px;
-        }
-
-        .page-header h1 {
-            font-size: 1.8rem !important;
-            font-weight: 700;
-            margin-bottom: 10px;
-        }
-
-        .page-header p {
-            font-size: 1.0rem !important;
+        .navbar-brand:hover {
+            color: white !important;
             opacity: 0.9;
         }
 
-        /* Cards */
+        .navbar-brand i {
+            font-size: 20px;
+        }
+
+        .nav-link {
+            color: rgba(255,255,255,0.9) !important;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            padding: 8px 16px !important;
+            font-size: 14px !important;
+            border-radius: 2px;
+        }
+
+        .nav-link:hover {
+            color: white !important;
+            background-color: rgba(255,255,255,0.1);
+        }
+
+        .nav-link i {
+            margin-right: 6px;
+        }
+
+        /* Page Header - D365 Style */
+        .page-header {
+            background: linear-gradient(135deg, var(--d365-primary) 0%, #005a9e 100%);
+            color: white;
+            padding: 40px 0;
+            text-align: center;
+            margin-bottom: 32px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .page-header h1 {
+            font-size: 28px !important;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: white !important;
+        }
+
+        .page-header p {
+            font-size: 16px !important;
+            opacity: 0.95;
+            color: white !important;
+            margin: 0;
+        }
+
+        /* Cards - D365 Style */
         .card {
-            border: none;
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-            transition: all 0.3s ease;
+            border: 1px solid var(--d365-border);
+            border-radius: 2px;
+            box-shadow: 0 1.6px 3.6px 0 rgba(0,0,0,.132), 0 0.3px 0.9px 0 rgba(0,0,0,.108);
+            transition: all 0.2s ease;
             height: 100%;
+            background: white;
         }
 
         .card:hover {
-            box-shadow: 0 8px 16px rgba(0,0,0,0.12);
-            transform: translateY(-5px);
+            box-shadow: 0 6.4px 14.4px 0 rgba(0,0,0,.132), 0 1.2px 3.6px 0 rgba(0,0,0,.108);
+            transform: translateY(-4px);
         }
 
         .card-header {
-            background-color: var(--primary);
-            color: white;
-            border-radius: 12px 12px 0 0 !important;
-            border: none;
-        }
-
-        .card-title {
-            color: var(--primary);
+            background-color: var(--d365-bg-secondary);
+            color: var(--d365-text);
+            border-radius: 2px 2px 0 0 !important;
+            border-bottom: 1px solid var(--d365-border);
+            padding: 16px 20px;
+            font-size: 16px;
             font-weight: 600;
         }
 
-        /* Buttons */
-        .btn-primary {
-            background-color: var(--primary);
-            border-color: var(--primary);
-            font-weight: 500;
-            transition: all 0.3s ease;
+        .card-title {
+            color: var(--d365-text);
+            font-weight: 600;
+            margin-bottom: 8px;
         }
 
-        .btn-primary:hover {
-            background-color: #2d5a3d;
-            border-color: #2d5a3d;
-            box-shadow: 0 4px 12px rgba(26, 71, 42, 0.3);
+        .card-body {
+            padding: 20px;
         }
 
-        .btn-secondary {
-            background-color: var(--secondary);
-            border-color: var(--secondary);
-            font-weight: 500;
-        }
-
-        .btn-secondary:hover {
-            background-color: #e08a00;
-            border-color: #e08a00;
-        }
-
-        /* Badges */
+        /* Badges - D365 Style */
         .badge {
-            padding: 0.5rem 0.75rem;
-            border-radius: 6px;
-            font-weight: 500;
+            padding: 4px 8px;
+            border-radius: 2px;
+            font-weight: 600;
+            font-size: 11px;
         }
 
-        /* Footer */
+        .badge-primary {
+            background-color: var(--d365-primary);
+        }
+
+        .badge-success {
+            background-color: var(--d365-success);
+        }
+
+        .badge-danger {
+            background-color: var(--d365-error);
+        }
+
+        .badge-warning {
+            background-color: var(--d365-warning);
+            color: var(--d365-text);
+        }
+
+        /* Footer - D365 Style */
         footer {
-            background: linear-gradient(135deg, var(--primary) 0%, #2d5a3d 100%);
+            background: linear-gradient(135deg, var(--d365-primary) 0%, #005a9e 100%);
             color: white;
             padding: 40px 0 20px;
-            margin-top: 60px;
+            margin-top: auto;
+            position: relative;
+            z-index: 10;
+            border-top: 3px solid rgba(255,255,255,0.2);
         }
 
         footer h5 {
             font-weight: 600;
-            margin-bottom: 15px;
+            margin-bottom: 16px;
+            font-size: 16px;
+            color: white;
+        }
+
+        footer h5 i {
+            margin-right: 8px;
+            color: rgba(255,255,255,0.9);
         }
 
         footer p, footer a {
-            color: rgba(255,255,255,0.8);
-            font-size: 0.95rem;
+            color: rgba(255,255,255,0.85);
+            font-size: 14px;
+            line-height: 1.6;
         }
 
         footer a:hover {
-            color: var(--secondary);
-            text-decoration: none;
+            color: white;
+            text-decoration: underline;
+        }
+
+        footer .list-unstyled li {
+            margin-bottom: 8px;
         }
 
         .footer-bottom {
             border-top: 1px solid rgba(255,255,255,0.2);
             padding-top: 20px;
-            margin-top: 30px;
+            margin-top: 32px;
             text-align: center;
-            color: rgba(255,255,255,0.7);
+            color: rgba(255,255,255,0.8);
+            font-size: 12px;
+        }
+
+        .footer-bottom p {
+            margin-bottom: 4px;
+            font-size: 12px;
+        }
+
+        /* Alerts - D365 Style */
+        .alert {
+            border-radius: 2px;
+            border-width: 1px;
+            border-left-width: 4px;
+            font-size: 14px;
+            padding: 12px 16px;
+        }
+
+        .alert-success {
+            background-color: #dff6dd;
+            border-color: var(--d365-success);
+            color: var(--d365-text);
+        }
+
+        .alert-danger {
+            background-color: #fde7e9;
+            border-color: var(--d365-error);
+            color: var(--d365-text);
+        }
+
+        .alert-info {
+            background-color: #f3f9fd;
+            border-color: var(--d365-primary);
+            color: var(--d365-text);
+        }
+
+        .alert-warning {
+            background-color: #fff4ce;
+            border-color: var(--d365-warning);
+            color: var(--d365-text);
+        }
+
+        /* Form Controls - D365 Style */
+        .form-control, .form-select {
+            padding: 8px 12px;
+            font-size: 14px;
+            border: 1px solid var(--d365-border-dark);
+            border-radius: 2px;
+            color: var(--d365-text);
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--d365-primary);
+            box-shadow: 0 0 0 1px var(--d365-primary);
+            outline: none;
+        }
+
+        .form-label {
+            margin-bottom: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--d365-text);
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        /* Tables - D365 Style */
+        .table {
+            font-size: 12px;
+            color: var(--d365-text);
+        }
+
+        .table th {
+            background-color: var(--d365-bg-secondary);
+            color: var(--d365-text);
+            font-weight: 600;
+            padding: 8px 12px;
+            border-bottom: 1px solid var(--d365-border);
+        }
+
+        .table td {
+            padding: 8px 12px;
+            border-bottom: 1px solid var(--d365-border);
+        }
+
+        .table-striped tbody tr:nth-of-type(odd) {
+            background-color: var(--d365-bg);
+        }
+
+        /* List Groups - D365 Style */
+        .list-group-item {
+            padding: 12px 16px;
+            font-size: 14px;
+            border: 1px solid var(--d365-border);
+            color: var(--d365-text);
+        }
+
+        .list-group-item:first-child {
+            border-radius: 2px 2px 0 0;
+        }
+
+        .list-group-item:last-child {
+            border-radius: 0 0 2px 2px;
+        }
+
+        /* Input Groups - D365 Style */
+        .input-group-text {
+            font-size: 14px;
+            padding: 8px 12px;
+            background-color: var(--d365-bg-secondary);
+            border: 1px solid var(--d365-border-dark);
+            border-radius: 2px;
+            color: var(--d365-text);
+        }
+
+        /* Global Spacing - D365 Scale */
+        .row {
+            margin-bottom: 20px;
+        }
+
+        .mb-3 {
+            margin-bottom: 16px !important;
+        }
+
+        .mb-4 {
+            margin-bottom: 24px !important;
+        }
+
+        .mb-5 {
+            margin-bottom: 32px !important;
+        }
+
+        .mt-3 {
+            margin-top: 16px !important;
+        }
+
+        .mt-4 {
+            margin-top: 24px !important;
+        }
+
+        .mt-5 {
+            margin-top: 32px !important;
+        }
+
+        .py-3 {
+            padding-top: 16px !important;
+            padding-bottom: 16px !important;
+        }
+
+        .py-4 {
+            padding-top: 24px !important;
+            padding-bottom: 24px !important;
+        }
+
+        .py-5 {
+            padding-top: 32px !important;
+            padding-bottom: 32px !important;
+        }
+
+        .px-3 {
+            padding-left: 16px !important;
+            padding-right: 16px !important;
+        }
+
+        .px-4 {
+            padding-left: 24px !important;
+            padding-right: 24px !important;
+        }
+
+        /* Main Content Styling */
+        main {
+            flex: 1;
+            padding-bottom: 0;
+            width: 100%;
         }
 
         /* Responsive */
         @media (max-width: 768px) {
             .page-header h1 {
-                font-size: 1.8rem;
+                font-size: 24px !important;
             }
 
             .page-header {
-                padding: 40px 0;
+                padding: 32px 0;
+            }
+
+            .navbar-brand {
+                font-size: 16px;
+            }
+
+            h1, .h1 {
+                font-size: 24px !important;
+            }
+
+            h2, .h2 {
+                font-size: 18px !important;
             }
         }
     </style>
@@ -272,7 +571,7 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/products">
-                            <i class="fas fa-box"></i> Products
+                            <i class="fas fa-store"></i> Store
                         </a>
                     </li>
                     <li class="nav-item">
@@ -327,7 +626,7 @@
             <div class="container mt-3">
                 {% for category, message in messages %}
                     <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
-                        <i class="fas fa-{{ 'exclamation-circle' if category == 'error' else 'check-circle' }}"></i>
+                        <i class="fas fa-{{ 'exclamation-circle' if category == 'error' else 'check-circle' if category == 'success' else 'info-circle' }}"></i>
                         {{ message }}
                         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                     </div>
@@ -342,43 +641,49 @@
     </main>
 
     <!-- Footer -->
-    <footer class="mt-5">
+    <footer>
         <div class="container">
             <div class="row">
-                <div class="col-md-3">
+                <div class="col-md-3 mb-4">
                     <h5><i class="fas fa-cube"></i> 360Degree Supply</h5>
                     {% if company_info %}
-                        <p>{{ company_info.company_name }}</p>
+                        <p style="font-weight: 600;">{{ company_info.company_name }}</p>
                         <p><small>{{ company_info.description|truncate(150) }}</small></p>
+                    {% else %}
+                        <p>Your trusted partner for industrial supplies and services.</p>
                     {% endif %}
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-3 mb-4">
                     <h5><i class="fas fa-link"></i> Quick Links</h5>
                     <ul class="list-unstyled">
                         <li><a href="/">Home</a></li>
                         <li><a href="/services">Services</a></li>
-                        <li><a href="/products">Products</a></li>
+                        <li><a href="/products">Store</a></li>
                         <li><a href="/contact">Contact</a></li>
                     </ul>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-3 mb-4">
                     <h5><i class="fas fa-info-circle"></i> About</h5>
                     {% if company_info %}
                         <p><strong>Founded:</strong> {{ company_info.established_year }}</p>
                         <p><strong>Mission:</strong><br><small>{{ company_info.mission }}</small></p>
+                    {% else %}
+                        <p>Delivering excellence in industrial supplies since establishment.</p>
                     {% endif %}
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-3 mb-4">
                     <h5><i class="fas fa-phone"></i> Contact Info</h5>
                     {% if company_info %}
-                        <p><i class="fas fa-map-marker-alt"></i> {{ company_info.address|truncate(40) }}</p>
+                        <p><i class="fas fa-map-marker-alt"></i> {{ company_info.address|truncate(50) }}</p>
                         <p><i class="fas fa-phone"></i> {{ company_info.phone }}</p>
                         <p><i class="fas fa-envelope"></i> <a href="mailto:{{ company_info.email }}">{{ company_info.email }}</a></p>
+                    {% else %}
+                        <p><i class="fas fa-envelope"></i> info@360degreesupply.com</p>
                     {% endif %}
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; {% if company_info %}{{ company_info.company_name }}{% else %}360Degree Supply (Pty) Ltd{% endif %} 2024. All rights reserved.</p>
+                <p>&copy; {% if company_info %}{{ company_info.company_name }}{% else %}360Degree Supply (Pty) Ltd{% endif %} {{ now.year if now else '2024' }}. All rights reserved.</p>
                 <p>South African Supply Excellence | Trusted by Industry Leaders</p>
             </div>
         </div>

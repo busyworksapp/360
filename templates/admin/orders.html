@@ -1,419 +1,253 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Orders Management - 360Degree Supply Admin</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <style>
-        :root {
-            --primary-color: #1a472a;
-            --accent-color: #f39c12;
-            --light-bg: #f5f5f5;
-            --border-color: #ddd;
-        }
-        
-        body {
-            background-color: var(--light-bg);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        
-        .navbar {
-            background-color: var(--primary-color);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        
-        .nav-link {
-            color: rgba(255,255,255,0.8) !important;
-            margin-left: 20px;
-        }
-        
-        .nav-link:hover {
-            color: var(--accent-color) !important;
-        }
-        
-        .page-header {
-            background: linear-gradient(135deg, var(--primary-color) 0%, #0f2918 100%);
-            color: white;
-            padding: 30px 0;
-            margin-bottom: 30px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-        
-        .card {
-            border: none;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
-            border-radius: 8px;
-        }
-        
-        .card-header {
-            background-color: var(--primary-color);
-            color: white;
-            border-radius: 8px 8px 0 0;
-            padding: 15px 20px;
-            border-bottom: none;
-        }
-        
-        .card-header h5 {
-            margin: 0;
-            font-weight: 600;
-            font-size: 1.1em;
-        }
-        
-        .filter-tabs {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            margin-bottom: 20px;
-        }
-        
-        .filter-tab {
-            padding: 8px 16px;
-            border-radius: 4px;
-            background-color: white;
-            border: 2px solid var(--border-color);
-            color: var(--primary-color);
-            font-weight: 600;
-            cursor: pointer;
-            text-decoration: none;
-            transition: all 0.3s;
-        }
-        
-        .filter-tab:hover {
-            border-color: var(--accent-color);
-            color: var(--accent-color);
-        }
-        
-        .filter-tab.active {
-            background-color: var(--accent-color);
-            border-color: var(--accent-color);
-            color: white;
-        }
-        
-        .order-table {
-            width: 100%;
-            margin-bottom: 0;
-        }
-        
-        .order-table thead th {
-            background-color: var(--light-bg);
-            color: var(--primary-color);
-            font-weight: 700;
-            border-bottom: 2px solid var(--border-color);
-            padding: 15px 12px;
-        }
-        
-        .order-table tbody td {
-            padding: 12px;
-            vertical-align: middle;
-            border-bottom: 1px solid var(--border-color);
-        }
-        
-        .order-table tbody tr:hover {
-            background-color: rgba(243, 156, 18, 0.05);
-        }
-        
-        .order-number {
-            font-weight: 700;
-            color: var(--primary-color);
-        }
-        
-        .customer-name {
-            color: #666;
-            font-size: 0.9em;
-        }
-        
-        .order-total {
-            font-weight: 700;
-            color: var(--accent-color);
-            font-size: 1.05em;
-        }
-        
-        .status-badge {
-            display: inline-block;
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 0.85em;
-            font-weight: 600;
-        }
-        
-        .status-pending {
-            background-color: #fff3cd;
-            color: #856404;
-        }
-        
-        .status-processing {
-            background-color: #cfe2ff;
-            color: #084298;
-        }
-        
-        .status-shipped {
-            background-color: #d1ecf1;
-            color: #0c5460;
-        }
-        
-        .status-delivered {
-            background-color: #d4edda;
-            color: #155724;
-        }
-        
-        .status-cancelled {
-            background-color: #f8d7da;
-            color: #721c24;
-        }
-        
-        .btn-view {
-            background-color: var(--primary-color);
-            border: none;
-            color: white;
-            padding: 6px 12px;
-            border-radius: 4px;
-            text-decoration: none;
-            font-size: 0.9em;
-            transition: all 0.3s;
-        }
-        
-        .btn-view:hover {
-            background-color: var(--accent-color);
-            color: white;
-            text-decoration: none;
-        }
-        
-        .pagination {
-            margin-top: 20px;
-            justify-content: center;
-        }
-        
-        .page-link {
-            color: var(--primary-color);
-        }
-        
-        .page-link:hover {
-            color: var(--accent-color);
-        }
-        
-        .page-link.active {
-            background-color: var(--accent-color);
-            border-color: var(--accent-color);
-        }
-        
-        .footer {
-            background-color: var(--primary-color);
-            color: white;
-            padding: 40px 0;
-            margin-top: 50px;
-        }
-    </style>
-</head>
-<body>
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark">
-        <div class="container">
-            <a class="navbar-brand" href="/">
-                <i class="fas fa-cubes"></i> 360Degree Admin
-            </a>
-            <div class="navbar-nav ms-auto">
-                <a class="nav-link" href="/admin">Dashboard</a>
-                <a class="nav-link" href="/admin/orders">Orders</a>
-                <a class="nav-link" href="/">Home</a>
-                <a class="nav-link" href="/customer/logout">Logout</a>
-            </div>
-        </div>
-    </nav>
+{% extends "admin/base.html" %}
 
-    <!-- Page Header -->
-    <div class="page-header">
-        <div class="container">
-            <h1><i class="fas fa-shopping-bag"></i> Orders Management</h1>
+{% block title %}Orders Management - Admin{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <!-- Breadcrumb & Page Title -->
+    <div style="margin-bottom: 16px;">
+        <div class="breadcrumb-d365">
+            <a href="{{ url_for('admin_dashboard') }}">Home</a>
+            <span class="separator">/</span>
+            <span>Orders</span>
+        </div>
+        <h1 style="font-size: 20px; font-weight: 600; margin: 4px 0 0 0; color: #323130;">Orders</h1>
+    </div>
+
+    <!-- Command Bar with Status Filters -->
+    <div class="command-bar-d365">
+        <div class="command-bar-left">
+            <button class="btn-d365-secondary" style="font-size: 12px; padding: 6px 12px;" disabled>
+                <i class="fas fa-eye"></i>
+                <span>View</span>
+            </button>
+            <button class="btn-d365-secondary" style="font-size: 12px; padding: 6px 12px;" disabled>
+                <i class="fas fa-edit"></i>
+                <span>Update Status</span>
+            </button>
+            <div style="width: 1px; height: 24px; background: #edebe9; margin: 0 4px;"></div>
+            <a href="?status=all" class="{% if current_status == 'all' %}btn-d365-primary{% else %}btn-d365-secondary{% endif %}" style="font-size: 12px; padding: 6px 12px;">
+                All ({{ orders.total }})
+            </a>
+            <a href="?status=pending" class="{% if current_status == 'pending' %}btn-d365-primary{% else %}btn-d365-secondary{% endif %}" style="font-size: 12px; padding: 6px 12px;">
+                Pending
+            </a>
+            <a href="?status=processing" class="{% if current_status == 'processing' %}btn-d365-primary{% else %}btn-d365-secondary{% endif %}" style="font-size: 12px; padding: 6px 12px;">
+                Processing
+            </a>
+            <a href="?status=delivered" class="{% if current_status == 'delivered' %}btn-d365-primary{% else %}btn-d365-secondary{% endif %}" style="font-size: 12px; padding: 6px 12px;">
+                Delivered
+            </a>
+        </div>
+        <div class="command-bar-right">
+            <div class="search-box-d365">
+                <i class="fas fa-search"></i>
+                <input type="text" placeholder="Filter" id="filterInput" />
+            </div>
         </div>
     </div>
 
-    <!-- Main Content -->
-    <div class="container" style="margin-bottom: 50px;">
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                {% for category, message in messages %}
-                    <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
-                        {{ message }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                    </div>
-                {% endfor %}
-            {% endif %}
-        {% endwith %}
-
-        <!-- Filter Tabs -->
-        <div class="filter-tabs">
-            <a href="?status=all" class="filter-tab {% if current_status == 'all' %}active{% endif %}">
-                <i class="fas fa-list"></i> All ({{ orders.total }})
-            </a>
-            {% for status in statuses %}
-                <a href="?status={{ status }}" class="filter-tab {% if current_status == status %}active{% endif %}">
-                    {{ status|upper }}
-                </a>
-            {% endfor %}
-        </div>
-
-        <!-- Orders Table -->
-        <div class="card">
-            <div class="card-header">
-                <h5><i class="fas fa-table"></i> Orders</h5>
-            </div>
-            <div class="card-body" style="padding: 0;">
-                {% if orders.items %}
-                    <table class="order-table">
-                        <thead>
-                            <tr>
-                                <th>Order Number</th>
-                                <th>Customer</th>
-                                <th>Date</th>
-                                <th>Items</th>
-                                <th>Total</th>
-                                <th>Status</th>
-                                <th>Payment</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for order in orders.items %}
-                                <tr>
-                                    <td class="order-number">{{ order.order_number }}</td>
-                                    <td>
-                                        <div>{{ order.customer.first_name }} {{ order.customer.last_name }}</div>
-                                        <div class="customer-name">{{ order.customer.email }}</div>
-                                    </td>
-                                    <td>{{ order.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
-                                    <td>{{ order.get_item_count() }}</td>
-                                    <td class="order-total">R{{ "%.2f"|format(order.total_amount) }}</td>
-                                    <td>
-                                        <span class="status-badge status-{{ order.status }}">
-                                            {{ order.status|upper }}
-                                        </span>
-                                    </td>
-                                    <td>
-                                        {% if order.payment_status == 'completed' %}
-                                            <span class="status-badge" style="background-color: #d4edda; color: #155724;">
-                                                {{ order.payment_status|upper }}
-                                            </span>
-                                        {% else %}
-                                            <span class="status-badge" style="background-color: #fff3cd; color: #856404;">
-                                                {{ order.payment_status|upper }}
-                                            </span>
-                                        {% endif %}
-                                    </td>
-                                    <td>
-                                        <a href="/admin/orders/{{ order.id }}" class="btn-view">
-                                            <i class="fas fa-eye"></i> View
-                                        </a>
-                                    </td>
-                                </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-
-                    <!-- Pagination -->
-                    {% if orders.pages > 1 %}
-                        <nav aria-label="Page navigation" style="padding: 20px;">
-                            <ul class="pagination">
-                                {% if orders.has_prev %}
-                                    <li class="page-item">
-                                        <a class="page-link" href="?page={{ orders.prev_num }}&status={{ current_status }}">
-                                            <i class="fas fa-chevron-left"></i> Previous
-                                        </a>
-                                    </li>
-                                {% endif %}
-
-                                {% for page_num in orders.iter_pages() %}
-                                    {% if page_num %}
-                                        {% if page_num == orders.page %}
-                                            <li class="page-item active">
-                                                <span class="page-link">{{ page_num }}</span>
-                                            </li>
-                                        {% else %}
-                                            <li class="page-item">
-                                                <a class="page-link" href="?page={{ page_num }}&status={{ current_status }}">
-                                                    {{ page_num }}
-                                                </a>
-                                            </li>
-                                        {% endif %}
+    <!-- Orders Table -->
+    <div class="d365-card">
+        <div class="card-body-d365" style="padding: 0;">
+            {% if orders.items %}
+                <table class="table-d365">
+                    <thead>
+                        <tr>
+                            <th class="row-checkbox">
+                                <input type="checkbox" id="selectAll" />
+                            </th>
+                            <th class="sortable">
+                                <div class="column-header">
+                                    <span class="column-title">Order number</span>
+                                    <span class="column-icons">
+                                        <i class="fas fa-filter filter-icon"></i>
+                                        <i class="fas fa-sort sort-icon"></i>
+                                    </span>
+                                </div>
+                            </th>
+                            <th class="sortable">
+                                <div class="column-header">
+                                    <span class="column-title">Customer</span>
+                                    <span class="column-icons">
+                                        <i class="fas fa-filter filter-icon"></i>
+                                        <i class="fas fa-sort sort-icon"></i>
+                                    </span>
+                                </div>
+                            </th>
+                            <th class="sortable" style="width: 130px;">
+                                <div class="column-header">
+                                    <span class="column-title">Order date</span>
+                                    <span class="column-icons">
+                                        <i class="fas fa-sort sort-icon"></i>
+                                    </span>
+                                </div>
+                            </th>
+                            <th class="sortable" style="width: 80px; text-align: center;">
+                                <div class="column-header">
+                                    <span class="column-title">Items</span>
+                                    <span class="column-icons">
+                                        <i class="fas fa-sort sort-icon"></i>
+                                    </span>
+                                </div>
+                            </th>
+                            <th class="sortable" style="width: 120px; text-align: right;">
+                                <div class="column-header">
+                                    <span class="column-title">Total amount</span>
+                                    <span class="column-icons">
+                                        <i class="fas fa-sort sort-icon"></i>
+                                    </span>
+                                </div>
+                            </th>
+                            <th class="sortable" style="width: 110px;">
+                                <div class="column-header">
+                                    <span class="column-title">Status</span>
+                                    <span class="column-icons">
+                                        <i class="fas fa-filter filter-icon"></i>
+                                    </span>
+                                </div>
+                            </th>
+                            <th class="sortable" style="width: 110px;">
+                                <div class="column-header">
+                                    <span class="column-title">Payment</span>
+                                    <span class="column-icons">
+                                        <i class="fas fa-filter filter-icon"></i>
+                                    </span>
+                                </div>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for order in orders.items %}
+                            <tr onclick="selectRow(this, event)" style="cursor: pointer;">
+                                <td class="row-checkbox">
+                                    <input type="checkbox" class="row-select" onclick="event.stopPropagation();" />
+                                </td>
+                                <td>
+                                    <a href="/admin/orders/{{ order.id }}">{{ order.order_number }}</a>
+                                </td>
+                                <td>
+                                    <div style="font-weight: 600;">{{ order.customer.first_name }} {{ order.customer.last_name }}</div>
+                                    <div style="font-size: 11px; color: #605e5c;">{{ order.customer.email }}</div>
+                                </td>
+                                <td style="font-size: 11px;">{{ order.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                                <td style="text-align: center;">{{ order.get_item_count() }}</td>
+                                <td style="text-align: right; font-weight: 600;">R{{ "%.2f"|format(order.total_amount) }}</td>
+                                <td>
+                                    {% if order.status == 'pending' %}
+                                        <span class="badge-d365 warning" style="font-size: 11px;">PENDING</span>
+                                    {% elif order.status == 'processing' %}
+                                        <span class="badge-d365 info" style="font-size: 11px;">PROCESSING</span>
+                                    {% elif order.status == 'shipped' %}
+                                        <span class="badge-d365 info" style="font-size: 11px;">SHIPPED</span>
+                                    {% elif order.status == 'delivered' %}
+                                        <span class="badge-d365 success" style="font-size: 11px;">DELIVERED</span>
+                                    {% elif order.status == 'cancelled' %}
+                                        <span class="badge-d365 danger" style="font-size: 11px;">CANCELLED</span>
                                     {% else %}
-                                        <li class="page-item disabled">
-                                            <span class="page-link">...</span>
-                                        </li>
+                                        <span class="badge-d365 info" style="font-size: 11px;">{{ order.status|upper }}</span>
                                     {% endif %}
-                                {% endfor %}
+                                </td>
+                                <td>
+                                    {% if order.payment_status == 'completed' %}
+                                        <span class="badge-d365 success" style="font-size: 11px;">PAID</span>
+                                    {% else %}
+                                        <span class="badge-d365 warning" style="font-size: 11px;">{{ order.payment_status|upper }}</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
 
-                                {% if orders.has_next %}
-                                    <li class="page-item">
-                                        <a class="page-link" href="?page={{ orders.next_num }}&status={{ current_status }}">
-                                            Next <i class="fas fa-chevron-right"></i>
-                                        </a>
-                                    </li>
-                                {% endif %}
-                            </ul>
-                        </nav>
-                    {% endif %}
-                {% else %}
-                    <div style="text-align: center; padding: 40px;">
-                        <p style="color: #666;">No orders found</p>
+                <!-- Pagination -->
+                {% if orders.pages > 1 %}
+                    <div style="padding: 12px 16px; border-top: 1px solid #edebe9; display: flex; justify-content: center; align-items: center; gap: 8px;">
+                        {% if orders.has_prev %}
+                            <a href="?page={{ orders.prev_num }}&status={{ current_status }}" class="btn-d365-secondary" style="padding: 4px 8px; font-size: 11px;">
+                                <i class="fas fa-chevron-left"></i> Previous
+                            </a>
+                        {% endif %}
+                        <span style="font-size: 12px; color: #605e5c;">Page {{ orders.page }} of {{ orders.pages }}</span>
+                        {% if orders.has_next %}
+                            <a href="?page={{ orders.next_num }}&status={{ current_status }}" class="btn-d365-secondary" style="padding: 4px 8px; font-size: 11px;">
+                                Next <i class="fas fa-chevron-right"></i>
+                            </a>
+                        {% endif %}
                     </div>
                 {% endif %}
-            </div>
-        </div>
-
-        <!-- Statistics -->
-        <div class="row" style="margin-top: 30px;">
-            <div class="col-md-3">
-                <div class="card">
-                    <div class="card-body text-center">
-                        <div style="font-size: 2em; color: var(--accent-color); font-weight: 700;">
-                            {{ orders.total }}
-                        </div>
-                        <p style="color: #666; margin-bottom: 0;">Total Orders</p>
-                    </div>
+            {% else %}
+                <div style="text-align: center; padding: 48px; color: #a19f9d;">
+                    <i class="fas fa-shopping-bag" style="font-size: 36px; margin-bottom: 12px; display: block; opacity: 0.3;"></i>
+                    <p style="margin: 0; font-size: 13px;">No orders found matching the selected filter.</p>
                 </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card">
-                    <div class="card-body text-center">
-                        <div style="font-size: 2em; color: var(--accent-color); font-weight: 700;">
-                            0
-                        </div>
-                        <p style="color: #666; margin-bottom: 0;">Pending Orders</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card">
-                    <div class="card-body text-center">
-                        <div style="font-size: 2em; color: var(--accent-color); font-weight: 700;">
-                            0
-                        </div>
-                        <p style="color: #666; margin-bottom: 0;">Processing</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card">
-                    <div class="card-body text-center">
-                        <div style="font-size: 2em; color: var(--accent-color); font-weight: 700;">
-                            0
-                        </div>
-                        <p style="color: #666; margin-bottom: 0;">Delivered</p>
-                    </div>
-                </div>
-            </div>
+            {% endif %}
         </div>
     </div>
 
-    <!-- Footer -->
-    <div class="footer">
-        <div class="container">
-            <p style="text-align: center; margin: 0;">&copy; 2026 360Degree Supply Admin Panel. All rights reserved.</p>
-        </div>
+    <!-- Footer Info -->
+    <div style="margin-top: 12px; font-size: 12px; color: #605e5c;">
+        <span>Total records: {{ orders.total }}</span>
     </div>
+</div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+<style>
+    .dashboard-container {
+        max-width: 100%;
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        background: #faf9f8 !important;
+    }
+
+    .content {
+        background: #faf9f8 !important;
+        padding: 16px 24px !important;
+    }
+</style>
+
+<script>
+// Select All Checkbox
+document.getElementById('selectAll')?.addEventListener('change', function() {
+    const checkboxes = document.querySelectorAll('.row-select');
+    checkboxes.forEach(cb => cb.checked = this.checked);
+    updateCommandBar();
+});
+
+// Row Selection
+function selectRow(row, event) {
+    if (event.target.type === 'checkbox' || event.target.tagName === 'A') return;
+    const checkbox = row.querySelector('.row-select');
+    checkbox.checked = !checkbox.checked;
+    updateCommandBar();
+}
+
+// Update Command Bar based on selection
+function updateCommandBar() {
+    const selectedCount = document.querySelectorAll('.row-select:checked').length;
+    const viewBtn = document.querySelector('.command-bar-left button:nth-child(1)');
+    const updateBtn = document.querySelector('.command-bar-left button:nth-child(2)');
+    
+    if (selectedCount > 0) {
+        viewBtn.disabled = selectedCount !== 1;
+        updateBtn.disabled = false;
+    } else {
+        viewBtn.disabled = true;
+        updateBtn.disabled = true;
+    }
+}
+
+// Filter functionality
+document.getElementById('filterInput')?.addEventListener('input', function(e) {
+    const filter = e.target.value.toLowerCase();
+    const rows = document.querySelectorAll('.table-d365 tbody tr');
+    
+    rows.forEach(row => {
+        const text = row.textContent.toLowerCase();
+        row.style.display = text.includes(filter) ? '' : 'none';
+    });
+});
+</script>
+{% endblock %}

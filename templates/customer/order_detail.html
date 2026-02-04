@@ -1,0 +1,444 @@
+{% extends "customer/base.html" %}
+
+{% block title %}Order {{ order.order_number }} - 360Degree Supply{% endblock %}
+
+{% block extra_css %}
+<style>
+    .dashboard-container {
+        background: #faf9f8;
+        padding: 0;
+    }
+
+    .dashboard-header {
+        background: white;
+        border-bottom: 1px solid #edebe9;
+        padding: 16px 24px;
+        margin-bottom: 20px;
+    }
+
+    .dashboard-header h1 {
+        font-size: 20px;
+        font-weight: 600;
+        color: #323130;
+        margin: 0;
+    }
+
+    .dashboard-header .subtitle {
+        font-size: 12px;
+        color: #605e5c;
+        margin-top: 4px;
+    }
+
+    .kpi-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 12px;
+        margin-bottom: 20px;
+    }
+
+    .kpi-card {
+        background: white;
+        border: 1px solid #edebe9;
+        padding: 16px;
+        transition: box-shadow 0.1s ease;
+    }
+
+    .kpi-card:hover {
+        box-shadow: 0 3.2px 7.2px rgba(0,0,0,0.132);
+    }
+
+    .kpi-label {
+        font-size: 12px;
+        color: #605e5c;
+        margin-bottom: 8px;
+        font-weight: 400;
+    }
+
+    .kpi-value {
+        font-size: 24px;
+        font-weight: 600;
+        color: #323130;
+        line-height: 1;
+    }
+
+    .kpi-icon {
+        float: right;
+        font-size: 16px;
+        color: #0078d4;
+        opacity: 0.8;
+    }
+
+    .data-grid {
+        background: white;
+        border: 1px solid #edebe9;
+        margin-bottom: 20px;
+    }
+
+    .data-grid-header {
+        padding: 12px 16px;
+        border-bottom: 1px solid #edebe9;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .data-grid-title {
+        font-size: 16px;
+        font-weight: 600;
+        color: #323130;
+        margin: 0;
+    }
+
+    .data-grid-actions {
+        display: flex;
+        gap: 8px;
+    }
+
+    .grid-action-btn {
+        background: white;
+        border: 1px solid #8a8886;
+        color: #323130;
+        padding: 5px 12px;
+        font-size: 14px;
+        cursor: pointer;
+        transition: all 0.1s ease;
+    }
+
+    .grid-action-btn:hover {
+        background: #f3f2f1;
+        border-color: #323130;
+    }
+
+    .d365-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .d365-table thead th {
+        background: #faf9f8;
+        color: #323130;
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        padding: 12px 16px;
+        text-align: left;
+        border-bottom: 1px solid #edebe9;
+    }
+
+    .d365-table tbody td {
+        padding: 12px 16px;
+        font-size: 14px;
+        color: #323130;
+        border-bottom: 1px solid #edebe9;
+    }
+
+    .d365-table tbody tr:hover {
+        background: #f3f2f1;
+    }
+
+    .status-badge {
+        display: inline-block;
+        padding: 2px 8px;
+        border-radius: 2px;
+        font-size: 12px;
+        font-weight: 400;
+    }
+
+    .info-section {
+        background: white;
+        border: 1px solid #edebe9;
+        padding: 16px;
+        margin-bottom: 20px;
+    }
+
+    .info-section h3 {
+        font-size: 14px;
+        font-weight: 600;
+        color: #323130;
+        margin-bottom: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .info-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 8px 0;
+        border-bottom: 1px solid #edebe9;
+    }
+
+    .info-row:last-child {
+        border-bottom: none;
+    }
+
+    .info-label {
+        font-size: 12px;
+        color: #605e5c;
+    }
+
+    .info-value {
+        font-size: 14px;
+        color: #323130;
+        font-weight: 600;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <!-- Page Header -->
+    <div class="dashboard-header">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <h1>Order Details</h1>
+                <div class="subtitle">Order {{ order.order_number }}</div>
+            </div>
+            <a href="{{ url_for('customer_orders') }}" class="grid-action-btn">
+                <i class="fas fa-arrow-left"></i> Back to Orders
+            </a>
+        </div>
+    </div>
+
+    <div class="container-fluid px-3">
+        <div class="row g-3">
+            <!-- Order Information -->
+            <div class="col-lg-4">
+                <div class="info-section">
+                    <h3>Order Information</h3>
+                    <div class="info-row">
+                        <span class="info-label">Order Number</span>
+                        <span class="info-value">{{ order.order_number }}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Order Date</span>
+                        <span class="info-value">{{ order.created_at.strftime('%Y-%m-%d %H:%M') if order.created_at else 'N/A' }}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Status</span>
+                        <span class="info-value">
+                            {% if order.status == 'pending' %}
+                                <span class="status-badge" style="background: #fff4ce; color: #797673;">Pending</span>
+                            {% elif order.status == 'processing' %}
+                                <span class="status-badge" style="background: #deecf9; color: #0078d4;">Processing</span>
+                            {% elif order.status == 'shipped' %}
+                                <span class="status-badge" style="background: #deecf9; color: #0078d4;">Shipped</span>
+                            {% elif order.status == 'delivered' %}
+                                <span class="status-badge" style="background: #dff6dd; color: #107c10;">Delivered</span>
+                            {% elif order.status == 'cancelled' %}
+                                <span class="status-badge" style="background: #fde7e9; color: #a4262c;">Cancelled</span>
+                            {% else %}
+                                <span class="status-badge" style="background: #edebe9; color: #605e5c;">{{ order.status|title }}</span>
+                            {% endif %}
+                        </span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Payment Status</span>
+                        <span class="info-value">
+                            {% if order.payment_status == 'paid' %}
+                                <span class="status-badge" style="background: #dff6dd; color: #107c10;">Paid</span>
+                            {% elif order.payment_status == 'partial' %}
+                                <span class="status-badge" style="background: #fff4ce; color: #797673;">Partial</span>
+                            {% else %}
+                                <span class="status-badge" style="background: #fde7e9; color: #a4262c;">Unpaid</span>
+                            {% endif %}
+                        </span>
+                    </div>
+                </div>
+                </div>
+
+                <!-- Shipping Address -->
+                <div class="info-section">
+                    <h3>Shipping Address</h3>
+                    <div style="padding: 8px 0;">
+                        <p style="margin: 0 0 4px 0; font-weight: 600;">{{ order.customer.get_full_name() }}</p>
+                        {% if order.shipping_address %}
+                            <p style="margin: 0 0 4px 0; font-size: 14px; color: #605e5c;">{{ order.shipping_address }}</p>
+                        {% endif %}
+                        {% if order.customer.city %}
+                            <p style="margin: 0 0 4px 0; font-size: 14px; color: #605e5c;">{{ order.customer.city }}{% if order.customer.postal_code %}, {{ order.customer.postal_code }}{% endif %}</p>
+                        {% endif %}
+                        {% if order.customer.country %}
+                            <p style="margin: 0 0 4px 0; font-size: 14px; color: #605e5c;">{{ order.customer.country }}</p>
+                        {% endif %}
+                        {% if order.customer.phone %}
+                            <p style="margin: 0; font-size: 14px; color: #605e5c;"><i class="fas fa-phone"></i> {{ order.customer.phone }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                {% if order.tracking_number %}
+                <!-- Tracking Information -->
+                <div class="info-section">
+                    <h3>Tracking</h3>
+                    <div style="padding: 8px 0;">
+                        <code style="background: #f3f2f1; padding: 4px 8px; border-radius: 2px;">{{ order.tracking_number }}</code>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Order Items & Summary -->
+            <div class="col-lg-8">
+                <div class="data-grid">
+                    <div class="data-grid-header">
+                        <h2 class="data-grid-title">Order Items</h2>
+                    </div>
+                    <table class="d365-table">
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th style="text-align: center;">Quantity</th>
+                                <th style="text-align: right;">Price</th>
+                                <th style="text-align: right;">Subtotal</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in order.items %}
+                            <tr>
+                                <td>
+                                    <div style="display: flex; align-items: center;">
+                                        {% if item.product.image_url %}
+                                            <img src="{{ item.product.image_url }}" 
+                                                 alt="{{ item.product.name }}"
+                                                 style="width: 40px; height: 40px; object-fit: cover; border-radius: 2px; margin-right: 12px; border: 1px solid #edebe9;">
+                                        {% endif %}
+                                        <div>
+                                            <div style="font-weight: 600;">{{ item.product.name }}</div>
+                                            {% if item.product.sku %}
+                                                <div style="font-size: 12px; color: #605e5c;">SKU: {{ item.product.sku }}</div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </td>
+                                <td style="text-align: center;">
+                                    <span class="status-badge" style="background: #edebe9; color: #323130;">{{ item.quantity }}</span>
+                                </td>
+                                <td style="text-align: right;">
+                                    R{{ "%.2f"|format(item.price_at_purchase) }}
+                                </td>
+                                <td style="text-align: right; font-weight: 600;">
+                                    R{{ "%.2f"|format(item.price_at_purchase * item.quantity) }}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Order Summary -->
+                <div class="data-grid">
+                    <div class="data-grid-header">
+                        <h2 class="data-grid-title">Order Summary</h2>
+                    </div>
+                    <div style="padding: 16px;">
+                        <div class="row">
+                            <div class="col-md-7"></div>
+                            <div class="col-md-5">
+                                <div class="info-row">
+                                    <span class="info-label">Subtotal:</span>
+                                    <span class="info-value">R{{ "%.2f"|format(order.subtotal) }}</span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="info-label">Tax (VAT):</span>
+                                    <span class="info-value">R{{ "%.2f"|format(order.tax_amount) }}</span>
+                                </div>
+                                        <td>Shipping:</td>
+                                        <td class="text-end"><strong>R{{ "%.2f"|format(order.shipping_cost) }}</strong></td>
+                                    </tr>
+                                    <tr style="border-top: 2px solid var(--primary);">
+                                        <td><strong>Total:</strong></td>
+                                        <td class="text-end">
+                                            <strong style="font-size: 1.3rem; color: var(--primary);">
+                                                R{{ "%.2f"|format(order.total_amount) }}
+                                            </strong>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="card shadow-sm mt-3">
+                <div class="card-body">
+                    {% if order.invoices %}
+                        {# Order has invoices - show invoice payment info #}
+                        <div class="alert alert-info mb-3">
+                            <i class="fas fa-file-invoice-dollar"></i>
+                            <strong>Invoice Generated:</strong> This order has an invoice. Please pay the invoice to complete your order.
+                        </div>
+                        
+                        {% for invoice in order.invoices %}
+                            <div class="d-flex justify-content-between align-items-center mb-2 p-3" style="background-color: #f8f9fa; border-radius: 8px;">
+                                <div>
+                                    <strong>{{ invoice.invoice_number }}</strong>
+                                    <br>
+                                    <small class="text-muted">
+                                        Amount: <strong>R{{ "%.2f"|format(invoice.total_amount) }}</strong> | 
+                                        Status: 
+                                        {% if invoice.status == 'paid' %}
+                                            <span class="badge bg-success">Paid</span>
+                                        {% elif invoice.status == 'partial' %}
+                                            <span class="badge bg-warning text-dark">Partially Paid</span>
+                                        {% else %}
+                                            <span class="badge bg-warning text-dark">Pending</span>
+                                        {% endif %}
+                                    </small>
+                                </div>
+                                <div>
+                                    <a href="{{ url_for('customer_invoice_detail', invoice_id=invoice.id) }}" class="btn btn-sm btn-primary me-2">
+                                        <i class="fas fa-eye"></i> View Invoice
+                                    </a>
+                                    {% if invoice.status != 'paid' %}
+                                        <a href="{{ url_for('customer_pay_invoice', invoice_id=invoice.id) }}" class="btn btn-sm btn-success">
+                                            <i class="fas fa-credit-card"></i> Pay Invoice
+                                        </a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        {# No invoice yet - show generic payment button #}
+                        {% if order.payment_status in ['pending', 'unpaid'] %}
+                            <div class="alert alert-warning mb-3">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                <strong>Awaiting Invoice:</strong> An invoice will be generated for this order. You'll be able to make payment once the invoice is issued.
+                            </div>
+                        {% endif %}
+                    {% endif %}
+                    
+                    <div class="d-flex gap-2 justify-content-end mt-3">
+                        {% if order.status in ['pending', 'processing'] and order.payment_status != 'paid' %}
+                            <button class="btn btn-danger" onclick="if(confirm('Are you sure you want to cancel this order?')) { window.location.href='{{ url_for('customer_orders') }}'; }">
+                                <i class="fas fa-times"></i> Cancel Order
+                            </button>
+                        {% endif %}
+                        
+                        <a href="{{ url_for('customer_orders') }}" class="btn btn-outline-secondary">
+                            <i class="fas fa-arrow-left"></i> Back to Orders
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            {% if order.notes %}
+                <div class="card shadow-sm mt-3">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-sticky-note"></i> Order Notes
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="mb-0" style="background-color: #f8f9fa; padding: 15px; border-radius: 8px; border-left: 4px solid var(--secondary);">
+                            {{ order.notes }}
+                        </p>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

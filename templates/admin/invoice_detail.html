@@ -81,6 +81,47 @@
 
         <hr>
 
+        <!-- Invoice Items -->
+        {% if invoice.items %}
+            <div class="mb-4">
+                <h5 style="color: var(--primary);" class="mb-3">
+                    <i class="fas fa-list"></i> Invoice Items
+                </h5>
+                <div class="table-responsive">
+                    <table class="table table-sm table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Description</th>
+                                <th>Order Reference</th>
+                                <th class="text-center">Quantity</th>
+                                <th class="text-end">Unit Price</th>
+                                <th class="text-end">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in invoice.items %}
+                                <tr>
+                                    <td>{{ item.description }}</td>
+                                    <td>
+                                        {% if item.order %}
+                                            <a href="{{ url_for('admin_order_detail', order_id=item.order.id) }}">
+                                                {{ item.order.order_number }}
+                                            </a>
+                                        {% else %}
+                                            -
+                                        {% endif %}
+                                    </td>
+                                    <td class="text-center">{{ item.quantity }}</td>
+                                    <td class="text-end">R{{ "%.2f"|format(item.unit_price) }}</td>
+                                    <td class="text-end"><strong>R{{ "%.2f"|format(item.total) }}</strong></td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        {% endif %}
+
         <!-- Amount Summary -->
         <div class="row">
             <div class="col-md-8"></div>

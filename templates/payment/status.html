@@ -4,266 +4,258 @@
 
 {% block content %}
 <div class="payment-container">
-    <!-- Status Indicator -->
-    {% if status == 'success' %}
-    <div class="payment-header" style="background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);">
-        <h1 style="color: #155724;">✅ Payment Successful</h1>
-        <p style="color: #155724;">{{ message }}</p>
+    <!-- Breadcrumb -->
+    <div class="breadcrumb-d365">
+        <a href="{{ url_for('home') }}">Home</a>
+        <span class="separator">/</span>
+        <a href="{{ url_for('customer.orders') }}">Orders</a>
+        <span class="separator">/</span>
+        <span>Payment Status</span>
     </div>
 
-    <!-- Success Alert -->
-    <div class="alert alert-success" style="margin-bottom: 20px;">
-        <i class="fas fa-check-circle"></i>
-        Your payment has been processed successfully. Your order is now confirmed.
+    <!-- Status Card -->
+    {% if status == 'success' %}
+    <div class="d365-card">
+        <div class="card-header-d365" style="background: #dff6dd; border-color: #107c10;">
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <span style="font-size: 32px;">✅</span>
+                <div>
+                    <h1 style="color: #107c10; margin: 0;">Payment Successful</h1>
+                    <p style="color: #107c10; margin: 4px 0 0 0;">{{ message }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="card-body-d365">
+            <div class="alert-d365 alert-success">
+                <i class="fas fa-check-circle"></i>
+                <div>
+                    <strong>Thank you!</strong> Your payment has been processed successfully. Your order is now confirmed.
+                </div>
+            </div>
+        </div>
     </div>
 
     {% elif status == 'failed' %}
-    <div class="payment-header" style="background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);">
-        <h1 style="color: #721c24;">❌ Payment Failed</h1>
-        <p style="color: #721c24;">{{ message }}</p>
-    </div>
-
-    <!-- Error Alert -->
-    <div class="alert alert-error" style="margin-bottom: 20px;">
-        <i class="fas fa-exclamation-circle"></i>
-        Your payment could not be processed. Please check your payment details and try again.
+    <div class="d365-card">
+        <div class="card-header-d365" style="background: #fde7e9; border-color: #a80000;">
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <span style="font-size: 32px;">❌</span>
+                <div>
+                    <h1 style="color: #a80000; margin: 0;">Payment Failed</h1>
+                    <p style="color: #a80000; margin: 4px 0 0 0;">{{ message }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="card-body-d365">
+            <div class="alert-d365 alert-error">
+                <i class="fas fa-exclamation-circle"></i>
+                <div>
+                    <strong>Payment Error:</strong> Your payment could not be processed. Please check your payment details and try again.
+                </div>
+            </div>
+        </div>
     </div>
 
     {% elif status == 'pending' %}
-    <div class="payment-header" style="background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);">
-        <h1 style="color: #856404;">⏳ Payment Processing</h1>
-        <p style="color: #856404;">{{ message }}</p>
-    </div>
-
-    <!-- Pending Alert -->
-    <div class="alert alert-warning" style="margin-bottom: 20px;">
-        <span class="spinner"></span>
-        <strong>Please wait...</strong> Your payment is being processed. This may take a few moments.
+    <div class="d365-card">
+        <div class="card-header-d365" style="background: #fff4ce; border-color: #f7630c;">
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <span style="font-size: 32px;">⏳</span>
+                <div>
+                    <h1 style="color: #8a8886; margin: 0;">Payment Processing</h1>
+                    <p style="color: #8a8886; margin: 4px 0 0 0;">{{ message }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="card-body-d365">
+            <div class="alert-d365 alert-warning">
+                <span class="spinner"></span>
+                <div>
+                    <strong>Please wait...</strong> Your payment is being processed. This may take a few moments.
+                </div>
+            </div>
+        </div>
     </div>
 
     {% else %}
-    <div class="payment-header" style="background: linear-gradient(135deg, #d1ecf1 0%, #bee5eb 100%);">
-        <h1 style="color: #0c5460;">❓ Unknown Status</h1>
-        <p style="color: #0c5460;">{{ message }}</p>
+    <div class="d365-card">
+        <div class="card-header-d365" style="background: #deecf9; border-color: #0078d4;">
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <span style="font-size: 32px;">❓</span>
+                <div>
+                    <h1 style="color: #0078d4; margin: 0;">Unknown Status</h1>
+                    <p style="color: #0078d4; margin: 4px 0 0 0;">{{ message }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="card-body-d365">
+            <div class="alert-d365 alert-info">
+                <i class="fas fa-info-circle"></i>
+                <div>
+                    We could not determine the status of your payment. Please contact support if you have questions.
+                </div>
+            </div>
+        </div>
     </div>
-
-    <!-- Info Alert -->
-    <div class="alert alert-info" style="margin-bottom: 20px;">
-        <i class="fas fa-info-circle"></i>
-        We could not determine the status of your payment. Please contact support if you have questions.
-    </div>
-
     {% endif %}
 
     <!-- Order Information -->
     {% if order %}
-    <div class="transaction-details">
-        <div class="transaction-header">
+    <div class="d365-card">
+        <div class="card-header-d365">
             <div>
                 <div class="transaction-id">Order #{{ order.order_number }}</div>
-                <small style="color: #999;">{{ order.created_at.strftime('%B %d, %Y at %I:%M %p') }}</small>
+                <small>{{ order.created_at.strftime('%B %d, %Y at %I:%M %p') }}</small>
             </div>
-            <div class="status-badge status-{{ order.payment_status }}">
+            <span class="badge-d365 badge-{{ order.payment_status }}">
                 {{ order.payment_status|upper }}
-            </div>
-        </div>
-
-        <div class="transaction-row">
-            <span class="transaction-label">Order Status:</span>
-            <span class="transaction-value">{{ order.status|upper }}</span>
-        </div>
-
-        <div class="transaction-row">
-            <span class="transaction-label">Delivery Address:</span>
-            <span class="transaction-value">{{ order.delivery_address|truncate(40) }}</span>
-        </div>
-
-        <div class="transaction-row">
-            <span class="transaction-label">Number of Items:</span>
-            <span class="transaction-value">{{ order.order_items|length }}</span>
-        </div>
-
-        <div class="transaction-row">
-            <span class="transaction-label">Subtotal:</span>
-            <span class="transaction-value">${{ "%.2f"|format(order.subtotal) }}</span>
-        </div>
-
-        {% if order.tax_amount %}
-        <div class="transaction-row">
-            <span class="transaction-label">Tax:</span>
-            <span class="transaction-value">${{ "%.2f"|format(order.tax_amount) }}</span>
-        </div>
-        {% endif %}
-
-        {% if order.shipping_cost %}
-        <div class="transaction-row">
-            <span class="transaction-label">Shipping:</span>
-            <span class="transaction-value">${{ "%.2f"|format(order.shipping_cost) }}</span>
-        </div>
-        {% endif %}
-
-        <div class="transaction-row" style="border-top: 2px solid #007bff; margin-top: 15px; padding-top: 15px;">
-            <span class="transaction-label" style="font-size: 16px;">Total Amount:</span>
-            <span class="transaction-value" style="font-size: 16px; color: #007bff;">
-                ${{ "%.2f"|format(order.total_amount) }}
             </span>
+        </div>
+        <div class="transaction-details" style="border: none; border-radius: 0;">
+            <div class="transaction-row">
+                <span class="transaction-label">Order Status:</span>
+                <span class="transaction-value">{{ order.status|upper }}</span>
+            </div>
+
+            <div class="transaction-row">
+                <span class="transaction-label">Delivery Address:</span>
+                <span class="transaction-value">{{ order.delivery_address|truncate(40) }}</span>
+            </div>
+
+            <div class="transaction-row">
+                <span class="transaction-label">Number of Items:</span>
+                <span class="transaction-value">{{ order.order_items|length }}</span>
+            </div>
+
+            <div class="transaction-row">
+                <span class="transaction-label">Subtotal:</span>
+                <span class="transaction-value">${{ "%.2f"|format(order.subtotal) }}</span>
+            </div>
+
+            {% if order.tax_amount %}
+            <div class="transaction-row">
+                <span class="transaction-label">Tax:</span>
+                <span class="transaction-value">${{ "%.2f"|format(order.tax_amount) }}</span>
+            </div>
+            {% endif %}
+
+            {% if order.shipping_cost %}
+            <div class="transaction-row">
+                <span class="transaction-label">Shipping:</span>
+                <span class="transaction-value">${{ "%.2f"|format(order.shipping_cost) }}</span>
+            </div>
+            {% endif %}
+
+            <div class="transaction-row" style="border-top: 2px solid #0078d4; padding-top: 16px; margin-top: 12px;">
+                <span class="transaction-label" style="font-size: 14px; font-weight: 600; color: #0078d4;">Total Amount:</span>
+                <span class="transaction-value" style="font-size: 16px; font-weight: 600; color: #0078d4;">${{ "%.2f"|format(order.total_amount) }}</span>
+            </div>
         </div>
     </div>
     {% endif %}
 
-    <!-- Transaction Information (if available) -->
+    <!-- Transaction Details -->
     {% if transaction %}
-    <div class="transaction-details">
-        <div class="transaction-header">
-            <div>
-                <div class="transaction-id">Transaction #{{ transaction.payment_reference }}</div>
-                <small style="color: #999;">{{ transaction.created_at.strftime('%B %d, %Y at %I:%M %p') }}</small>
+    <div class="d365-card">
+        <div class="card-header-d365">
+            <h2>Transaction Details</h2>
+        </div>
+        <div class="transaction-details" style="border: none; border-radius: 0;">
+            <div class="transaction-row">
+                <span class="transaction-label">Transaction ID:</span>
+                <span class="transaction-value">{{ transaction.id }}</span>
             </div>
-            <div class="status-badge" style="background: #e9ecef; color: #333;">
-                {{ transaction.payment_method|upper }}
+
+            {% if transaction.payment_reference %}
+            <div class="transaction-row">
+                <span class="transaction-label">Payment Reference:</span>
+                <span class="transaction-value">{{ transaction.payment_reference }}</span>
             </div>
-        </div>
+            {% endif %}
 
-        <div class="transaction-row">
-            <span class="transaction-label">Payment Method:</span>
-            <span class="transaction-value">{{ transaction.payment_method|title }}</span>
-        </div>
+            <div class="transaction-row">
+                <span class="transaction-label">Payment Method:</span>
+                <span class="transaction-value">
+                    {% if transaction.payment_method == 'stripe' %}
+                    <span class="badge-d365 badge-info">STRIPE</span>
+                    {% elif transaction.payment_method == 'payfast' %}
+                    <span class="badge-d365 badge-warning">PAYFAST</span>
+                    {% else %}
+                    {{ transaction.payment_method|upper }}
+                    {% endif %}
+                </span>
+            </div>
 
-        <div class="transaction-row">
-            <span class="transaction-label">Transaction Status:</span>
-            <span class="transaction-value">{{ transaction.status|upper }}</span>
-        </div>
+            <div class="transaction-row">
+                <span class="transaction-label">Amount:</span>
+                <span class="transaction-value">${{ "%.2f"|format(transaction.amount) }}</span>
+            </div>
 
-        <div class="transaction-row">
-            <span class="transaction-label">Amount Charged:</span>
-            <span class="transaction-value">${{ "%.2f"|format(transaction.amount) }}</span>
-        </div>
+            <div class="transaction-row">
+                <span class="transaction-label">Status:</span>
+                <span class="transaction-value">
+                    {% if transaction.status == 'completed' %}
+                    <span class="badge-d365 badge-success">COMPLETED</span>
+                    {% elif transaction.status == 'failed' %}
+                    <span class="badge-d365 badge-error">FAILED</span>
+                    {% elif transaction.status == 'pending' %}
+                    <span class="badge-d365 badge-pending">PENDING</span>
+                    {% else %}
+                    <span class="badge-d365 badge-info">{{ transaction.status|upper }}</span>
+                    {% endif %}
+                </span>
+            </div>
 
-        {% if transaction.status == 'refunded' %}
-        <div class="transaction-row">
-            <span class="transaction-label">Refund Amount:</span>
-            <span class="transaction-value">${{ "%.2f"|format(transaction.refund_amount if transaction.refund_amount else 0) }}</span>
-        </div>
-
-        {% if transaction.refund_reason %}
-        <div class="transaction-row">
-            <span class="transaction-label">Refund Reason:</span>
-            <span class="transaction-value">{{ transaction.refund_reason }}</span>
-        </div>
-        {% endif %}
-        {% endif %}
-
-        {% if transaction.gateway_response %}
-        <div class="transaction-row">
-            <span class="transaction-label">Gateway Response:</span>
-            <span class="transaction-value" style="word-break: break-all; font-family: monospace; font-size: 12px;">
-                {{ transaction.gateway_response[:100] }}{{ "..." if transaction.gateway_response|length > 100 else "" }}
-            </span>
-        </div>
-        {% endif %}
-    </div>
-    {% endif %}
-
-    <!-- Order Items -->
-    {% if order and order.order_items %}
-    <div class="transaction-details">
-        <h3 style="margin-top: 0; color: #333;">📦 Order Items</h3>
-        <div style="overflow-x: auto;">
-            <table style="width: 100%; border-collapse: collapse;">
-                <thead>
-                    <tr style="background: #f8f9fa; border-bottom: 2px solid #dee2e6;">
-                        <th style="text-align: left; padding: 10px; color: #333; font-weight: 600;">Product</th>
-                        <th style="text-align: center; padding: 10px; color: #333; font-weight: 600;">Qty</th>
-                        <th style="text-align: right; padding: 10px; color: #333; font-weight: 600;">Price</th>
-                        <th style="text-align: right; padding: 10px; color: #333; font-weight: 600;">Total</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for item in order.order_items %}
-                    <tr style="border-bottom: 1px solid #e0e0e0;">
-                        <td style="padding: 10px; color: #333;">{{ item.product.name }}</td>
-                        <td style="text-align: center; padding: 10px; color: #666;">{{ item.quantity }}</td>
-                        <td style="text-align: right; padding: 10px; color: #666;">${{ "%.2f"|format(item.price_at_purchase) }}</td>
-                        <td style="text-align: right; padding: 10px; color: #333; font-weight: 600;">
-                            ${{ "%.2f"|format(item.quantity * item.price_at_purchase) }}
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+            <div class="transaction-row">
+                <span class="transaction-label">Date:</span>
+                <span class="transaction-value">{{ transaction.created_at.strftime('%B %d, %Y at %I:%M %p') }}</span>
+            </div>
         </div>
     </div>
     {% endif %}
 
     <!-- Action Buttons -->
-    <div class="btn-group" style="margin-top: 30px;">
+    <div class="actions-bar">
         {% if status == 'success' %}
-            <a href="{{ url_for('customer.view_order', order_id=order.id if order else '#') }}" class="btn btn-primary">
-                View Order Details
-            </a>
-            <a href="{{ url_for('customer.orders_list') }}" class="btn btn-secondary">
-                View All Orders
-            </a>
-        {% elif status == 'failed' %}
-            <a href="{{ url_for('payment.select_payment_method') }}" class="btn btn-primary">
-                Try Payment Again
-            </a>
-            <a href="{{ url_for('checkout.view_cart') }}" class="btn btn-secondary">
-                Return to Cart
-            </a>
-        {% else %}
-            <a href="{{ url_for('customer.orders_list') }}" class="btn btn-primary">
+            <a href="{{ url_for('customer.orders') }}" class="btn-d365 btn-d365-primary">
                 View My Orders
             </a>
-            <a href="{{ url_for('home') }}" class="btn btn-secondary">
-                Continue Shopping
+            <a href="{{ url_for('home') }}" class="btn-d365 btn-d365-secondary">
+                Return to Home
+            </a>
+        {% elif status == 'failed' %}
+            {% if order %}
+            <a href="{{ url_for('payment.select_payment_method', order_id=order.id) }}" class="btn-d365 btn-d365-primary">
+                Try Again
+            </a>
+            {% endif %}
+            <a href="{{ url_for('customer.orders') }}" class="btn-d365 btn-d365-secondary">
+                View Orders
+            </a>
+        {% elif status == 'pending' %}
+            <button type="button" class="btn-d365 btn-d365-primary" onclick="location.reload();">
+                Refresh Status
+            </button>
+            <a href="{{ url_for('customer.orders') }}" class="btn-d365 btn-d365-secondary">
+                View Orders
+            </a>
+        {% else %}
+            <a href="{{ url_for('home') }}" class="btn-d365 btn-d365-primary">
+                Return to Home
+            </a>
+            <a href="{{ url_for('contact') }}" class="btn-d365 btn-d365-secondary">
+                Contact Support
             </a>
         {% endif %}
     </div>
-
-    <!-- Support Information -->
-    <div style="background: #f8f9fa; padding: 20px; border-radius: 6px; margin-top: 30px; border-left: 4px solid #007bff;">
-        <h4 style="margin-top: 0; color: #333;">📞 Need Help?</h4>
-        <p style="margin: 10px 0 0 0; color: #666; font-size: 14px;">
-            If you have questions about your payment or order, please <a href="{{ url_for('contact') }}" style="color: #007bff; text-decoration: none;">contact our support team</a>
-            or email us at <a href="mailto:support@barron.com" style="color: #007bff; text-decoration: none;">support@barron.com</a>
-        </p>
-    </div>
 </div>
 
-<!-- Auto-redirect for pending payments (optional) -->
+<!-- Auto-refresh for pending status -->
 {% if status == 'pending' %}
 <script>
-    // Check payment status every 5 seconds for 2 minutes
-    let attempts = 0;
-    const maxAttempts = 24;
-
-    function checkPaymentStatus() {
-        attempts++;
-
-        if (attempts >= maxAttempts) {
-            // Stop checking after 2 minutes
-            console.log('Stopped checking payment status after 2 minutes');
-            return;
-        }
-
-        fetch('{{ url_for("payment.payment_status") }}?order_id={{ order.id if order else "0" }}', {
-            method: 'GET',
-            headers: {
-                'Accept': 'application/json'
-            }
-        }).then(response => response.json())
-        .then(data => {
-            if (data.status !== 'pending') {
-                // Status changed, reload page
-                location.reload();
-            }
-        }).catch(err => console.log('Status check error:', err));
-    }
-
-    // Check every 5 seconds
-    setInterval(checkPaymentStatus, 5000);
+    setTimeout(function() {
+        location.reload();
+    }, 5000); // Refresh every 5 seconds
 </script>
 {% endif %}
-
 {% endblock %}

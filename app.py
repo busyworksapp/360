@@ -4,13 +4,13 @@ from flask_migrate import Migrate
 from flask_cors import CORS
 from flask_caching import Cache
 import os
-import datetime
+from datetime import datetime, timedelta
 from config import Config
 from models import (
     db, User, SiteSettings, CompanyInfo, Service, Product, HeroSection,
     ContentSection, PaymentMethod, PaymentTerm, Transaction,
     ContactSubmission, MenuItem, Testimonial, Customer, Cart, CartItem,
-    Order, OrderItem, Invoice, InvoicePayment
+    Order, OrderItem, Invoice, InvoicePayment, InvoiceItem, ProofOfPayment
 )
 from email_service import EmailService
 import json
@@ -19,6 +19,7 @@ from payments import StripePayment, PayFastPayment
 from email_service import EmailService
 from geolocation import geolocation_service
 from pricing import pricing_service
+from ocr_service import OCRService
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -115,7 +116,7 @@ def index():
     ).order_by(Service.order_position).all()
     testimonials = Testimonial.query.filter_by(
         is_active=True
-    ).order_by(Testimonial.order_position).all()
+    ).order_by(Testimonial.order_position).limit(3).all()
     company_info = CompanyInfo.query.first()
     content_sections = ContentSection.query.filter_by(
         is_active=True
@@ -155,12 +156,21 @@ def products():
         is_active=True, parent_id=None
     ).order_by(MenuItem.order_position).all()
     
+    # Get unique categories
+    categories = db.session.query(Product.category).filter(
+        Product.is_active == True,
+        Product.category.isnot(None),
+        Product.category != ''
+    ).distinct().order_by(Product.category).all()
+    categories = [cat[0] for cat in categories if cat[0]]
+    
     # Get pricing context for current customer
     pricing_ctx = pricing_service.get_product_list_context(products)
     
     return render_template('products.html',
                          products=products,
                          pricing_context=pricing_ctx,
+                         categories=categories,
                          company_info=company_info,
                          menu_items=menu_items)
 
@@ -290,7 +300,17 @@ def admin_dashboard():
     total_transactions = Transaction.query.count()
     pending_contacts = ContactSubmission.query.filter_by(status='new').count()
     
-    recent_transactions = Transaction.query.order_by(Transaction.created_at.desc()).limit(5).all()
+    # Get recent transactions with customer info via order relationship
+    recent_transactions = db.session.query(
+        Transaction,
+        Order,
+        Customer
+    ).join(
+        Order, Transaction.order_id == Order.id
+    ).join(
+        Customer, Order.customer_id == Customer.id
+    ).order_by(Transaction.created_at.desc()).limit(5).all()
+    
     recent_contacts = ContactSubmission.query.order_by(ContactSubmission.created_at.desc()).limit(5).all()
     
     return render_template('admin/dashboard.html',
@@ -599,8 +619,77 @@ def admin_contacts():
 @login_required
 def admin_transactions():
     page = request.args.get('page', 1, type=int)
-    transactions = Transaction.query.order_by(Transaction.created_at.desc()).paginate(page=page, per_page=10)
+    
+    # Query transactions with customer and order info
+    transactions_query = db.session.query(
+        Transaction,
+        Order,
+        Customer
+    ).join(
+        Order, Transaction.order_id == Order.id
+    ).join(
+        Customer, Order.customer_id == Customer.id
+    ).order_by(Transaction.created_at.desc())
+    
+    # Paginate the results
+    transactions = transactions_query.paginate(page=page, per_page=10, error_out=False)
+    
+    # Transform results to include customer info using a wrapper class
+    class TransactionWithCustomer:
+        def __init__(self, tx, order, customer, invoice):
+            self.id = tx.id
+            self.payment_reference = tx.payment_reference
+            self.amount = tx.amount
+            self.currency = tx.currency
+            self.payment_method = tx.payment_method
+            self.status = tx.status
+            self.created_at = tx.created_at
+            self.customer_name = f"{customer.first_name} {customer.last_name}"
+            self.customer_email = customer.email
+            self.customer_phone = customer.phone
+            self.order_number = order.order_number
+            self.invoice_number = invoice.invoice_number if invoice else 'N/A'
+            self.material_type = 'N/A'  # Can be derived from order items if needed
+    
+    enriched_items = []
+    for tx, order, customer in transactions.items:
+        # Check if there's an invoice for this order
+        invoice = Invoice.query.filter_by(order_id=order.id).first()
+        enriched_items.append(TransactionWithCustomer(tx, order, customer, invoice))
+    
+    # Replace the items with enriched transactions
+    transactions.items = enriched_items
+    
     return render_template('admin/transactions.html', transactions=transactions)
+
+@app.route('/admin/transactions/<int:transaction_id>')
+@login_required
+def admin_transaction_detail(transaction_id):
+    # Query transaction with customer and order info
+    result = db.session.query(
+        Transaction,
+        Order,
+        Customer
+    ).join(
+        Order, Transaction.order_id == Order.id
+    ).join(
+        Customer, Order.customer_id == Customer.id
+    ).filter(Transaction.id == transaction_id).first()
+    
+    if not result:
+        flash('Transaction not found', 'error')
+        return redirect(url_for('admin_transactions'))
+    
+    transaction, order, customer = result
+    
+    # Check if there's an invoice for this order
+    invoice = Invoice.query.filter_by(order_id=order.id).first()
+    
+    return render_template('admin/transaction_detail.html',
+                         transaction=transaction,
+                         order=order,
+                         customer=customer,
+                         invoice=invoice)
 
 @app.route('/admin/menu')
 @login_required
@@ -770,6 +859,46 @@ def customer_login():
                 return redirect(url_for('login'))
 
             login_user(customer)
+            
+            # Migrate session cart to database cart
+            if 'cart' in session and session['cart']:
+                cart = Cart.query.filter_by(
+                    customer_id=customer.id, is_active=True
+                ).first()
+                
+                if not cart:
+                    cart = Cart(customer_id=customer.id)
+                    db.session.add(cart)
+                    db.session.flush()
+                
+                # Add session cart items to database cart
+                for item in session['cart']:
+                    product = db.session.get(Product, item['product_id'])
+                    if product:
+                        # Check if product already in cart
+                        cart_item = CartItem.query.filter_by(
+                            cart_id=cart.id, product_id=item['product_id']
+                        ).first()
+                        
+                        if cart_item:
+                            cart_item.quantity += item['quantity']
+                        else:
+                            cart_item = CartItem(
+                                cart_id=cart.id,
+                                product_id=item['product_id'],
+                                quantity=item['quantity'],
+                                price_at_add=product.price
+                            )
+                            db.session.add(cart_item)
+                
+                db.session.commit()
+                # Store count before clearing
+                cart_count = len(session.get('cart', []))
+                # Clear session cart
+                session.pop('cart', None)
+                if cart_count > 0:
+                    flash(f'Welcome back! Your cart has been updated with {cart_count} items.', 'success')
+            
             next_page = request.args.get('next')
             if not next_page or (
                 next_page.startswith('http') or
@@ -802,12 +931,29 @@ def customer_dashboard():
         flash('Access denied', 'danger')
         return redirect(url_for('index'))
 
+    # Get real statistics from database
+    orders = Order.query.filter_by(customer_id=current_user.id).all()
+    total_orders = len(orders)
+    completed_orders = len([o for o in orders if o.status == 'delivered'])
+    pending_orders = len([o for o in orders if o.status in ['pending', 'processing']])
+    total_spent = sum(o.total_amount for o in orders)
+    
+    # Get recent orders
+    recent_orders = Order.query.filter_by(
+        customer_id=current_user.id
+    ).order_by(Order.created_at.desc()).limit(5).all()
+
     menu_items = MenuItem.query.filter_by(
         is_active=True, parent_id=None
     ).order_by(MenuItem.order_position).all()
     company_info = CompanyInfo.query.first()
 
     return render_template('customer/dashboard.html',
+                         total_orders=total_orders,
+                         completed_orders=completed_orders,
+                         pending_orders=pending_orders,
+                         total_spent=total_spent,
+                         recent_orders=recent_orders,
                          menu_items=menu_items,
                          company_info=company_info)
 
@@ -850,40 +996,89 @@ def customer_profile():
                          company_info=company_info)
 
 
+@app.route('/customer/products')
+@login_required
+def customer_products():
+    """Customer-facing products page with sidebar navigation"""
+    if not isinstance(current_user, Customer):
+        flash('Access denied', 'danger')
+        return redirect(url_for('index'))
+    
+    products = Product.query.filter_by(is_active=True).order_by(
+        Product.order_position
+    ).all()
+    
+    # Get unique categories
+    categories = db.session.query(Product.category).distinct().all()
+    categories = [c[0] for c in categories if c[0]]
+    
+    # Get pricing context for current customer
+    pricing_ctx = pricing_service.get_product_list_context(products)
+    
+    return render_template('customer/products.html',
+                         products=products,
+                         categories=categories,
+                         pricing_context=pricing_ctx)
+
+
+@app.route('/customer/services')
+@login_required
+def customer_services():
+    """Customer-facing services page with sidebar navigation"""
+    if not isinstance(current_user, Customer):
+        flash('Access denied', 'danger')
+        return redirect(url_for('index'))
+    
+    services = Service.query.filter_by(is_active=True).order_by(
+        Service.order_position
+    ).all()
+    
+    return render_template('customer/services.html', services=services)
+
+
 # ========== SHOPPING CART ROUTES ==========
 
 @app.route('/cart', methods=['GET'])
 def view_cart():
-    """Display shopping cart"""
+    """Display shopping cart - supports both logged-in and guest users"""
     menu_items = MenuItem.query.filter_by(
         is_active=True
     ).order_by(MenuItem.order_position).all()
     company_info = CompanyInfo.query.first()
 
     cart = None
+    session_cart_items = []
     pricing_ctx = pricing_service.get_customer_pricing_context()
     
-    if current_user and isinstance(current_user, Customer):
+    if current_user.is_authenticated and isinstance(current_user, Customer):
+        # Get database cart for logged-in customer
         cart = Cart.query.filter_by(
             customer_id=current_user.id, is_active=True
         ).first()
+    else:
+        # Get session cart for guest users
+        if 'cart' in session:
+            cart_data = session['cart']
+            for item in cart_data:
+                product = db.session.get(Product, item['product_id'])
+                if product:
+                    session_cart_items.append({
+                        'product': product,
+                        'quantity': item['quantity'],
+                        'price': item['price']
+                    })
 
     return render_template('cart.html',
                            cart=cart,
+                           session_cart=session_cart_items,
                            pricing_context=pricing_ctx,
                            menu_items=menu_items,
                            company_info=company_info)
 
 
 @app.route('/api/cart/add', methods=['POST'])
-@login_required
 def add_to_cart():
-    """Add product to cart via AJAX"""
-    if not isinstance(current_user, Customer):
-        return jsonify({
-            'success': False, 'message': 'Must be logged in as customer'
-        }), 401
-
+    """Add product to cart via AJAX - supports both logged-in and guest users"""
     data = request.get_json()
     product_id = data.get('product_id')
     quantity = int(data.get('quantity', 1))
@@ -899,40 +1094,77 @@ def add_to_cart():
             'success': False, 'message': 'Product not found'
         }), 404
 
-    # Get or create customer's cart
-    cart = Cart.query.filter_by(
-        customer_id=current_user.id, is_active=True
-    ).first()
+    # Check if user is logged in as customer
+    if current_user.is_authenticated and isinstance(current_user, Customer):
+        # Database cart for logged-in customers
+        cart = Cart.query.filter_by(
+            customer_id=current_user.id, is_active=True
+        ).first()
 
-    if not cart:
-        cart = Cart(customer_id=current_user.id)
-        db.session.add(cart)
+        if not cart:
+            cart = Cart(customer_id=current_user.id)
+            db.session.add(cart)
+            db.session.commit()
+
+        # Check if product already in cart
+        cart_item = CartItem.query.filter_by(
+            cart_id=cart.id, product_id=product_id
+        ).first()
+
+        if cart_item:
+            cart_item.quantity += quantity
+        else:
+            cart_item = CartItem(
+                cart_id=cart.id,
+                product_id=product_id,
+                quantity=quantity,
+                price_at_add=product.price
+            )
+            db.session.add(cart_item)
+
         db.session.commit()
 
-    # Check if product already in cart
-    cart_item = CartItem.query.filter_by(
-        cart_id=cart.id, product_id=product_id
-    ).first()
-
-    if cart_item:
-        cart_item.quantity += quantity
+        return jsonify({
+            'success': True,
+            'message': 'Product added to cart',
+            'cart_count': cart.get_item_count(),
+            'subtotal': float(cart.get_subtotal())
+        })
     else:
-        cart_item = CartItem(
-            cart_id=cart.id,
-            product_id=product_id,
-            quantity=quantity,
-            price_at_add=product.price
-        )
-        db.session.add(cart_item)
-
-    db.session.commit()
-
-    return jsonify({
-        'success': True,
-        'message': 'Product added to cart',
-        'cart_count': cart.get_item_count(),
-        'subtotal': float(cart.get_subtotal())
-    })
+        # Session-based cart for guests
+        if 'cart' not in session:
+            session['cart'] = []
+        
+        # Check if product already in session cart
+        cart_items = session['cart']
+        found = False
+        
+        for item in cart_items:
+            if item['product_id'] == product_id:
+                item['quantity'] += quantity
+                found = True
+                break
+        
+        if not found:
+            cart_items.append({
+                'product_id': product_id,
+                'quantity': quantity,
+                'price': float(product.price)
+            })
+        
+        session['cart'] = cart_items
+        session.modified = True
+        
+        # Calculate cart count and subtotal
+        cart_count = sum(item['quantity'] for item in cart_items)
+        subtotal = sum(item['quantity'] * item['price'] for item in cart_items)
+        
+        return jsonify({
+            'success': True,
+            'message': 'Product added to cart',
+            'cart_count': cart_count,
+            'subtotal': float(subtotal)
+        })
 
 
 @app.route('/api/cart/remove/<int:item_id>',
@@ -1041,15 +1273,19 @@ def clear_cart():
 
 @app.route('/api/cart/count', methods=['GET'])
 def get_cart_count():
-    """Get number of items in cart (for navbar)"""
+    """Get number of items in cart (for navbar) - supports both logged-in and guest users"""
     cart_count = 0
 
-    if current_user and isinstance(current_user, Customer):
+    if current_user.is_authenticated and isinstance(current_user, Customer):
         cart = Cart.query.filter_by(
             customer_id=current_user.id, is_active=True
         ).first()
         if cart:
             cart_count = cart.get_item_count()
+    else:
+        # Get count from session cart for guests
+        if 'cart' in session:
+            cart_count = sum(item['quantity'] for item in session['cart'])
 
     return jsonify({'cart_count': cart_count})
 
@@ -1087,6 +1323,7 @@ def checkout():
             shipping = 100.0 if subtotal > 0 else 0
             total = subtotal + tax + shipping
             
+            # Create order (unpaid)
             order = Order(
                 customer_id=current_user.id,
                 order_number=order_number,
@@ -1095,7 +1332,7 @@ def checkout():
                 tax_amount=tax,
                 shipping_cost=shipping,
                 total_amount=total,
-                payment_status='pending',
+                payment_status='unpaid',  # Order starts unpaid
                 shipping_address=shipping_address,
                 billing_address=billing_address
             )
@@ -1111,6 +1348,35 @@ def checkout():
                     price_at_purchase=cart_item.price_at_add
                 )
                 db.session.add(order_item)
+            
+            # Create invoice for the order
+            invoice_number = f"INV-{uuid.uuid4().hex[:8].upper()}"
+            due_date = datetime.utcnow() + timedelta(days=30)  # 30 days payment terms
+            
+            invoice = Invoice(
+                customer_id=current_user.id,
+                order_id=order.id,
+                invoice_number=invoice_number,
+                subtotal=subtotal,
+                tax_amount=tax,
+                total_amount=total,
+                status='pending',  # Invoice pending payment
+                due_date=due_date
+            )
+            db.session.add(invoice)
+            db.session.flush()  # Get invoice ID
+            
+            # Add invoice items
+            for cart_item in cart.items:
+                invoice_item = InvoiceItem(
+                    invoice_id=invoice.id,
+                    order_id=order.id,
+                    description=cart_item.product.name,
+                    quantity=cart_item.quantity,
+                    unit_price=cart_item.price_at_add,
+                    total=cart_item.price_at_add * cart_item.quantity
+                )
+                db.session.add(invoice_item)
             
             # Mark cart as inactive
             cart.is_active = False
@@ -1128,8 +1394,9 @@ def checkout():
             except Exception as e:
                 print(f'Email error: {e}')
             
-            flash('Order created successfully!', 'success')
-            return redirect(url_for('customer_orders'))
+            flash(f'Order {order_number} created! Invoice {invoice_number} generated.', 'success')
+            # Redirect to invoice page to proceed with payment
+            return redirect(url_for('customer_invoice_detail', invoice_id=invoice.id))
         
         # GET - show checkout form
         cart = Cart.query.filter_by(
@@ -1220,6 +1487,119 @@ def customer_order_detail(order_id):
         print(f'Error: {e}')
         flash('Could not load order', 'error')
         return redirect(url_for('customer_orders'))
+
+
+@app.route('/customer/transactions', methods=['GET'])
+@login_required
+def customer_transactions():
+    """View customer transaction history"""
+    if not isinstance(current_user, Customer):
+        flash('Customers only', 'error')
+        return redirect(url_for('index'))
+    
+    try:
+        page = request.args.get('page', 1, type=int)
+        
+        # Get all transactions for customer's orders
+        transactions_query = db.session.query(
+            Transaction,
+            Order
+        ).join(
+            Order, Transaction.order_id == Order.id
+        ).filter(
+            Order.customer_id == current_user.id
+        ).order_by(Transaction.created_at.desc())
+        
+        # Paginate results
+        transactions = transactions_query.paginate(page=page, per_page=10, error_out=False)
+        
+        # Enrich transactions with invoice info
+        enriched_items = []
+        for transaction, order in transactions.items:
+            invoice = Invoice.query.filter_by(order_id=order.id).first()
+            
+            # Create wrapper object
+            class TransactionWithOrder:
+                def __init__(self, tx, ord, inv):
+                    self.id = tx.id
+                    self.payment_reference = tx.payment_reference
+                    self.amount = tx.amount
+                    self.currency = tx.currency
+                    self.payment_method = tx.payment_method
+                    self.status = tx.status
+                    self.created_at = tx.created_at
+                    self.order_number = ord.order_number
+                    self.order_id = ord.id
+                    self.invoice_number = inv.invoice_number if inv else 'N/A'
+                    self.invoice_id = inv.id if inv else None
+            
+            enriched_items.append(TransactionWithOrder(transaction, order, invoice))
+        
+        transactions.items = enriched_items
+        
+        menu_items = MenuItem.query.filter_by(
+            is_active=True, parent_id=None
+        ).order_by(MenuItem.order_position).all()
+        company_info = CompanyInfo.query.first()
+        
+        return render_template(
+            'customer/transactions.html',
+            transactions=transactions,
+            menu_items=menu_items,
+            company_info=company_info
+        )
+    except Exception as e:
+        print(f'Error: {e}')
+        flash('Could not load transactions', 'error')
+        return redirect(url_for('customer_dashboard'))
+
+
+@app.route('/customer/transactions/<int:transaction_id>', methods=['GET'])
+@login_required
+def customer_transaction_detail(transaction_id):
+    """View specific transaction details"""
+    if not isinstance(current_user, Customer):
+        flash('Customers only', 'error')
+        return redirect(url_for('index'))
+    
+    try:
+        # Get transaction with order
+        result = db.session.query(
+            Transaction,
+            Order
+        ).join(
+            Order, Transaction.order_id == Order.id
+        ).filter(
+            Transaction.id == transaction_id,
+            Order.customer_id == current_user.id
+        ).first()
+        
+        if not result:
+            flash('Transaction not found', 'error')
+            return redirect(url_for('customer_transactions'))
+        
+        transaction, order = result
+        
+        # Get invoice if exists
+        invoice = Invoice.query.filter_by(order_id=order.id).first()
+        
+        menu_items = MenuItem.query.filter_by(
+            is_active=True, parent_id=None
+        ).order_by(MenuItem.order_position).all()
+        company_info = CompanyInfo.query.first()
+        
+        return render_template(
+            'customer/transaction_detail.html',
+            transaction=transaction,
+            order=order,
+            invoice=invoice,
+            menu_items=menu_items,
+            company_info=company_info
+        )
+    except Exception as e:
+        print(f'Error: {e}')
+        flash('Could not load transaction', 'error')
+        return redirect(url_for('customer_transactions'))
 
 
 @app.route('/admin/orders', methods=['GET'])
@@ -1330,6 +1710,60 @@ def api_update_order_status(order_id):
     except Exception as e:
         print(f'Error: {e}')
         return jsonify({'error': 'Update failed'}), 500
+
+
+@app.route('/api/customers/<int:customer_id>/orders', methods=['GET'])
+@login_required
+def api_get_customer_orders(customer_id):
+    """API to get customer orders for invoice creation"""
+    if not isinstance(current_user, User):
+        return jsonify({'error': 'Admin required'}), 403
+    
+    try:
+        customer = Customer.query.get(customer_id)
+        if not customer:
+            return jsonify({'error': 'Customer not found'}), 404
+        
+        # Get all orders for this customer
+        orders = Order.query.filter_by(customer_id=customer_id).order_by(Order.created_at.desc()).all()
+        
+        orders_data = []
+        total_order_value = 0
+        
+        for order in orders:
+            # Check if order already has an invoice
+            has_invoice = len(order.invoices) > 0
+            
+            orders_data.append({
+                'id': order.id,
+                'order_number': order.order_number,
+                'status': order.status,
+                'total_amount': float(order.total_amount),
+                'subtotal': float(order.subtotal),
+                'tax_amount': float(order.tax_amount),
+                'item_count': len(order.items),
+                'created_at': order.created_at.strftime('%Y-%m-%d'),
+                'has_invoice': has_invoice,
+                'payment_status': order.payment_status
+            })
+            
+            total_order_value += float(order.total_amount)
+        
+        return jsonify({
+            'customer': {
+                'id': customer.id,
+                'name': customer.get_full_name(),
+                'email': customer.email,
+                'company': customer.company or '',
+            },
+            'orders': orders_data,
+            'total_orders': len(orders),
+            'total_order_value': total_order_value
+        })
+    
+    except Exception as e:
+        app.logger.error(f"Error fetching customer orders: {str(e)}")
+        return jsonify({'error': 'Failed to fetch orders'}), 500
 
 
 def stripe_payment():
@@ -1534,7 +1968,348 @@ def customer_invoice_detail(invoice_id):
         return redirect(url_for('customer_invoices'))
 
 
+@app.route('/customer/invoices/<int:invoice_id>/pay', methods=['GET', 'POST'])
+@login_required
+def customer_pay_invoice(invoice_id):
+    """Pay an invoice"""
+    if not isinstance(current_user, Customer):
+        flash('Customers only', 'error')
+        return redirect(url_for('index'))
+    
+    try:
+        invoice = Invoice.query.filter_by(
+            id=invoice_id, customer_id=current_user.id
+        ).first()
+        
+        if not invoice:
+            flash('Invoice not found', 'error')
+            return redirect(url_for('customer_invoices'))
+        
+        # Check if invoice is already paid
+        if invoice.remaining_balance() <= 0:
+            flash('This invoice has already been paid', 'info')
+            return redirect(url_for('customer_invoice_detail', invoice_id=invoice_id))
+        
+        if request.method == 'POST':
+            payment_method = request.form.get('payment_method', 'card')
+            
+            try:
+                # Handle EFT/Bank Transfer with Proof of Payment
+                if payment_method == 'eft' or payment_method == 'bank_transfer':
+                    return handle_eft_payment(invoice, request)
+                
+                # Handle other payment methods (card, etc.)
+                # Calculate payment amount BEFORE updating invoice
+                payment_amount = invoice.remaining_balance()
+                
+                # Create invoice payment record
+                payment = InvoicePayment(
+                    invoice_id=invoice.id,
+                    amount=payment_amount,
+                    payment_method=payment_method,
+                    payment_date=datetime.utcnow()
+                )
+                
+                # Update invoice
+                invoice.paid_amount = float(invoice.paid_amount or 0) + float(payment_amount)
+                if invoice.paid_amount >= float(invoice.total_amount):
+                    invoice.status = 'paid'
+                else:
+                    invoice.status = 'partial'
+                
+                # Update linked order if exists
+                if invoice.order_id:
+                    order = Order.query.get(invoice.order_id)
+                    if order:
+                        # Update order payment status
+                        if invoice.status == 'paid':
+                            order.payment_status = 'paid'
+                        else:
+                            order.payment_status = 'partial'
+                        
+                        # Create transaction record for the order
+                        transaction = Transaction(
+                            order_id=order.id,
+                            amount=payment_amount,
+                            currency='ZAR',
+                            payment_method=payment_method,
+                            payment_reference=f"{invoice.invoice_number}-{datetime.utcnow().strftime('%Y%m%d%H%M%S')}",
+                            status='completed',
+                            refund_amount=0.00
+                        )
+                        db.session.add(transaction)
+                
+                db.session.add(payment)
+                db.session.commit()
+                
+                flash(f'Payment of R{payment_amount:.2f} received successfully!', 'success')
+                return redirect(url_for('customer_invoice_detail', invoice_id=invoice_id))
+                
+            except Exception as e:
+                db.session.rollback()
+                app.logger.error(f"Error processing payment: {str(e)}")
+                flash('Error processing payment. Please try again.', 'danger')
+        
+        # GET request - show payment form
+        menu_items = MenuItem.query.filter_by(
+            is_active=True, parent_id=None
+        ).order_by(MenuItem.order_position).all()
+        company_info = CompanyInfo.query.first()
+        
+        return render_template(
+            'customer/pay_invoice.html',
+            invoice=invoice,
+            menu_items=menu_items,
+            company_info=company_info
+        )
+        
+    except Exception as e:
+        app.logger.error(f"Error in pay invoice: {str(e)}")
+        flash('Error loading payment page', 'danger')
+        return redirect(url_for('customer_invoices'))
+
+
+def handle_eft_payment(invoice, request):
+    """Handle EFT/Bank Transfer payment with Proof of Payment upload"""
+    try:
+        # Check if file was uploaded
+        if 'proof_of_payment' not in request.files:
+            flash('Please upload proof of payment for EFT/Bank Transfer', 'warning')
+            return redirect(url_for('customer_pay_invoice', invoice_id=invoice.id))
+        
+        file = request.files['proof_of_payment']
+        
+        if file.filename == '':
+            flash('No file selected', 'warning')
+            return redirect(url_for('customer_pay_invoice', invoice_id=invoice.id))
+        
+        # Validate file type
+        allowed_extensions = {'pdf', 'jpg', 'jpeg', 'png'}
+        file_ext = file.filename.rsplit('.', 1)[1].lower() if '.' in file.filename else ''
+        
+        if file_ext not in allowed_extensions:
+            flash('Invalid file type. Please upload PDF, JPG, or PNG', 'danger')
+            return redirect(url_for('customer_pay_invoice', invoice_id=invoice.id))
+        
+        # Save uploaded file
+        import uuid
+        filename = f"pop_{invoice.invoice_number}_{uuid.uuid4().hex[:8]}.{file_ext}"
+        upload_folder = os.path.join(app.config['UPLOAD_FOLDER'], 'proof_of_payments')
+        os.makedirs(upload_folder, exist_ok=True)
+        file_path = os.path.join(upload_folder, filename)
+        file.save(file_path)
+        
+        # Get file size
+        file_size = os.path.getsize(file_path)
+        
+        # Create pending payment record
+        payment = InvoicePayment(
+            invoice_id=invoice.id,
+            amount=invoice.remaining_balance(),
+            payment_method='eft',
+            payment_date=datetime.utcnow(),
+            notes='Pending verification - Proof of Payment uploaded'
+        )
+        db.session.add(payment)
+        db.session.flush()  # Get payment ID
+        
+        # Create ProofOfPayment record
+        pop = ProofOfPayment(
+            invoice_payment_id=payment.id,
+            invoice_id=invoice.id,
+            customer_id=current_user.id,
+            file_path=file_path,
+            file_name=filename,
+            file_type=file_ext,
+            file_size=file_size,
+            verification_status='pending'
+        )
+        db.session.add(pop)
+        db.session.flush()  # Get POP ID
+        
+        # Process document with OCR
+        try:
+            ocr_service = OCRService()
+            result = ocr_service.process_document(file_path, file_ext)
+            
+            if result.get('success'):
+                # Store extracted data
+                pop.extracted_amount = result.get('amount')
+                pop.extracted_reference = result.get('reference')
+                pop.extracted_date = result.get('date')
+                pop.extracted_payer_name = result.get('payer_name')
+                pop.extracted_payer_account = result.get('payer_account')
+                pop.extracted_bank_name = result.get('bank_name')
+                pop.ocr_confidence = result.get('confidence', 0.0)
+                pop.ocr_raw_text = result.get('raw_text', '')
+                pop.processed_at = datetime.utcnow()
+                
+                # Validate amount
+                if pop.extracted_amount:
+                    validation = ocr_service.validate_payment(
+                        pop.extracted_amount,
+                        float(invoice.total_amount)
+                    )
+                    
+                    pop.amount_matched = validation['matched']
+                    pop.verification_status = validation['status']
+                    pop.verification_notes = validation['reason']
+                    
+                    # Auto-verify if amount matches and confidence is high
+                    if validation['matched'] and pop.ocr_confidence >= 0.75:
+                        pop.verification_status = 'verified'
+                        pop.verified_at = datetime.utcnow()
+                        
+                        # Update invoice
+                        invoice.paid_amount = float(invoice.paid_amount or 0) + float(payment.amount)
+                        if invoice.paid_amount >= float(invoice.total_amount):
+                            invoice.status = 'paid'
+                        else:
+                            invoice.status = 'partial'
+                        
+                        # Update order if linked
+                        if invoice.order_id:
+                            order = Order.query.get(invoice.order_id)
+                            if order:
+                                order.payment_status = 'paid' if invoice.status == 'paid' else 'partial'
+                        
+                        flash(f'Payment verified! Amount: R{pop.extracted_amount:.2f}', 'success')
+                    else:
+                        pop.verification_status = 'manual_review'
+                        invoice.status = 'pending_verification'
+                        flash('Proof of payment uploaded successfully. Payment is pending verification.', 'info')
+                else:
+                    pop.verification_status = 'manual_review'
+                    pop.verification_notes = 'Could not extract payment amount'
+                    invoice.status = 'pending_verification'
+                    flash('Proof of payment uploaded. Manual verification required.', 'warning')
+            else:
+                pop.verification_status = 'manual_review'
+                pop.verification_notes = f'OCR Error: {result.get("error", "Unknown error")}'
+                invoice.status = 'pending_verification'
+                flash('Proof of payment uploaded. Manual verification required.', 'warning')
+        
+        except Exception as ocr_error:
+            app.logger.error(f"OCR processing error: {str(ocr_error)}")
+            pop.verification_status = 'manual_review'
+            pop.verification_notes = f'OCR processing failed: {str(ocr_error)}'
+            invoice.status = 'pending_verification'
+            flash('Proof of payment uploaded. Manual verification required.', 'warning')
+        
+        db.session.commit()
+        
+        return redirect(url_for('customer_invoice_detail', invoice_id=invoice.id))
+        
+    except Exception as e:
+        db.session.rollback()
+        app.logger.error(f"Error handling EFT payment: {str(e)}")
+        flash(f'Error processing proof of payment: {str(e)}', 'danger')
+        return redirect(url_for('customer_pay_invoice', invoice_id=invoice.id))
+
+
 # Admin Invoice Routes
+@app.route('/admin/invoices/create', methods=['GET', 'POST'])
+@login_required
+def admin_create_invoice():
+    """Create new invoice with customer order selection"""
+    if not isinstance(current_user, User):
+        flash('Admin only', 'error')
+        return redirect(url_for('login'))
+    
+    if request.method == 'POST':
+        try:
+            customer_id = request.form.get('customer_id')
+            selected_order_ids = request.form.getlist('order_ids[]')
+            due_days = int(request.form.get('due_days', 30))
+            notes = request.form.get('notes', '')
+            terms = request.form.get('terms', '')
+            
+            if not customer_id:
+                flash('Please select a customer', 'error')
+                return redirect(url_for('admin_create_invoice'))
+            
+            # Generate invoice number
+            import uuid
+            invoice_number = f"INV-{uuid.uuid4().hex[:8].upper()}"
+            
+            # Calculate dates
+            issue_date = datetime.datetime.utcnow()
+            from datetime import timedelta
+            due_date = issue_date + timedelta(days=due_days)
+            
+            # Initialize totals
+            subtotal = 0
+            tax_amount = 0
+            
+            # Create invoice
+            invoice = Invoice(
+                invoice_number=invoice_number,
+                customer_id=customer_id,
+                issue_date=issue_date,
+                due_date=due_date,
+                subtotal=0,
+                tax_amount=0,
+                total_amount=0,
+                status='draft',
+                notes=notes,
+                terms=terms
+            )
+            db.session.add(invoice)
+            db.session.flush()  # Get invoice ID
+            
+            # Add selected orders as invoice items
+            if selected_order_ids:
+                for order_id in selected_order_ids:
+                    order = Order.query.get(order_id)
+                    if order and order.customer_id == int(customer_id):
+                        # Create invoice item for each order
+                        invoice_item = InvoiceItem(
+                            invoice_id=invoice.id,
+                            order_id=order.id,
+                            description=f"Order {order.order_number} ({len(order.items)} items)",
+                            quantity=1,
+                            unit_price=order.total_amount,
+                            total=order.total_amount
+                        )
+                        db.session.add(invoice_item)
+                        
+                        subtotal += float(order.subtotal)
+                        tax_amount += float(order.tax_amount)
+            
+            # Calculate totals
+            total_amount = subtotal + tax_amount
+            
+            # Update invoice with totals
+            invoice.subtotal = subtotal
+            invoice.tax_amount = tax_amount
+            invoice.total_amount = total_amount
+            
+            db.session.commit()
+            
+            flash(f'Invoice {invoice_number} created successfully!', 'success')
+            return redirect(url_for('admin_invoice_detail', invoice_id=invoice.id))
+            
+        except Exception as e:
+            db.session.rollback()
+            app.logger.error(f"Error creating invoice: {str(e)}")
+            flash(f'Error creating invoice: {str(e)}', 'error')
+            return redirect(url_for('admin_create_invoice'))
+    
+    # GET - show form
+    try:
+        # Get all customers with orders
+        customers = Customer.query.order_by(Customer.first_name, Customer.last_name).all()
+        
+        return render_template(
+            'admin/invoice_create.html',
+            customers=customers
+        )
+    except Exception as e:
+        app.logger.error(f"Error loading invoice creation form: {str(e)}")
+        flash('Error loading form', 'danger')
+        return redirect(url_for('admin_invoices'))
+
+
 @app.route('/admin/invoices', methods=['GET'])
 @login_required
 def admin_invoices():
@@ -1607,7 +2382,7 @@ def admin_invoice_edit(invoice_id):
             return redirect(url_for('admin_invoices'))
         
         if request.method == 'POST':
-            invoice.due_date = datetime.strptime(
+            invoice.due_date = datetime.datetime.strptime(
                 request.form.get('due_date'), '%Y-%m-%d'
             )
             invoice.status = request.form.get('status')
@@ -1631,43 +2406,8 @@ def admin_invoice_edit(invoice_id):
 @app.route('/admin/invoices/new', methods=['GET', 'POST'])
 @login_required
 def admin_invoice_create():
-    """Create new invoice (admin)"""
-    if not isinstance(current_user, User):
-        flash('Admin only', 'error')
-        return redirect(url_for('login'))
-    
-    try:
-        if request.method == 'POST':
-            customer_id = request.form.get('customer_id')
-            invoice_number = request.form.get('invoice_number')
-            total_amount = request.form.get('total_amount')
-            due_date = datetime.strptime(
-                request.form.get('due_date'), '%Y-%m-%d'
-            )
-            
-            invoice = Invoice(
-                invoice_number=invoice_number,
-                customer_id=customer_id,
-                total_amount=total_amount,
-                due_date=due_date,
-                status='draft'
-            )
-            
-            db.session.add(invoice)
-            db.session.commit()
-            
-            flash('Invoice created successfully', 'success')
-            return redirect(url_for('admin_invoice_detail', invoice_id=invoice.id))
-        
-        customers = Customer.query.all()
-        return render_template(
-            'admin/invoice_create.html',
-            customers=customers
-        )
-    except Exception as e:
-        app.logger.error(f"Error creating invoice: {str(e)}")
-        flash('Error creating invoice', 'danger')
-        return redirect(url_for('admin_invoices'))
+    """Redirect to new invoice creation system"""
+    return redirect(url_for('admin_create_invoice'))
 
 
 @app.route('/payment/success')

@@ -96,8 +96,8 @@
                                             {% endif %}
                                         </td>
                                         <td>{{ item.quantity }}</td>
-                                        <td>R{{ "%.2f"|format(item.unit_price) }}</td>
-                                        <td><strong>R{{ "%.2f"|format(item.quantity * item.unit_price) }}</strong></td>
+                                        <td>R{{ "%.2f"|format(item.price_at_purchase) }}</td>
+                                        <td><strong>R{{ "%.2f"|format(item.quantity * item.price_at_purchase) }}</strong></td>
                                     </tr>
                                 {% endfor %}
                             </tbody>

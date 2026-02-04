@@ -2,92 +2,244 @@
 
 {% block title %}Payment Cancelled - 360Degree Supply{% endblock %}
 
+{% block extra_css %}
+<style>
+    /* D365 Cancel Page Styling */
+    
+    .cancel-wrapper-d365 {
+        background-color: #faf9f8;
+        min-height: calc(100vh - 200px);
+        display: flex;
+        align-items: center;
+        padding: 60px 0;
+    }
+
+    .cancel-card-d365 {
+        background: white;
+        border: 1px solid #edebe9;
+        border-radius: 2px;
+        box-shadow: 0 6.4px 14.4px 0 rgba(0,0,0,.132), 0 1.2px 3.6px 0 rgba(0,0,0,.108);
+        padding: 48px 32px;
+        text-align: center;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    .cancel-icon-d365 {
+        font-size: 72px;
+        color: #a80000;
+        margin-bottom: 24px;
+    }
+
+    .cancel-card-d365 h1 {
+        font-size: 28px;
+        font-weight: 600;
+        color: #323130;
+        margin-bottom: 16px;
+    }
+
+    .cancel-card-d365 .lead-text {
+        font-size: 14px;
+        color: #605e5c;
+        margin-bottom: 32px;
+    }
+
+    .reasons-box-d365 {
+        background-color: #fff4ce;
+        padding: 24px;
+        border-radius: 2px;
+        margin-bottom: 32px;
+        border-left: 4px solid #ffaa44;
+        text-align: left;
+    }
+
+    .reasons-box-d365 h5 {
+        font-size: 16px;
+        font-weight: 600;
+        color: #323130;
+        margin-bottom: 16px;
+    }
+
+    .reasons-box-d365 ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .reasons-box-d365 li {
+        font-size: 12px;
+        color: #605e5c;
+        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+    }
+
+    .reasons-box-d365 li i {
+        color: #797775;
+        margin-right: 12px;
+        font-size: 12px;
+    }
+
+    .info-alert-d365 {
+        background: #f3f9fd;
+        border: 1px solid #0078d4;
+        border-left: 4px solid #0078d4;
+        border-radius: 2px;
+        padding: 16px 20px;
+        margin-bottom: 32px;
+        text-align: left;
+        font-size: 12px;
+    }
+
+    .info-alert-d365 i {
+        color: #0078d4;
+        margin-right: 8px;
+        font-size: 14px;
+    }
+
+    .info-alert-d365 strong {
+        font-weight: 600;
+        color: #323130;
+    }
+
+    .info-alert-d365 p {
+        margin: 8px 0 0 0;
+        color: #605e5c;
+    }
+
+    .btn-primary-d365 {
+        background: #0078d4;
+        color: white;
+        border: none;
+        padding: 12px 32px;
+        font-size: 14px;
+        font-weight: 600;
+        border-radius: 2px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        text-decoration: none;
+        display: inline-block;
+        margin: 0 8px 16px;
+    }
+
+    .btn-primary-d365:hover {
+        background: #106ebe;
+        color: white;
+    }
+
+    .btn-secondary-d365 {
+        background: white;
+        color: #323130;
+        border: 1px solid #8a8886;
+        padding: 12px 32px;
+        font-size: 14px;
+        font-weight: 600;
+        border-radius: 2px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        text-decoration: none;
+        display: inline-block;
+        margin: 0 8px 16px;
+    }
+
+    .btn-secondary-d365:hover {
+        background: #f3f2f1;
+        color: #323130;
+    }
+
+    .divider-d365 {
+        height: 1px;
+        background: #edebe9;
+        margin: 24px 0;
+    }
+
+    .support-text-d365 {
+        font-size: 12px;
+        color: #605e5c;
+        margin: 0;
+    }
+
+    .support-text-d365 a {
+        color: #0078d4;
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+    .support-text-d365 a:hover {
+        text-decoration: underline;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<div class="container my-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card shadow-lg border-0">
-                <div class="card-body text-center py-5">
+<div class="cancel-wrapper-d365">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="cancel-card-d365">
                     <!-- Cancel Icon -->
-                    <div class="mb-4">
-                        <i class="fas fa-times-circle" style="font-size: 4rem; color: #dc3545;"></i>
+                    <div class="cancel-icon-d365">
+                        <i class="fas fa-times-circle"></i>
                     </div>
 
                     <!-- Title -->
-                    <h1 class="display-5 mb-3" style="color: var(--primary);">
-                        <strong>Payment Cancelled</strong>
-                    </h1>
+                    <h1>Payment Cancelled</h1>
 
                     <!-- Message -->
-                    <p class="lead text-muted mb-4">
+                    <p class="lead-text">
                         Your payment transaction has been cancelled. No charges have been made to your account.
                     </p>
 
                     <!-- Reasons Section -->
-                    <div style="background-color: #fff3cd; padding: 20px; border-radius: 12px; margin-bottom: 30px; border-left: 4px solid #ff9800;">
-                        <h5 class="mb-3" style="color: var(--primary);">What Happened?</h5>
-                        <ul class="text-start small text-muted" style="list-style: none; padding: 0;">
-                            <li class="mb-2">
-                                <i class="fas fa-check" style="color: var(--primary);"></i>
-                                You cancelled the payment process
+                    <div class="reasons-box-d365">
+                        <h5>What Happened?</h5>
+                        <ul>
+                            <li>
+                                <i class="fas fa-circle"></i>
+                                <span>You cancelled the payment process</span>
                             </li>
-                            <li class="mb-2">
-                                <i class="fas fa-check" style="color: var(--primary);"></i>
-                                Your payment method was declined
+                            <li>
+                                <i class="fas fa-circle"></i>
+                                <span>Your payment method was declined</span>
                             </li>
-                            <li class="mb-2">
-                                <i class="fas fa-check" style="color: var(--primary);"></i>
-                                Payment processing encountered an error
+                            <li>
+                                <i class="fas fa-circle"></i>
+                                <span>Payment processing encountered an error</span>
                             </li>
                         </ul>
                     </div>
 
                     <!-- Next Steps -->
-                    <div class="alert alert-info mb-4">
-                        <i class="fas fa-lightbulb"></i>
-                        <strong> Try Again?</strong>
-                        <p class="mb-0 mt-2">Your cart items are still saved. You can review your order and try again with a different payment method.</p>
+                    <div class="info-alert-d365">
+                        <div>
+                            <i class="fas fa-lightbulb"></i>
+                            <strong>Try Again?</strong>
+                        </div>
+                        <p>Your cart items are still saved. You can review your order and try again with a different payment method.</p>
                     </div>
 
                     <!-- Action Buttons -->
-                    <div class="d-grid gap-2">
-                        <a href="{{ url_for('view_cart') }}" class="btn btn-lg" style="background-color: var(--secondary); color: white;">
+                    <div>
+                        <a href="{{ url_for('view_cart') }}" class="btn-primary-d365">
                             <i class="fas fa-shopping-cart"></i> Return to Cart
                         </a>
-                        <a href="{{ url_for('checkout') }}" class="btn btn-lg btn-outline-primary">
+                        <a href="{{ url_for('checkout') }}" class="btn-secondary-d365">
                             <i class="fas fa-credit-card"></i> Try Payment Again
                         </a>
-                        <a href="{{ url_for('index') }}" class="btn btn-lg btn-outline-secondary">
-                            <i class="fas fa-home"></i> Continue Shopping
+                        <a href="{{ url_for('index') }}" class="btn-secondary-d365">
+                            <i class="fas fa-home"></i> Back to Home
                         </a>
                     </div>
 
                     <!-- Contact Support -->
-                    <div class="mt-4 pt-3 border-top">
-                        <p class="text-muted small mb-0">
-                            Having trouble? 
-                            <a href="{{ url_for('contact') }}" style="color: var(--secondary); text-decoration: none;">
-                                Get in touch with our support team
-                            </a>
-                        </p>
-                    </div>
+                    <div class="divider-d365"></div>
+                    <p class="support-text-d365">
+                        Having trouble? 
+                        <a href="{{ url_for('contact') }}">Get in touch with our support team</a>
+                    </p>
                 </div>
             </div>
         </div>
     </div>
 </div>
-
-<style>
-    .card {
-        border-radius: 16px !important;
-    }
-    
-    .display-5 {
-        font-weight: 700;
-    }
-    
-    ul li:before {
-        content: "✓ ";
-    }
-</style>
 {% endblock %}

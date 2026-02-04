@@ -2,95 +2,276 @@
 
 {% block title %}Customer Registration - 360Degree Supply{% endblock %}
 
+{% block extra_css %}
+<style>
+    /* D365 Design System Styles for Registration */
+    .register-container {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 40px 20px;
+        background: #faf9f8;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .register-card-d365 {
+        width: 100%;
+        max-width: 540px;
+        background: #ffffff;
+        border: 1px solid #edebe9;
+        border-radius: 2px;
+        box-shadow: 0 3.2px 7.2px rgba(0, 0, 0, 0.132);
+        padding: 40px;
+    }
+
+    .register-header {
+        text-align: center;
+        margin-bottom: 32px;
+    }
+
+    .register-title {
+        font-size: 24px;
+        font-weight: 600;
+        color: #323130;
+        margin: 0 0 8px 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .register-subtitle {
+        font-size: 14px;
+        color: #605e5c;
+        margin: 0;
+    }
+
+    .form-row-d365 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+        margin-bottom: 20px;
+    }
+
+    @media (max-width: 576px) {
+        .form-row-d365 {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .form-group-d365 {
+        margin-bottom: 20px;
+    }
+
+    .form-label-d365 {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        color: #323130;
+        margin-bottom: 8px;
+    }
+
+    .form-control-d365 {
+        width: 100%;
+        padding: 10px 12px;
+        font-size: 14px;
+        line-height: 20px;
+        color: #323130;
+        background: #ffffff;
+        border: 1px solid #8a8886;
+        border-radius: 2px;
+        transition: all 0.1s ease;
+    }
+
+    .form-control-d365:focus {
+        outline: none;
+        border-color: #0078d4;
+        box-shadow: 0 0 0 1px #0078d4;
+    }
+
+    .form-control-d365::placeholder {
+        color: #a19f9d;
+    }
+
+    .form-hint {
+        font-size: 12px;
+        color: #605e5c;
+        margin-top: 4px;
+        display: block;
+    }
+
+    .btn-register {
+        width: 100%;
+        background: #0078d4;
+        color: #ffffff;
+        border: 1px solid #0078d4;
+        border-radius: 2px;
+        padding: 10px 20px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.1s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+    }
+
+    .btn-register:hover {
+        background: #106ebe;
+        border-color: #106ebe;
+        color: #ffffff;
+    }
+
+    .divider {
+        height: 1px;
+        background: #edebe9;
+        margin: 24px 0;
+    }
+
+    .text-center-d365 {
+        text-align: center;
+        font-size: 14px;
+        color: #605e5c;
+    }
+
+    .link-d365 {
+        color: #0078d4;
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+    .link-d365:hover {
+        text-decoration: underline;
+        color: #106ebe;
+    }
+
+    .link-secondary {
+        color: #605e5c;
+        text-decoration: none;
+        font-size: 13px;
+    }
+
+    .link-secondary:hover {
+        text-decoration: underline;
+    }
+
+    /* Alert */
+    .alert-d365 {
+        padding: 12px 16px;
+        border-radius: 2px;
+        font-size: 13px;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .alert-d365.alert-danger {
+        background: #fde7e9;
+        border-left: 3px solid #a4262c;
+        color: #a4262c;
+    }
+
+    .alert-d365.alert-success {
+        background: #dff6dd;
+        border-left: 3px solid #107c10;
+        color: #107c10;
+    }
+
+    .alert-d365.alert-info {
+        background: #deecf9;
+        border-left: 3px solid #0078d4;
+        color: #0078d4;
+    }
+</style>
+{% endblock %}
 {% block content %}
-<div class="container mt-5 mb-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card shadow-lg">
-                <div class="card-body p-5">
-                    <div class="text-center mb-4">
-                        <h2 class="card-title">
-                            <i class="fas fa-user-plus"></i> Create Account
-                        </h2>
-                        <p class="text-muted">Join 360Degree Supply today</p>
+<div class="register-container">
+    <div class="register-card-d365">
+        <div class="register-header">
+            <h1 class="register-title">
+                <i class="fas fa-user-plus"></i> Create Account
+            </h1>
+            <p class="register-subtitle">Join 360Degree Supply today</p>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert-d365 alert-{{ category }}">
+                        <i class="fas fa-info-circle"></i>
+                        <div>{{ message }}</div>
                     </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
 
-                    {% with messages = get_flashed_messages(with_categories=true) %}
-                        {% if messages %}
-                            {% for category, message in messages %}
-                                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
-                                    {{ message }}
-                                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                                </div>
-                            {% endfor %}
-                        {% endif %}
-                    {% endwith %}
-
-                    <form method="POST">
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="first_name" class="form-label">
-                                    First Name
-                                </label>
-                                <input type="text" class="form-control" id="first_name" name="first_name" 
-                                       placeholder="John">
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="last_name" class="form-label">
-                                    Last Name
-                                </label>
-                                <input type="text" class="form-control" id="last_name" name="last_name" 
-                                       placeholder="Doe">
-                            </div>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="email" class="form-label">
-                                <i class="fas fa-envelope"></i> Email Address *
-                            </label>
-                            <input type="email" class="form-control form-control-lg" id="email" name="email" 
-                                   placeholder="your@email.com" required>
-                            <small class="text-muted">We'll never share your email</small>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="password" class="form-label">
-                                <i class="fas fa-lock"></i> Password *
-                            </label>
-                            <input type="password" class="form-control form-control-lg" id="password" name="password" 
-                                   placeholder="At least 6 characters" required>
-                            <small class="text-muted">Minimum 6 characters</small>
-                        </div>
-
-                        <div class="mb-4">
-                            <label for="confirm_password" class="form-label">
-                                <i class="fas fa-lock-open"></i> Confirm Password *
-                            </label>
-                            <input type="password" class="form-control form-control-lg" id="confirm_password" 
-                                   name="confirm_password" placeholder="Repeat password" required>
-                        </div>
-
-                        <button type="submit" class="btn btn-primary btn-lg w-100 mb-3">
-                            <i class="fas fa-user-plus"></i> Create Account
-                        </button>
-                    </form>
-
-                    <hr>
-
-                    <p class="text-center mb-3">
-                        Already have an account?
-                        <a href="{{ url_for('customer_login') }}" class="fw-bold">
-                            Sign in here
-                        </a>
-                    </p>
-
-                    <div class="text-center">
-                        <a href="{{ url_for('index') }}" class="text-muted small">
-                            <i class="fas fa-arrow-left"></i> Back to Home
-                        </a>
-                    </div>
+        <form method="POST">
+            <div class="form-row-d365">
+                <div>
+                    <label for="first_name" class="form-label-d365">
+                        First Name
+                    </label>
+                    <input type="text" class="form-control-d365" id="first_name" name="first_name" 
+                           placeholder="John">
+                </div>
+                <div>
+                    <label for="last_name" class="form-label-d365">
+                        Last Name
+                    </label>
+                    <input type="text" class="form-control-d365" id="last_name" name="last_name" 
+                           placeholder="Doe">
                 </div>
             </div>
+
+            <div class="form-group-d365">
+                <label for="email" class="form-label-d365">
+                    <i class="fas fa-envelope"></i> Email Address *
+                </label>
+                <input type="email" class="form-control-d365" id="email" name="email" 
+                       placeholder="your@email.com" required>
+                <small class="form-hint">We'll never share your email with anyone else</small>
+            </div>
+
+            <div class="form-group-d365">
+                <label for="password" class="form-label-d365">
+                    <i class="fas fa-lock"></i> Password *
+                </label>
+                <input type="password" class="form-control-d365" id="password" name="password" 
+                       placeholder="Minimum 6 characters" required>
+                <small class="form-hint">Minimum 6 characters</small>
+            </div>
+
+            <div class="form-group-d365">
+                <label for="confirm_password" class="form-label-d365">
+                    <i class="fas fa-lock-open"></i> Confirm Password *
+                </label>
+                <input type="password" class="form-control-d365" id="confirm_password" 
+                       name="confirm_password" placeholder="Repeat your password" required>
+            </div>
+
+            <button type="submit" class="btn-register">
+                <i class="fas fa-user-plus"></i> Create Account
+            </button>
+        </form>
+
+        <div class="divider"></div>
+
+        <p class="text-center-d365">
+            Already have an account?
+            <a href="{{ url_for('customer_login') }}" class="link-d365">
+                Sign in here
+            </a>
+        </p>
+
+        <div class="text-center-d365" style="margin-top: 16px;">
+            <a href="{{ url_for('index') }}" class="link-secondary">
+                <i class="fas fa-arrow-left"></i> Back to Home
+            </a>
         </div>
     </div>
 </div>

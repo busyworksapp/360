@@ -1,0 +1,268 @@
+{% extends "customer/base.html" %}
+
+{% block title %}My Transactions{% endblock %}
+
+{% block content %}
+<div style="padding: 16px 24px; background: #faf9f8;">
+    <!-- Breadcrumb Navigation -->
+    <div class="breadcrumb-d365">
+        <a href="{{ url_for('customer_dashboard') }}">Home</a>
+        <span class="separator">/</span>
+        <span>Transactions</span>
+    </div>
+    
+    <!-- Page Title -->
+    <h1 style="font-size: 20px; font-weight: 600; margin: 4px 0 16px 0; color: #323130;">
+        My Transactions
+    </h1>
+
+    {% if not transactions %}
+        <!-- Empty State -->
+        <div class="d365-card">
+            <div class="card-body-d365" style="text-align: center; padding: 60px 24px;">
+                <div style="font-size: 48px; color: #a19f9d; margin-bottom: 16px;">
+                    <i class="fas fa-receipt"></i>
+                </div>
+                <div style="font-size: 16px; font-weight: 600; color: #323130; margin-bottom: 8px;">
+                    No transactions yet
+                </div>
+                <div style="color: #605e5c; font-size: 14px;">
+                    Your payment history will appear here
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <!-- Summary Cards -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 16px;">
+            <div class="d365-card" style="padding: 16px;">
+                <div style="float: right; font-size: 16px; color: #0078d4; opacity: 0.8;">
+                    <i class="fas fa-receipt"></i>
+                </div>
+                <div style="font-size: 12px; color: #605e5c; margin-bottom: 8px;">Total Transactions</div>
+                <div style="font-size: 24px; font-weight: 600; color: #323130;">{{ transactions.total }}</div>
+            </div>
+
+            <div class="d365-card" style="padding: 16px;">
+                <div style="float: right; font-size: 16px; color: #107c10; opacity: 0.8;">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div style="font-size: 12px; color: #605e5c; margin-bottom: 8px;">Completed</div>
+                <div style="font-size: 24px; font-weight: 600; color: #323130;">
+                    {{ transactions.items|selectattr('status', 'equalto', 'completed')|list|length }}
+                </div>
+            </div>
+
+            <div class="d365-card" style="padding: 16px;">
+                <div style="float: right; font-size: 16px; color: #f7630c; opacity: 0.8;">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <div style="font-size: 12px; color: #605e5c; margin-bottom: 8px;">Pending</div>
+                <div style="font-size: 24px; font-weight: 600; color: #323130;">
+                    {{ transactions.items|selectattr('status', 'equalto', 'pending')|list|length }}
+                </div>
+            </div>
+
+            <div class="d365-card" style="padding: 16px;">
+                <div style="float: right; font-size: 16px; color: #0078d4; opacity: 0.8;">
+                    <i class="fas fa-dollar-sign"></i>
+                </div>
+                <div style="font-size: 12px; color: #605e5c; margin-bottom: 8px;">Total Amount</div>
+                <div style="font-size: 24px; font-weight: 600; color: #323130;">
+                    R {{ "%.2f"|format(transactions|sum(attribute='amount')) }}
+                </div>
+            </div>
+        </div>
+
+        <!-- Command Bar -->
+        <div class="command-bar-d365">
+            <div class="command-bar-left">
+                <button class="btn-d365-secondary" id="viewBtn" disabled onclick="viewSelected()">
+                    <i class="fas fa-eye"></i> View Details
+                </button>
+                <button class="btn-d365-secondary" onclick="location.reload()">
+                    <i class="fas fa-sync-alt"></i> Refresh
+                </button>
+            </div>
+            <div class="command-bar-right">
+                <div class="search-box-d365">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="filterInput" placeholder="Filter" onkeyup="filterTable()">
+                </div>
+            </div>
+        </div>
+
+        <!-- Transactions Table -->
+        <div class="d365-card">
+            <div class="card-body-d365" style="padding: 0;">
+                <table class="table-d365" id="transactionsTable">
+                    <thead>
+                        <tr>
+                            <th class="row-checkbox">
+                                <input type="checkbox" id="selectAll" onchange="toggleSelectAll(this)">
+                            </th>
+                            <th class="sortable">
+                                <div class="column-header">
+                                    <span class="column-title">Reference</span>
+                                    <span class="column-icons">
+                                        <i class="fas fa-filter filter-icon"></i>
+                                        <i class="fas fa-sort sort-icon"></i>
+                                    </span>
+                                </div>
+                            </th>
+                            <th class="sortable">
+                                <div class="column-header">
+                                    <span class="column-title">Date</span>
+                                    <span class="column-icons">
+                                        <i class="fas fa-filter filter-icon"></i>
+                                        <i class="fas fa-sort sort-icon"></i>
+                                    </span>
+                                </div>
+                            </th>
+                            <th class="sortable" style="text-align: right;">
+                                <div class="column-header">
+                                    <span class="column-title">Amount</span>
+                                    <span class="column-icons">
+                                        <i class="fas fa-filter filter-icon"></i>
+                                        <i class="fas fa-sort sort-icon"></i>
+                                    </span>
+                                </div>
+                            </th>
+                            <th class="sortable">
+                                <div class="column-header">
+                                    <span class="column-title">Payment Method</span>
+                                    <span class="column-icons">
+                                        <i class="fas fa-filter filter-icon"></i>
+                                        <i class="fas fa-sort sort-icon"></i>
+                                    </span>
+                                </div>
+                            </th>
+                            <th class="sortable">
+                                <div class="column-header">
+                                    <span class="column-title">Status</span>
+                                    <span class="column-icons">
+                                        <i class="fas fa-filter filter-icon"></i>
+                                        <i class="fas fa-sort sort-icon"></i>
+                                    </span>
+                                </div>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for transaction in transactions %}
+                        <tr onclick="selectRow(this, event)">
+                            <td class="row-checkbox">
+                                <input type="checkbox" class="row-select" value="{{ transaction.id }}">
+                            </td>
+                            <td>
+                                <a href="{{ url_for('customer_transaction_detail', transaction_id=transaction.id) }}">
+                                    {{ transaction.payment_reference }}
+                                </a>
+                            </td>
+                            <td style="font-size: 11px;">
+                                {{ transaction.created_at.strftime('%d %b %Y %H:%M') }}
+                            </td>
+                            <td style="text-align: right; font-weight: 600;">
+                                R {{ "%.2f"|format(transaction.amount) }}
+                            </td>
+                            <td>
+                                {% if transaction.payment_method == 'stripe' %}
+                                    <span class="badge-d365 badge-info">Stripe</span>
+                                {% elif transaction.payment_method == 'payfast' %}
+                                    <span class="badge-d365 badge-warning">PayFast</span>
+                                {% elif transaction.payment_method == 'card' %}
+                                    <span class="badge-d365 badge-primary">Card</span>
+                                {% elif transaction.payment_method == 'eft' %}
+                                    <span class="badge-d365 badge-secondary">EFT</span>
+                                {% else %}
+                                    <span class="badge-d365 badge-secondary">{{ transaction.payment_method|title }}</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if transaction.status == 'completed' %}
+                                    <span class="badge-d365 badge-success">Completed</span>
+                                {% elif transaction.status == 'pending' %}
+                                    <span class="badge-d365 badge-warning">Pending</span>
+                                {% elif transaction.status == 'failed' %}
+                                    <span class="badge-d365 badge-danger">Failed</span>
+                                {% else %}
+                                    <span class="badge-d365 badge-secondary">{{ transaction.status|title }}</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div style="margin-top: 12px; font-size: 12px; color: #605e5c;">
+            <span>Total records: {{ transactions.total }}</span>
+        </div>
+    {% endif %}
+</div>
+
+<script>
+function toggleSelectAll(checkbox) {
+    const checkboxes = document.querySelectorAll('.row-select');
+    checkboxes.forEach(cb => {
+        cb.checked = checkbox.checked;
+        if (checkbox.checked) {
+            cb.closest('tr').classList.add('selected');
+        } else {
+            cb.closest('tr').classList.remove('selected');
+        }
+    });
+    updateCommandBar();
+}
+
+function selectRow(row, event) {
+    if (event.target.tagName === 'A' || event.target.type === 'checkbox') {
+        return;
+    }
+    
+    const checkbox = row.querySelector('.row-select');
+    checkbox.checked = !checkbox.checked;
+    
+    if (checkbox.checked) {
+        row.classList.add('selected');
+    } else {
+        row.classList.remove('selected');
+    }
+    
+    updateCommandBar();
+}
+
+function updateCommandBar() {
+    const checkedCount = document.querySelectorAll('.row-select:checked').length;
+    const viewBtn = document.getElementById('viewBtn');
+    
+    viewBtn.disabled = checkedCount !== 1;
+}
+
+function viewSelected() {
+    const checked = document.querySelector('.row-select:checked');
+    if (checked) {
+        window.location.href = "{{ url_for('customer_transaction_detail', transaction_id=0) }}".replace('0', checked.value);
+    }
+}
+
+function filterTable() {
+    const input = document.getElementById('filterInput');
+    const filter = input.value.toLowerCase();
+    const table = document.getElementById('transactionsTable');
+    const rows = table.getElementsByTagName('tr');
+    
+    for (let i = 1; i < rows.length; i++) {
+        const row = rows[i];
+        const text = row.textContent || row.innerText;
+        
+        if (text.toLowerCase().indexOf(filter) > -1) {
+            row.style.display = '';
+        } else {
+            row.style.display = 'none';
+        }
+    }
+}
+</script>
+{% endblock %}

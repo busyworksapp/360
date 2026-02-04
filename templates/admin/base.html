@@ -3,18 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - 360Degree Supply</title>
+    <title>{% block title %}Admin Portal - 360Degree Supply{% endblock %}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    {% block extra_css %}{% endblock %}
     <style>
+        /* D365 Color System */
         :root {
-            --primary: #1a472a;
-            --secondary: #f39c12;
-            --light: #ecf0f1;
-            --dark: #2c3e50;
-            --border-color: #ddd;
+            --d365-neutral-primary: #323130;
+            --d365-neutral-secondary: #605e5c;
+            --d365-neutral-tertiary: #a19f9d;
+            --d365-neutral-light: #edebe9;
+            --d365-neutral-lighter: #f3f2f1;
+            --d365-neutral-lightest: #faf9f8;
+            --d365-white: #ffffff;
+            --d365-theme-primary: #0078d4;
+            --d365-theme-dark: #106ebe;
+            --d365-red: #a4262c;
+            --d365-green: #107c10;
+            --d365-orange: #d83b01;
+            --sidebar-width: 48px;
+            --sidebar-expanded-width: 220px;
         }
-
+        
         * {
             margin: 0;
             padding: 0;
@@ -22,498 +33,614 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f5f6fa;
-            color: var(--dark);
-            font-size: 0.95rem;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Roboto', 'Helvetica Neue', sans-serif;
+            font-size: 14px;
+            color: var(--d365-neutral-primary);
+            background: var(--d365-neutral-lightest);
+            line-height: 1.5;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
 
-        .container {
-            max-width: 100% !important;
-            padding-left: 15px !important;
-            padding-right: 15px !important;
-        }
-
-        @media (min-width: 1200px) {
-            .container {
-                max-width: 1400px !important;
-            }
-        }
-
-        h1, .h1 { font-size: 2.0rem !important; }
-        h2, .h2 { font-size: 1.6rem !important; }
-        h3, .h3 { font-size: 1.3rem !important; }
-        h4, .h4 { font-size: 1.1rem !important; }
-        h5, .h5 { font-size: 0.95rem !important; }
-        h6, .h6 { font-size: 0.85rem !important; }
-
-        p { font-size: 0.95rem !important; margin-bottom: 1rem; }
-        .lead { font-size: 1.1rem !important; }
-
-        .btn {
-            font-size: 0.9rem !important;
-            padding: 0.5rem 1.2rem !important;
-        }
-
-        .btn-lg {
-            font-size: 1.0rem !important;
-            padding: 0.7rem 1.5rem !important;
-        }
-
-        .btn-sm {
-            font-size: 0.8rem !important;
-            padding: 0.4rem 0.8rem !important;
-        }
-
-        .card-text { font-size: 0.9rem !important; }
-        .card-title { font-size: 1.1rem !important; }
-
-        /* Sidebar */
+        /* D365 Sidebar */
         .sidebar {
             position: fixed;
             left: 0;
             top: 0;
-            width: 250px;
             height: 100vh;
-            background: linear-gradient(135deg, var(--primary) 0%, #2d5a3d 100%);
-            padding: 0;
-            color: white;
+            width: var(--sidebar-width);
+            background: var(--d365-neutral-primary);
+            transition: width 0.2s cubic-bezier(0.1, 0.9, 0.2, 1);
             z-index: 1000;
-            overflow-y: auto;
+            overflow: hidden;
+            border-right: 1px solid var(--d365-neutral-light);
         }
 
-        .sidebar .brand {
-            padding: 25px;
-            font-size: 1.4rem;
-            font-weight: 700;
-            border-bottom: 2px solid rgba(255,255,255,0.2);
+        .sidebar:hover {
+            width: var(--sidebar-expanded-width);
+            box-shadow: 0 6.4px 14.4px rgba(0,0,0,0.132);
+        }
+
+        .sidebar-header {
+            height: 48px;
             display: flex;
             align-items: center;
-            gap: 10px;
+            padding: 0 12px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            background: var(--d365-neutral-primary);
         }
 
-        .sidebar .brand i {
-            font-size: 1.8rem;
-            color: var(--secondary);
+        .sidebar-header i {
+            color: var(--d365-theme-primary);
+            font-size: 20px;
+            min-width: 24px;
+            text-align: center;
         }
 
-        .sidebar .nav {
-            padding: 20px 0;
+        .sidebar-header .brand-text {
+            color: var(--d365-white);
+            font-size: 14px;
+            font-weight: 600;
+            margin-left: 12px;
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 0.2s;
         }
 
-        .sidebar .nav-link {
-            color: rgba(255,255,255,0.8) !important;
-            padding: 12px 20px;
-            margin: 5px 10px;
-            border-radius: 8px;
-            transition: all 0.3s ease;
+        .sidebar:hover .sidebar-header .brand-text {
+            opacity: 1;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 8px 0;
+            margin: 0;
+        }
+
+        .sidebar-menu li {
+            margin: 0;
+        }
+
+        .sidebar-menu a {
             display: flex;
             align-items: center;
-            gap: 10px;
-            font-weight: 500;
+            height: 40px;
+            padding: 0 12px;
+            color: var(--d365-white);
+            text-decoration: none;
+            transition: background 0.1s;
+            position: relative;
+            font-size: 14px;
         }
 
-        .sidebar .nav-link:hover {
-            background-color: rgba(255,255,255,0.1);
-            color: var(--secondary) !important;
-            transform: translateX(5px);
+        .sidebar-menu a:hover {
+            background: rgba(255,255,255,0.1);
         }
 
-        .sidebar .nav-link.active {
-            background-color: var(--secondary);
-            color: white !important;
+        .sidebar-menu a.active {
+            background: var(--d365-theme-primary);
         }
 
-        .sidebar hr {
-            border-color: rgba(255,255,255,0.2);
-            margin: 15px 0;
+        .sidebar-menu a.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: var(--d365-white);
+        }
+
+        .sidebar-menu a i {
+            min-width: 24px;
+            text-align: center;
+            font-size: 16px;
+        }
+
+        .sidebar-menu a span {
+            margin-left: 12px;
+            opacity: 0;
+            transition: opacity 0.2s;
+            white-space: nowrap;
+        }
+
+        .sidebar:hover .sidebar-menu a span {
+            opacity: 1;
         }
 
         /* Main Content */
         .content {
-            margin-left: 250px;
-            padding: 20px;
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+            padding: 24px;
+            transition: margin-left 0.2s cubic-bezier(0.1, 0.9, 0.2, 1);
+            background: var(--d365-neutral-lightest);
         }
 
         /* Topbar */
         .topbar {
-            background: white;
-            padding: 20px 25px;
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            height: 48px;
+            background: var(--d365-white);
+            border-bottom: 1px solid var(--d365-neutral-light);
+            padding: 0 24px;
             display: flex;
+            align-items: center;
             justify-content: space-between;
-            align-items: center;
-            margin-bottom: 25px;
+            margin: -24px -24px 24px -24px;
         }
 
-        .topbar h3 {
-            margin: 0;
-            color: var(--primary);
-            font-weight: 700;
-            font-size: 1.5rem;
+        .topbar-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--d365-neutral-primary);
         }
 
-        .user-info {
+        .topbar-right {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 16px;
         }
 
-        .user-info span {
-            font-size: 0.9rem;
-            color: var(--dark);
+        .topbar-user {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.1s;
         }
 
-        .user-info img {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            border: 2px solid var(--secondary);
+        .topbar-user:hover {
+            background: var(--d365-neutral-lighter);
         }
 
-        /* Cards */
-        .card {
-            border: none;
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-            margin-bottom: 25px;
-            transition: all 0.3s ease;
+        .topbar-user i {
+            color: var(--d365-neutral-secondary);
         }
 
-        .card:hover {
-            box-shadow: 0 8px 16px rgba(0,0,0,0.12);
-            transform: translateY(-2px);
+        .topbar-user span {
+            color: var(--d365-neutral-primary);
+            font-size: 14px;
         }
 
-        .card-header {
-            background: linear-gradient(135deg, var(--primary) 0%, #2d5a3d 100%);
-            color: white;
-            border-radius: 12px 12px 0 0 !important;
-            border: none;
-            padding: 20px;
+        /* Page Header - D365 Style */
+        .page-header {
+            margin-bottom: 16px;
+        }
+
+        .page-header h1 {
+            font-size: 20px;
             font-weight: 600;
+            color: var(--d365-neutral-primary);
+            margin: 0 0 4px 0;
         }
 
-        .card-body {
-            padding: 25px;
+        /* D365 Command Bar */
+        .command-bar-d365 {
+            background: #faf9f8;
+            border: 1px solid #edebe9;
+            border-radius: 2px;
+            padding: 8px 12px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            min-height: 44px;
         }
 
-        /* Buttons */
-        .btn-primary {
-            background-color: var(--primary) !important;
-            border-color: var(--primary) !important;
-            font-weight: 500;
-            transition: all 0.3s ease;
+        .command-bar-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
         }
 
-        .btn-primary:hover {
-            background-color: #2d5a3d !important;
-            border-color: #2d5a3d !important;
-            box-shadow: 0 4px 12px rgba(26, 71, 42, 0.3);
-        }
-
-        .btn-secondary {
-            background-color: var(--secondary) !important;
-            border-color: var(--secondary) !important;
-            font-weight: 500;
-            color: white !important;
-        }
-
-        .btn-secondary:hover {
-            background-color: #e08a00 !important;
-            border-color: #e08a00 !important;
-            color: white !important;
-        }
-
-        /* Forms */
-        .form-label {
-            color: var(--primary) !important;
-            font-weight: 600;
-            margin-bottom: 8px;
-        }
-
-        .form-control {
-            border: 1px solid #ddd !important;
-            border-radius: 8px !important;
-            padding: 10px 15px !important;
-            font-size: 0.9rem !important;
-        }
-
-        .form-control:focus {
-            border-color: var(--secondary) !important;
-            box-shadow: 0 0 0 0.2rem rgba(243, 156, 18, 0.25) !important;
-        }
-
-        /* Tables */
-        .table {
-            margin-bottom: 0;
-            font-size: 0.9rem;
-        }
-
-        .table thead {
-            background-color: #f8f9fa;
-            border-bottom: 2px solid var(--primary);
-        }
-
-        .table thead th {
-            color: var(--primary);
-            font-weight: 600;
-            padding: 15px;
-            border: none;
-        }
-
-        .table tbody td {
-            padding: 12px 15px;
-            border-color: #eee;
-            vertical-align: middle;
-        }
-
-        .table tbody tr:hover {
-            background-color: #f9f9f9;
-        }
-
-        /* Alerts */
-        .alert {
-            border-radius: 8px;
-            border: none;
-            margin-bottom: 20px;
-        }
-
-        .alert-success {
-            background-color: #d4edda;
-            color: #155724;
-        }
-
-        .alert-danger {
-            background-color: #f8d7da;
-            color: #721c24;
-        }
-
-        .alert-warning {
-            background-color: #fff3cd;
-            color: #856404;
-        }
-
-        .alert-info {
-            background-color: #d1ecf1;
-            color: #0c5460;
-        }
-
-        /* Badges */
-        .badge {
-            padding: 0.5rem 0.75rem;
-            border-radius: 6px;
-            font-weight: 500;
-        }
-
-        .badge-success {
-            background-color: #28a745;
-        }
-
-        .badge-danger {
-            background-color: #dc3545;
-        }
-
-        .badge-warning {
-            background-color: #ffc107;
-            color: black;
-        }
-
-        /* Stat Cards */
-        .stat-card {
-            background: white;
-            border-radius: 12px;
-            padding: 25px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-            margin-bottom: 25px;
-            transition: all 0.3s ease;
-            border-left: 5px solid var(--secondary);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .stat-card:hover {
-            box-shadow: 0 8px 16px rgba(0,0,0,0.12);
-            transform: translateY(-4px);
-        }
-
-        .stat-card h5 {
-            color: var(--primary);
-            font-weight: 700;
-            margin-bottom: 15px;
-            font-size: 1rem;
+        .command-bar-right {
             display: flex;
             align-items: center;
             gap: 8px;
         }
 
-        .stat-card .value {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: var(--primary);
-            margin-bottom: 10px;
-        }
-
-        .stat-card i:last-child {
-            position: absolute;
-            right: 20px;
-            bottom: 15px;
-            font-size: 3rem;
-            color: rgba(243, 156, 18, 0.15);
-            z-index: 0;
-        }
-
-        /* Content Cards */
-        .content-card {
-            background: white;
-            border-radius: 12px;
-            padding: 25px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-            margin-bottom: 25px;
-            transition: all 0.3s ease;
-        }
-
-        .content-card:hover {
-            box-shadow: 0 8px 16px rgba(0,0,0,0.12);
-        }
-
-        .content-card h3 {
-            color: var(--primary);
-            font-weight: 700;
-            margin-bottom: 20px;
-            font-size: 1.3rem;
+        /* Breadcrumb */
+        .breadcrumb-d365 {
             display: flex;
             align-items: center;
-            gap: 10px;
-            border-bottom: 2px solid var(--secondary);
-            padding-bottom: 15px;
+            gap: 8px;
+            font-size: 12px;
+            color: #605e5c;
         }
 
-        .content-card .btn-group {
+        .breadcrumb-d365 a {
+            color: #0078d4;
+            text-decoration: none;
+        }
+
+        .breadcrumb-d365 a:hover {
+            text-decoration: underline;
+        }
+
+        .breadcrumb-d365 .separator {
+            color: #a19f9d;
+        }
+
+        /* Search Box D365 */
+        .search-box-d365 {
             display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
+            align-items: center;
+            background: var(--d365-white);
+            border: 1px solid #8a8886;
+            border-radius: 2px;
+            padding: 4px 8px;
+            min-width: 200px;
+        }
+
+        .search-box-d365 input {
+            border: none;
+            outline: none;
+            font-size: 12px;
+            padding: 2px 4px;
+            flex: 1;
+            background: transparent;
+        }
+
+        .search-box-d365 i {
+            color: #605e5c;
+            font-size: 12px;
+        }
+
+        /* D365 Cards */
+        .d365-card {
+            background: var(--d365-white);
+            border: 1px solid var(--d365-neutral-light);
+            border-radius: 2px;
+            box-shadow: 0 1.6px 3.6px rgba(0,0,0,0.132);
+            margin-bottom: 16px;
+        }
+
+        .card-header-d365 {
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--d365-neutral-light);
+            background: var(--d365-white);
+        }
+
+        .card-header-d365 h2 {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--d365-neutral-primary);
+            margin: 0;
+        }
+
+        .card-body-d365 {
+            padding: 24px;
+        }
+
+        /* D365 Tables - Authentic Styling */
+        .table-d365 {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+            background: var(--d365-white);
+        }
+
+        .table-d365 thead {
+            background: #faf9f8;
+            border-bottom: 1px solid #edebe9;
+        }
+
+        .table-d365 th {
+            padding: 8px 12px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 12px;
+            color: #323130;
+            border-right: 1px solid #edebe9;
+            white-space: nowrap;
+            position: relative;
+            height: 36px;
+        }
+
+        .table-d365 th:last-child {
+            border-right: none;
+        }
+
+        /* Column Header with Filter */
+        .table-d365 th.sortable {
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .table-d365 th.sortable:hover {
+            background: #f3f2f1;
+        }
+
+        .table-d365 th .column-header {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            justify-content: space-between;
+        }
+
+        .table-d365 th .column-title {
+            flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .table-d365 th .column-icons {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+            opacity: 0;
+            transition: opacity 0.1s;
+        }
+
+        .table-d365 th:hover .column-icons {
+            opacity: 1;
+        }
+
+        .table-d365 th .filter-icon,
+        .table-d365 th .sort-icon {
+            font-size: 10px;
+            color: #605e5c;
+            cursor: pointer;
+            padding: 2px;
+        }
+
+        .table-d365 th .filter-icon:hover,
+        .table-d365 th .sort-icon:hover {
+            color: #0078d4;
+        }
+
+        /* Table Body */
+        .table-d365 td {
+            padding: 8px 12px;
+            border-bottom: 1px solid #f3f2f1;
+            border-right: 1px solid #f3f2f1;
+            font-size: 12px;
+            color: #323130;
+            height: 36px;
+            vertical-align: middle;
+        }
+
+        .table-d365 td:last-child {
+            border-right: none;
+        }
+
+        .table-d365 tbody tr {
+            transition: background 0.05s;
+        }
+
+        .table-d365 tbody tr:hover {
+            background: #f3f2f1;
+        }
+
+        .table-d365 tbody tr.selected {
+            background: #deecf9;
+        }
+
+        /* Row Checkbox */
+        .table-d365 .row-checkbox {
+            width: 36px;
+            text-align: center;
+            padding: 8px 8px;
+        }
+
+        .table-d365 input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+            accent-color: #0078d4;
+        }
+
+        /* Table Links */
+        .table-d365 a {
+            color: #0078d4;
+            text-decoration: none;
+        }
+
+        .table-d365 a:hover {
+            text-decoration: underline;
+            color: #106ebe;
+        }
+
+        /* D365 Buttons */
+        .btn-d365-primary {
+            background: var(--d365-theme-primary);
+            color: var(--d365-white);
+            border: none;
+            padding: 8px 16px;
+            font-size: 14px;
+            border-radius: 2px;
+            cursor: pointer;
+            transition: background 0.1s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-d365-primary:hover {
+            background: var(--d365-theme-dark);
+            color: var(--d365-white);
+        }
+
+        .btn-d365-secondary {
+            background: var(--d365-white);
+            color: var(--d365-neutral-primary);
+            border: 1px solid var(--d365-neutral-tertiary);
+            padding: 8px 16px;
+            font-size: 14px;
+            border-radius: 2px;
+            cursor: pointer;
+            transition: background 0.1s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-d365-secondary:hover {
+            background: var(--d365-neutral-lighter);
+            color: var(--d365-neutral-primary);
+        }
+
+        /* D365 Badges */
+        .badge-d365 {
+            padding: 4px 8px;
+            border-radius: 2px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .badge-d365.success {
+            background: #dff6dd;
+            color: var(--d365-green);
+        }
+
+        .badge-d365.warning {
+            background: #fff4ce;
+            color: #797673;
+        }
+
+        .badge-d365.danger {
+            background: #fde7e9;
+            color: var(--d365-red);
+        }
+
+        .badge-d365.info {
+            background: #cfe4fa;
+            color: #004578;
+        }
+
+        /* D365 Forms */
+        .form-group-d365 {
+            margin-bottom: 16px;
+        }
+
+        .form-label-d365 {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--d365-neutral-primary);
+            margin-bottom: 4px;
+        }
+
+        .form-control-d365 {
+            width: 100%;
+            padding: 8px 12px;
+            font-size: 14px;
+            border: 1px solid var(--d365-neutral-tertiary);
+            border-radius: 2px;
+            background: var(--d365-white);
+            transition: border-color 0.1s;
+        }
+
+        .form-control-d365:focus {
+            outline: none;
+            border-color: var(--d365-theme-primary);
         }
 
         /* Responsive */
         @media (max-width: 768px) {
             .sidebar {
-                width: 0;
-                transition: width 0.3s ease;
+                width: var(--sidebar-width);
             }
-
-            .sidebar.active {
-                width: 250px;
+            
+            .sidebar:hover {
+                width: var(--sidebar-expanded-width);
             }
-
+            
             .content {
-                margin-left: 0;
-            }
-
-            .topbar {
-                flex-direction: column;
-                gap: 15px;
-                text-align: center;
-            }
-
-            .topbar h3 {
-                font-size: 1.3rem;
-            }
-
-            .user-info {
-                width: 100%;
-                justify-content: center;
+                margin-left: var(--sidebar-width);
+                padding: 16px;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Sidebar Navigation -->
+    <!-- Sidebar -->
     <div class="sidebar">
-        <div class="brand">
-            <i class="fas fa-cube"></i> 360D ADMIN
+        <div class="sidebar-header">
+            <i class="fas fa-cube"></i>
+            <span class="brand-text">360° Supply Admin</span>
         </div>
-        <nav class="nav flex-column">
-            <a class="nav-link" href="{{ url_for('admin_dashboard') }}">
-                <i class="fas fa-dashboard"></i> Dashboard
-            </a>
-            <a class="nav-link" href="{{ url_for('admin_company') }}">
-                <i class="fas fa-building"></i> Company Info
-            </a>
-            <a class="nav-link" href="{{ url_for('admin_services') }}">
-                <i class="fas fa-cogs"></i> Services
-            </a>
-            <a class="nav-link" href="{{ url_for('admin_products') }}">
-                <i class="fas fa-box"></i> Products
-            </a>
-            <a class="nav-link" href="{{ url_for('admin_orders') }}">
-                <i class="fas fa-shopping-bag"></i> Orders
-            </a>
-            <a class="nav-link" href="{{ url_for('admin_hero_sections') }}">
-                <i class="fas fa-image"></i> Hero Section
-            </a>
-            <a class="nav-link" href="{{ url_for('admin_testimonials') }}">
-                <i class="fas fa-star"></i> Testimonials
-            </a>
-            <a class="nav-link" href="{{ url_for('admin_transactions') }}">
-                <i class="fas fa-credit-card"></i> Transactions
-            </a>
-            <a class="nav-link" href="{{ url_for('admin_invoices') }}">
-                <i class="fas fa-file-invoice-dollar"></i> Invoices
-            </a>
-            <a class="nav-link" href="{{ url_for('admin_contacts') }}">
-                <i class="fas fa-envelope"></i> Contact Forms
-            </a>
-            <a class="nav-link" href="{{ url_for('admin_payment_methods') }}">
-                <i class="fas fa-wallet"></i> Payment Methods
-            </a>
-            <a class="nav-link" href="{{ url_for('admin_payment_terms') }}">
-                <i class="fas fa-list"></i> Payment Terms
-            </a>
-            <a class="nav-link" href="{{ url_for('admin_menu') }}">
-                <i class="fas fa-bars"></i> Menu Items
-            </a>
-            <hr>
-            <a class="nav-link" href="{{ url_for('admin_logout') }}">
-                <i class="fas fa-sign-out-alt"></i> Logout
-            </a>
-        </nav>
+        <ul class="sidebar-menu">
+            <li><a href="{{ url_for('admin_dashboard') }}" class="{% if request.endpoint == 'admin_dashboard' %}active{% endif %}">
+                <i class="fas fa-th-large"></i>
+                <span>Dashboard</span>
+            </a></li>
+            <li><a href="{{ url_for('admin_products') }}" class="{% if 'product' in request.endpoint %}active{% endif %}">
+                <i class="fas fa-box"></i>
+                <span>Products</span>
+            </a></li>
+            <li><a href="{{ url_for('admin_services') }}" class="{% if 'service' in request.endpoint %}active{% endif %}">
+                <i class="fas fa-tools"></i>
+                <span>Services</span>
+            </a></li>
+            <li><a href="{{ url_for('admin_orders') }}" class="{% if 'order' in request.endpoint %}active{% endif %}">
+                <i class="fas fa-shopping-cart"></i>
+                <span>Orders</span>
+            </a></li>
+            <li><a href="{{ url_for('admin_invoices') }}" class="{% if 'invoice' in request.endpoint %}active{% endif %}">
+                <i class="fas fa-file-invoice-dollar"></i>
+                <span>Invoices</span>
+            </a></li>
+            <li><a href="{{ url_for('admin_transactions') }}" class="{% if 'transaction' in request.endpoint %}active{% endif %}">
+                <i class="fas fa-exchange-alt"></i>
+                <span>Transactions</span>
+            </a></li>
+            <li><a href="{{ url_for('admin_company') }}" class="{% if 'company' in request.endpoint %}active{% endif %}">
+                <i class="fas fa-building"></i>
+                <span>Company</span>
+            </a></li>
+            <li><a href="{{ url_for('admin_payment_methods') }}" class="{% if 'payment' in request.endpoint %}active{% endif %}">
+                <i class="fas fa-credit-card"></i>
+                <span>Payments</span>
+            </a></li>
+            <li><a href="{{ url_for('admin_hero_sections') }}" class="{% if 'hero' in request.endpoint %}active{% endif %}">
+                <i class="fas fa-image"></i>
+                <span>Hero Sections</span>
+            </a></li>
+            <li><a href="{{ url_for('admin_testimonials') }}" class="{% if 'testimonial' in request.endpoint %}active{% endif %}">
+                <i class="fas fa-comment"></i>
+                <span>Testimonials</span>
+            </a></li>
+            <li><a href="{{ url_for('admin_contacts') }}" class="{% if 'contact' in request.endpoint %}active{% endif %}">
+                <i class="fas fa-envelope"></i>
+                <span>Contacts</span>
+            </a></li>
+            <li><a href="{{ url_for('admin_menu') }}" class="{% if 'menu' in request.endpoint %}active{% endif %}">
+                <i class="fas fa-bars"></i>
+                <span>Menu</span>
+            </a></li>
+            <li><a href="{{ url_for('admin_logout') }}">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </a></li>
+        </ul>
     </div>
-    
+
     <!-- Main Content -->
     <div class="content">
-        <!-- Topbar -->
-        <div class="topbar">
-            <h3>
-                <i class="fas fa-bars d-md-none me-2" role="button"></i>
-                {% block title %}Dashboard{% endblock %}
-            </h3>
-            <div class="user-info">
-                <span class="me-3">Welcome, <strong>{{ current_user.email }}</strong></span>
-                <img src="https://ui-avatars.com/api/?name={{ current_user.email }}&background=random" 
-                     alt="Avatar">
-            </div>
-        </div>
-        
-        <!-- Flash Messages -->
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
                 {% for category, message in messages %}
-                    <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
+                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
                         {{ message }}
                         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                     </div>
                 {% endfor %}
             {% endif %}
         {% endwith %}
-        
-        <!-- Page Content -->
+
         {% block content %}{% endblock %}
     </div>
-    
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
-    {% block scripts %}{% endblock %}
+    {% block extra_js %}{% endblock %}
 </body>
 </html>

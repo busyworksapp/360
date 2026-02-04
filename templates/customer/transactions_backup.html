@@ -1,0 +1,287 @@
+{% extends "customer/base.html" %}
+
+{% block title %}My Orders - 360Degree Supply{% endblock %}
+
+{% block extra_css %}
+<style>
+    .dashboard-container {
+        background: #faf9f8;
+        padding: 0;
+    }
+
+    .dashboard-header {
+        background: white;
+        border-bottom: 1px solid #edebe9;
+        padding: 16px 24px;
+        margin-bottom: 20px;
+    }
+
+    .dashboard-header h1 {
+        font-size: 20px;
+        font-weight: 600;
+        color: #323130;
+        margin: 0;
+    }
+
+    .dashboard-header .subtitle {
+        font-size: 12px;
+        color: #605e5c;
+        margin-top: 4px;
+    }
+
+    .kpi-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 12px;
+        margin-bottom: 20px;
+    }
+
+    .kpi-card {
+        background: white;
+        border: 1px solid #edebe9;
+        padding: 16px;
+        transition: box-shadow 0.1s ease;
+    }
+
+    .kpi-card:hover {
+        box-shadow: 0 3.2px 7.2px rgba(0,0,0,0.132);
+    }
+
+    .kpi-label {
+        font-size: 12px;
+        color: #605e5c;
+        margin-bottom: 8px;
+        font-weight: 400;
+    }
+
+    .kpi-value {
+        font-size: 24px;
+        font-weight: 600;
+        color: #323130;
+        line-height: 1;
+    }
+
+    .kpi-icon {
+        float: right;
+        font-size: 16px;
+        color: #0078d4;
+        opacity: 0.8;
+    }
+
+    .data-grid {
+        background: white;
+        border: 1px solid #edebe9;
+        margin-bottom: 20px;
+    }
+
+    .data-grid-header {
+        padding: 12px 16px;
+        border-bottom: 1px solid #edebe9;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .data-grid-title {
+        font-size: 16px;
+        font-weight: 600;
+        color: #323130;
+        margin: 0;
+    }
+
+    .data-grid-actions {
+        display: flex;
+        gap: 8px;
+    }
+
+    .grid-action-btn {
+        background: white;
+        border: 1px solid #8a8886;
+        color: #323130;
+        padding: 5px 12px;
+        font-size: 14px;
+        cursor: pointer;
+        transition: all 0.1s ease;
+    }
+
+    .grid-action-btn:hover {
+        background: #f3f2f1;
+        border-color: #323130;
+    }
+
+    .d365-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .d365-table thead th {
+        background: #faf9f8;
+        color: #323130;
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        padding: 12px 16px;
+        text-align: left;
+        border-bottom: 1px solid #edebe9;
+    }
+
+    .d365-table tbody td {
+        padding: 12px 16px;
+        font-size: 14px;
+        color: #323130;
+        border-bottom: 1px solid #edebe9;
+    }
+
+    .d365-table tbody tr:hover {
+        background: #f3f2f1;
+    }
+
+    .status-badge {
+        display: inline-block;
+        padding: 2px 8px;
+        border-radius: 2px;
+        font-size: 12px;
+        font-weight: 400;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 60px 24px;
+    }
+
+    .empty-state-icon {
+        font-size: 48px;
+        color: #a19f9d;
+        margin-bottom: 16px;
+    }
+
+    .empty-state-text {
+        font-size: 16px;
+        font-weight: 600;
+        color: #323130;
+        margin-bottom: 8px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <div class="dashboard-header">
+        <h1>Orders</h1>
+        <div class="subtitle">View and track your order history</div>
+    </div>
+
+    <div class="container-fluid px-3">
+        {% if not orders %}
+            <div class="data-grid">
+                <div class="empty-state" style="padding: 60px 24px;">
+                    <div class="empty-state-icon">
+                        <i class="fas fa-shopping-bag"></i>
+                    </div>
+                    <div class="empty-state-text" style="font-size: 16px; margin-bottom: 16px;">No orders yet</div>
+                    <div style="color: var(--d365-neutral-secondary); font-size: 14px; margin-bottom: 24px;">
+                        Start shopping to place your first order
+                    </div>
+                    <a href="{{ url_for('customer_products') }}" class="btn btn-primary">
+                        <i class="fas fa-shopping-cart"></i> Browse Products
+                    </a>
+                </div>
+            </div>
+        {% else %}
+            <div class="kpi-grid" style="margin-bottom: 20px;">
+                <div class="kpi-card">
+                    <div class="kpi-icon"><i class="fas fa-shopping-bag"></i></div>
+                    <div class="kpi-label">Total Orders</div>
+                    <div class="kpi-value">{{ orders|length }}</div>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-icon"><i class="fas fa-clock"></i></div>
+                    <div class="kpi-label">Pending</div>
+                    <div class="kpi-value">{{ orders|selectattr('status', 'equalto', 'pending')|list|length }}</div>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-icon"><i class="fas fa-truck"></i></div>
+                    <div class="kpi-label">Shipped</div>
+                    <div class="kpi-value">{{ orders|selectattr('status', 'equalto', 'shipped')|list|length }}</div>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-icon"><i class="fas fa-check-circle"></i></div>
+                    <div class="kpi-label">Delivered</div>
+                    <div class="kpi-value">{{ orders|selectattr('status', 'equalto', 'delivered')|list|length }}</div>
+                </div>
+            </div>
+
+            <div class="data-grid">
+                <div class="data-grid-header">
+                    <h2 class="data-grid-title">All Orders</h2>
+                    <div class="data-grid-actions">
+                        <button class="grid-action-btn" onclick="window.print()">
+                            <i class="fas fa-print"></i> Print
+                        </button>
+                    </div>
+                </div>
+
+                <table class="d365-table">
+                    <thead>
+                        <tr>
+                            <th>Order Number</th>
+                            <th>Date</th>
+                            <th>Items</th>
+                            <th>Total Amount</th>
+                            <th>Payment Status</th>
+                            <th>Order Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for order in orders %}
+                        <tr onclick="window.location='{{ url_for('customer_order_detail', order_id=order.id) }}';" style="cursor: pointer;">
+                            <td><strong>{{ order.order_number }}</strong></td>
+                            <td>
+                                <div>{{ order.created_at.strftime('%Y-%m-%d') }}</div>
+                                <div style="font-size: 12px; color: var(--d365-neutral-secondary);">{{ order.created_at.strftime('%H:%M') }}</div>
+                            </td>
+                            <td>{{ order.items|length }}</td>
+                            <td><strong>R{{ "%.2f"|format(order.total_amount) }}</strong></td>
+                            <td>
+                                {% if order.payment_status == 'paid' %}
+                                    <span class="status-badge" style="background: #dff6dd; color: #107c10;">Paid</span>
+                                {% elif order.payment_status == 'partial' %}
+                                    <span class="status-badge" style="background: #fff4ce; color: #797673;">Partial</span>
+                                {% else %}
+                                    <span class="status-badge" style="background: #fde7e9; color: #a4262c;">Unpaid</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if order.status == 'pending' %}
+                                    <span class="status-badge" style="background: #fff4ce; color: #797673;">Pending</span>
+                                {% elif order.status == 'processing' %}
+                                    <span class="status-badge" style="background: #deecf9; color: #0078d4;">Processing</span>
+                                {% elif order.status == 'shipped' %}
+                                    <span class="status-badge" style="background: #deecf9; color: #0078d4;">Shipped</span>
+                                {% elif order.status == 'delivered' %}
+                                    <span class="status-badge" style="background: #dff6dd; color: #107c10;">Delivered</span>
+                                {% elif order.status == 'cancelled' %}
+                                    <span class="status-badge" style="background: #fde7e9; color: #a4262c;">Cancelled</span>
+                                {% else %}
+                                    <span class="status-badge" style="background: #edebe9; color: #605e5c;">{{ order.status|title }}</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <button class="grid-action-btn" onclick="event.stopPropagation(); window.location='{{ url_for('customer_order_detail', order_id=order.id) }}';">
+                                    <i class="fas fa-eye"></i> View
+                                </button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

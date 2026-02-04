@@ -3,87 +3,99 @@
 {% block title %}{% if product %}Edit Product{% else %}Add Product{% endif %} - Admin{% endblock %}
 
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h3><i class="fas fa-box"></i> {% if product %}Edit Product{% else %}Add New Product{% endif %}</h3>
-    <a href="{{ url_for('admin_products') }}" class="btn btn-secondary">
-        <i class="fas fa-arrow-left"></i> Back to Products
-    </a>
-</div>
+<div class="dashboard-container">
+    <!-- Page Header -->
+    <div class="page-header-d365">
+        <div class="header-content">
+            <h1><i class="fas fa-box"></i> {% if product %}Edit Product{% else %}Add New Product{% endif %}</h1>
+            <p class="header-subtitle">{% if product %}Update product details and pricing{% else %}Create a new product in your catalog{% endif %}</p>
+        </div>
+        <div class="header-actions">
+            <a href="{{ url_for('admin_products') }}" class="btn-d365-secondary">
+                <i class="fas fa-arrow-left"></i>
+                <span>Back to Products</span>
+            </a>
+        </div>
+    </div>
 
-<div class="card">
-    <div class="card-body">
-        <form method="POST" enctype="multipart/form-data">
+    <!-- Product Form Card -->
+    <div class="d365-card">
+        <div class="card-header-d365">
+            <h2>Product Details</h2>
+        </div>
+        <div class="card-body-d365">
+            <form method="POST" enctype="multipart/form-data">
             <div class="row">
                 <div class="col-md-6">
-                    <div class="mb-3">
-                        <label for="name" class="form-label">Product Name *</label>
-                        <input type="text" class="form-control" id="name" name="name" 
+                    <div class="form-group-d365">
+                        <label for="name" class="form-label-d365">Product Name *</label>
+                        <input type="text" class="form-control-d365" id="name" name="name" 
                                value="{{ product.name or '' }}" required>
                         <small class="text-muted">The name of your product</small>
                     </div>
                 </div>
                 <div class="col-md-6">
-                    <div class="mb-3">
-                        <label for="category" class="form-label">Category *</label>
-                        <input type="text" class="form-control" id="category" name="category" 
+                    <div class="form-group-d365">
+                        <label for="category" class="form-label-d365">Category *</label>
+                        <input type="text" class="form-control-d365" id="category" name="category" 
                                value="{{ product.category or '' }}" required>
                         <small class="text-muted">e.g., Fuel, Minerals, etc.</small>
                     </div>
                 </div>
             </div>
 
-            <div class="mb-3">
-                <label for="description" class="form-label">Description *</label>
-                <textarea class="form-control" id="description" name="description" rows="4" required>{{ product.description or '' }}</textarea>
+            <div class="form-group-d365">
+                <label for="description" class="form-label-d365">Description *</label>
+                <textarea class="form-control-d365" id="description" name="description" rows="4" required>{{ product.description or '' }}</textarea>
                 <small class="text-muted">Detailed product description</small>
             </div>
 
-            <div class="mb-3">
-                <label for="specifications" class="form-label">Specifications</label>
-                <textarea class="form-control" id="specifications" name="specifications" rows="3" placeholder="Enter product specifications">{{ product.specifications or '' }}</textarea>
+            <div class="form-group-d365">
+                <label for="specifications" class="form-label-d365">Specifications</label>
+                <textarea class="form-control-d365" id="specifications" name="specifications" rows="3" placeholder="Enter product specifications">{{ product.specifications or '' }}</textarea>
                 <small class="text-muted">Technical details and specifications</small>
             </div>
 
             <div class="row">
                 <div class="col-md-3">
-                    <div class="mb-3">
-                        <label for="price_zar" class="form-label">
-                            <i class="fas fa-rand"></i> Local Price (ZAR) *
+                    <div class="form-group-d365">
+                        <label for="price_zar" class="form-label-d365">
+                            <i class="fas fa-coins"></i> Local Price (ZAR) *
                         </label>
-                        <input type="number" class="form-control" id="price_zar" name="price_zar" 
+                        <input type="number" class="form-control-d365" id="price_zar" name="price_zar" 
                                value="{{ product.price_zar or '' }}" step="0.01" min="0">
                         <small class="text-muted">Price for South African customers</small>
                     </div>
                 </div>
                 <div class="col-md-3">
-                    <div class="mb-3">
-                        <label for="price_usd" class="form-label">
+                    <div class="form-group-d365">
+                        <label for="price_usd" class="form-label-d365">
                             <i class="fas fa-dollar-sign"></i> International Price (USD) *
                         </label>
-                        <input type="number" class="form-control" id="price_usd" name="price_usd" 
+                        <input type="number" class="form-control-d365" id="price_usd" name="price_usd" 
                                value="{{ product.price_usd or '' }}" step="0.01" min="0">
                         <small class="text-muted">Price for international customers</small>
                     </div>
                 </div>
                 <div class="col-md-3">
-                    <div class="mb-3">
-                        <label for="unit" class="form-label">Unit *</label>
-                        <input type="text" class="form-control" id="unit" name="unit" 
+                    <div class="form-group-d365">
+                        <label for="unit" class="form-label-d365">Unit *</label>
+                        <input type="text" class="form-control-d365" id="unit" name="unit" 
                                value="{{ product.unit or 'L' }}" required>
                         <small class="text-muted">e.g., L, KG, M³, etc.</small>
                     </div>
                 </div>
                 <div class="col-md-3">
-                    <div class="mb-3">
-                        <label for="order_position" class="form-label">Display Order</label>
-                        <input type="number" class="form-control" id="order_position" name="order_position" 
+                    <div class="form-group-d365">
+                        <label for="order_position" class="form-label-d365">Display Order</label>
+                        <input type="number" class="form-control-d365" id="order_position" name="order_position" 
                                value="{{ product.order_position or 0 }}" min="0">
                     </div>
                 </div>
             </div>
 
-            <div class="alert alert-info mb-3" role="alert">
-                <i class="fas fa-info-circle"></i>
+            <div class="alert alert-info mb-3" role="alert" style="background: #e8f4fd; border: 1px solid #b3d9f2; border-radius: 4px; padding: 12px;">
+                <i class="fas fa-info-circle" style="color: var(--d365-theme-primary);"></i>
                 <strong>Location-Based Pricing:</strong> Set both ZAR and USD prices. 
                 South African customers will see ZAR prices, while international customers will see USD prices. 
                 At least one price is required.
@@ -91,40 +103,83 @@
 
             <div class="row">
                 <div class="col-md-3">
-                    <div class="mb-3">
-                        <label for="image" class="form-label">Product Image</label>
-                        <input type="file" class="form-control" id="image" name="image" accept="image/*">
+                    <div class="form-group-d365">
+                        <label for="image" class="form-label-d365">Product Image</label>
+                        <input type="file" class="form-control-d365" id="image" name="image" accept="image/*">
                         <small class="text-muted">JPG, PNG, GIF (max 5MB)</small>
                     </div>
                 </div>
             </div>
 
             {% if product and product.image_url %}
-            <div class="mb-3">
-                <label class="form-label">Current Image</label>
+            <div class="form-group-d365">
+                <label class="form-label-d365">Current Image</label>
                 <div>
-                    <img src="{{ product.image_url }}" alt="{{ product.name }}" style="max-width: 200px; border-radius: 8px;">
+                    <img src="{{ product.image_url }}" alt="{{ product.name }}" style="max-width: 200px; border-radius: 8px; border: 1px solid var(--d365-neutral-light);">
                 </div>
             </div>
             {% endif %}
 
-            <div class="mb-3 form-check">
-                <input type="checkbox" class="form-check-input" id="is_active" name="is_active"
-                       {% if product is none or product.is_active %}checked{% endif %}>
-                <label class="form-check-label" for="is_active">
-                    <i class="fas fa-check"></i> Active (display on website)
-                </label>
+            <div class="form-group-d365">
+                <div class="form-check" style="padding-left: 0;">
+                    <input type="checkbox" class="form-check-input" id="is_active" name="is_active"
+                           {% if product is none or product.is_active %}checked{% endif %}
+                           style="width: 18px; height: 18px; margin-right: 8px; cursor: pointer;">
+                    <label class="form-check-label" for="is_active" style="cursor: pointer; padding-top: 2px;">
+                        <i class="fas fa-check" style="color: var(--d365-theme-primary);"></i> Active (display on website)
+                    </label>
+                </div>
             </div>
 
-            <div class="d-flex gap-2">
-                <button type="submit" class="btn btn-primary">
+            <div style="display: flex; gap: 12px; margin-top: 24px;">
+                <button type="submit" class="btn-d365-primary">
                     <i class="fas fa-save"></i> {% if product %}Update Product{% else %}Create Product{% endif %}
                 </button>
-                <a href="{{ url_for('admin_products') }}" class="btn btn-outline-secondary">
+                <a href="{{ url_for('admin_products') }}" class="btn-d365-secondary">
                     <i class="fas fa-times"></i> Cancel
                 </a>
             </div>
         </form>
     </div>
 </div>
+</div>
+
+<style>
+    .dashboard-container {
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    .page-header-d365 {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 24px;
+        padding-bottom: 16px;
+        border-bottom: 1px solid var(--d365-neutral-light);
+    }
+
+    .header-content h1 {
+        font-size: 28px;
+        font-weight: 600;
+        color: var(--d365-neutral-primary);
+        margin: 0 0 4px 0;
+    }
+
+    .header-content h1 i {
+        color: var(--d365-theme-primary);
+        margin-right: 8px;
+    }
+
+    .header-subtitle {
+        color: var(--d365-neutral-secondary);
+        font-size: 14px;
+        margin: 0;
+    }
+
+    .header-actions {
+        display: flex;
+        gap: 8px;
+    }
+</style>
 {% endblock %}

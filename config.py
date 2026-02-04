@@ -65,3 +65,8 @@ class Config:
     UPLOAD_FOLDER = 'static/uploads'
     MAX_CONTENT_LENGTH = 16 * 1024 * 1024
     ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
+    ALLOWED_POP_EXTENSIONS = {'pdf', 'jpg', 'jpeg', 'png'}
+    
+    # OCR settings
+    OCR_CONFIDENCE_THRESHOLD = 0.75  # Auto-verify if confidence >= 75%
+    PAYMENT_VALIDATION_TOLERANCE = 0.01  # 1% tolerance for amount matching
