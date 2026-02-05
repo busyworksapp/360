@@ -54,14 +54,15 @@ csp = {
     'default-src': "'self'",
     'script-src': [
         "'self'",
-        "'unsafe-inline'",  # TODO: Replace with nonces
+        "'unsafe-inline'",  # Allow inline scripts (needed for onclick handlers)
+        "'unsafe-eval'",    # Allow eval (needed by some libraries)
         'cdn.jsdelivr.net',
         'code.jquery.com',
         'js.stripe.com'
     ],
     'style-src': [
         "'self'",
-        "'unsafe-inline'",
+        "'unsafe-inline'",  # Allow inline styles
         'cdn.jsdelivr.net',
         'cdnjs.cloudflare.com'
     ],
@@ -70,15 +71,38 @@ csp = {
     'connect-src': ["'self'", 'https://api.stripe.com']
 }
 
-# Only enable Talisman in production (when HTTPS is available)
-if os.getenv('FLASK_ENV') == 'production' or os.getenv('ENABLE_HTTPS') == 'True':
+# Only enable Talisman in production (Railway deployment)
+# Check for Railway environment or explicit production flag
+is_railway = os.getenv('RAILWAY_ENVIRONMENT') is not None
+is_production = os.getenv('FLASK_ENV') == 'production'
+enable_https = os.getenv('ENABLE_HTTPS') == 'True'
+
+# Only enforce HTTPS if running on Railway or explicitly enabled in production
+if is_railway or (is_production and enable_https and os.getenv('RAILWAY_STATIC_URL')):
+    print("🔒 HTTPS enforcement enabled (Production/Railway)")
     Talisman(app,
         force_https=True,
         strict_transport_security=True,
         strict_transport_security_max_age=31536000,
         content_security_policy=csp,
-        content_security_policy_nonce_in=['script-src']
+        content_security_policy_nonce_in=[]  # Disable nonces to allow 'unsafe-inline'
     )
+else:
+    print("⚠️  HTTPS enforcement disabled (Local development)")
+    # Still apply CSP without HTTPS enforcement for local testing
+    @app.after_request
+    def add_csp_header(response):
+        # Build CSP header manually for local development
+        csp_header = "; ".join([
+            "default-src 'self'",
+            "script-src 'self' 'unsafe-inline' 'unsafe-eval' cdn.jsdelivr.net code.jquery.com js.stripe.com",
+            "style-src 'self' 'unsafe-inline' cdn.jsdelivr.net cdnjs.cloudflare.com",
+            "img-src 'self' data: https:",
+            "font-src 'self' cdnjs.cloudflare.com",
+            "connect-src 'self' https://api.stripe.com cdn.jsdelivr.net"
+        ])
+        response.headers['Content-Security-Policy'] = csp_header
+        return response
 
 login_manager = LoginManager()
 login_manager.init_app(app)
