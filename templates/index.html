@@ -1,610 +1,1824 @@
-{% extends "base.html" %}
+{% extends "base.html" %}{% extends "base.html" %}{% extends "base.html" %}
+
+
 
 {% block title %}360Degree Supply - Industrial Supplies{% endblock %}
 
-{% block extra_css %}
+
+
+{% block extra_css %}{% block title %}360Degree Supply - Industrial Supplies{% endblock %}{% block title %}360Degree Supply - Industrial Supplies{% endblock %}
+
 <style>
-    /* D365 Home Page Styling */
-    
-    /* Remove default main padding for home page */
+
+    /* Remove default padding */
+
     main {
-        padding-bottom: 0 !important;
-    }
-    
-    /* Hero Section - D365 */
-    .hero-d365 {
-        background: linear-gradient(135deg, #0078d4 0%, #005a9e 100%) !important;
-        color: white !important;
-        padding: 80px 0 !important;
-        text-align: center !important;
+
+        padding: 0 !important;{% block extra_css %}{% block extra_css %}
+
         margin: 0 !important;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
-        display: block !important;
-        visibility: visible !important;
-        width: 100% !important;
-        position: relative !important;
-        z-index: 1 !important;
+
+    }<style><style>
+
+
+
+    body {    /* Remove default padding */    /* D365 Home Page Styling */
+
+        background: #000;
+
+        color: #fff;    main {    
+
+        overflow-x: hidden;
+
+    }        padding: 0 !important;    /* Remove default main padding for home page */
+
+
+
+    /* Modern Hero Section */        margin: 0 !important;    main {
+
+    .hero-modern {
+
+        position: relative;    }        padding-bottom: 0 !important;
+
+        min-height: 100vh;
+
+        background: #000;    }
+
+        overflow: hidden;
+
+        display: flex;    body {    
+
+        align-items: center;
+
+        justify-content: center;        background: #000;    /* Hero Section - D365 */
+
     }
 
-    .hero-d365 h1 {
-        font-size: 48px;
-        font-weight: 600;
-        margin-bottom: 16px;
-        color: white;
-        letter-spacing: -0.5px;
-    }
+        color: #fff;    .hero-d365 {
 
-    .hero-d365 p {
-        font-size: 20px;
-        margin-bottom: 32px;
-        opacity: 0.95;
-        color: white;
-        max-width: 600px;
-        margin-left: auto;
-        margin-right: auto;
-    }
+    /* Animated Background Images */
 
-    .hero-d365 .btn {
-        padding: 12px 32px;
-        font-size: 16px;
-        font-weight: 600;
-        border-radius: 2px;
-        transition: all 0.2s ease;
-    }
+    .hero-background {        overflow-x: hidden;        background: linear-gradient(135deg, #0078d4 0%, #005a9e 100%) !important;
 
-    .hero-d365 .btn-primary {
-        background-color: white;
-        border-color: white;
-        color: #0078d4;
-    }
+        position: absolute;
 
-    .hero-d365 .btn-primary:hover {
-        background-color: #f3f2f1;
-        border-color: #f3f2f1;
-        color: #0078d4;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-    }
+        top: 0;    }        color: white !important;
 
-    /* Services Section - D365 */
-    .services-section-d365 {
-        background-color: #faf9f8;
-        padding: 80px 0;
-    }
+        left: 0;
 
-    .section-title-d365 {
-        text-align: center;
-        margin-bottom: 60px;
-    }
+        width: 100%;        padding: 80px 0 !important;
 
-    .section-title-d365 h2 {
-        font-size: 32px;
-        font-weight: 600;
-        color: #323130;
-        margin-bottom: 16px;
-    }
-
-    .section-title-d365 .divider-d365 {
-        width: 60px;
-        height: 4px;
-        background-color: #0078d4;
-        margin: 0 auto 16px;
-        border-radius: 2px;
-    }
-
-    .section-title-d365 p {
-        font-size: 16px;
-        color: #605e5c;
-        margin-bottom: 0;
-    }
-
-    .service-card-d365 {
-        background: white;
-        border: 1px solid #edebe9;
-        border-radius: 2px;
-        padding: 32px 24px;
-        text-align: center;
-        transition: all 0.2s ease;
-        box-shadow: 0 1.6px 3.6px 0 rgba(0,0,0,.132), 0 0.3px 0.9px 0 rgba(0,0,0,.108);
         height: 100%;
-        margin-bottom: 24px;
+
+        z-index: 0;    /* Modern Hero Section */        text-align: center !important;
+
     }
 
-    .service-card-d365:hover {
-        box-shadow: 0 6.4px 14.4px 0 rgba(0,0,0,.132), 0 1.2px 3.6px 0 rgba(0,0,0,.108);
-        transform: translateY(-4px);
-        border-color: #0078d4;
+    .hero-modern {        margin: 0 !important;
+
+    .hero-background::before {
+
+        content: '';        position: relative;        box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
+
+        position: absolute;
+
+        top: 0;        min-height: 100vh;        display: block !important;
+
+        left: 0;
+
+        width: 100%;        background: #000;        visibility: visible !important;
+
+        height: 100%;
+
+        background: linear-gradient(135deg, rgba(0,0,0,0.7) 0%, rgba(75,0,130,0.5) 50%, rgba(138,43,226,0.3) 100%);        overflow: hidden;        width: 100% !important;
+
+        z-index: 2;
+
+    }        display: flex;        position: relative !important;
+
+
+
+    .background-image {        align-items: center;        z-index: 1 !important;
+
+        position: absolute;
+
+        top: 0;        justify-content: center;    }
+
+        left: 0;
+
+        width: 100%;    }
+
+        height: 100%;
+
+        background-size: cover;    .hero-d365 h1 {
+
+        background-position: center;
+
+        opacity: 0;    /* Animated Background Images */        font-size: 48px;
+
+        transition: opacity 2s ease-in-out;
+
+        z-index: 1;    .hero-background {        font-weight: 600;
+
     }
 
-    .service-icon-d365 {
-        font-size: 48px;
-        color: #0078d4;
-        margin-bottom: 20px;
+        position: absolute;        margin-bottom: 16px;
+
+    .background-image.active {
+
+        opacity: 0.4;        top: 0;        color: white;
+
     }
 
-    .service-card-d365 h4 {
-        color: #323130;
+        left: 0;        letter-spacing: -0.5px;
+
+    /* Animated Gradient Shapes */
+
+    .gradient-shapes {        width: 100%;    }
+
+        position: absolute;
+
+        top: 0;        height: 100%;
+
+        left: 0;
+
+        width: 100%;        z-index: 0;    .hero-d365 p {
+
+        height: 100%;
+
+        z-index: 3;    }        font-size: 20px;
+
+        pointer-events: none;
+
+    }        margin-bottom: 32px;
+
+
+
+    .shape {    .hero-background::before {        opacity: 0.95;
+
+        position: absolute;
+
+        border-radius: 50%;        content: '';        color: white;
+
+        filter: blur(80px);
+
+        opacity: 0.6;        position: absolute;        max-width: 600px;
+
+        animation: float 20s infinite ease-in-out;
+
+    }        top: 0;        margin-left: auto;
+
+
+
+    .shape-1 {        left: 0;        margin-right: auto;
+
+        width: 600px;
+
+        height: 600px;        width: 100%;    }
+
+        background: radial-gradient(circle, rgba(138,43,226,0.4) 0%, transparent 70%);
+
+        top: -200px;        height: 100%;
+
+        right: -100px;
+
+        animation-delay: 0s;        background: linear-gradient(135deg, rgba(0,0,0,0.7) 0%, rgba(75,0,130,0.5) 50%, rgba(138,43,226,0.3) 100%);    .hero-d365 .btn {
+
+    }
+
+        z-index: 2;        padding: 12px 32px;
+
+    .shape-2 {
+
+        width: 500px;    }        font-size: 16px;
+
+        height: 500px;
+
+        background: radial-gradient(circle, rgba(75,0,130,0.3) 0%, transparent 70%);        font-weight: 600;
+
+        bottom: -150px;
+
+        left: -50px;    .background-image {        border-radius: 2px;
+
+        animation-delay: 5s;
+
+    }        position: absolute;        transition: all 0.2s ease;
+
+
+
+    .shape-3 {        top: 0;    }
+
+        width: 400px;
+
+        height: 400px;        left: 0;
+
+        background: radial-gradient(circle, rgba(147,51,234,0.3) 0%, transparent 70%);
+
+        top: 50%;        width: 100%;    .hero-d365 .btn-primary {
+
+        left: 50%;
+
+        transform: translate(-50%, -50%);        height: 100%;        background-color: white;
+
+        animation-delay: 10s;
+
+    }        background-size: cover;        border-color: white;
+
+
+
+    @keyframes float {        background-position: center;        color: #0078d4;
+
+        0%, 100% {
+
+            transform: translate(0, 0) scale(1);        opacity: 0;    }
+
+        }
+
+        33% {        transition: opacity 2s ease-in-out;
+
+            transform: translate(50px, -50px) scale(1.1);
+
+        }        z-index: 1;    .hero-d365 .btn-primary:hover {
+
+        66% {
+
+            transform: translate(-30px, 30px) scale(0.9);    }        background-color: #f3f2f1;
+
+        }
+
+    }        border-color: #f3f2f1;
+
+
+
+    /* Animated Contour Lines */    .background-image.active {        color: #0078d4;
+
+    .contour-lines {
+
+        position: absolute;        opacity: 0.4;        transform: translateY(-2px);
+
+        top: 50%;
+
+        right: 5%;    }        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+
+        transform: translateY(-50%);
+
+        width: 500px;    }
+
+        height: 500px;
+
+        z-index: 4;    /* Animated Gradient Shapes */
+
+        opacity: 0.7;
+
+    }    .gradient-shapes {    /* Services Section - D365 */
+
+
+
+    .contour {        position: absolute;    .services-section-d365 {
+
+        position: absolute;
+
+        border: 2px solid;        top: 0;        background-color: #faf9f8;
+
+        border-radius: 50%;
+
+        animation: pulse 4s infinite ease-in-out;        left: 0;        padding: 80px 0;
+
+    }
+
+        width: 100%;    }
+
+    .contour-1 {
+
+        width: 100%;        height: 100%;
+
+        height: 100%;
+
+        border-color: rgba(138,43,226,0.6);        z-index: 3;    .section-title-d365 {
+
+        animation-delay: 0s;
+
+    }        pointer-events: none;        text-align: center;
+
+
+
+    .contour-2 {    }        margin-bottom: 60px;
+
+        width: 85%;
+
+        height: 85%;    }
+
+        top: 7.5%;
+
+        left: 7.5%;    .shape {
+
+        border-color: rgba(147,51,234,0.5);
+
+        animation-delay: 0.5s;        position: absolute;    .section-title-d365 h2 {
+
+    }
+
+        border-radius: 50%;        font-size: 32px;
+
+    .contour-3 {
+
+        width: 70%;        filter: blur(80px);        font-weight: 600;
+
+        height: 70%;
+
+        top: 15%;        opacity: 0.6;        color: #323130;
+
+        left: 15%;
+
+        border-color: rgba(168,85,247,0.4);        animation: float 20s infinite ease-in-out;        margin-bottom: 16px;
+
+        animation-delay: 1s;
+
+    }    }    }
+
+
+
+    .contour-4 {
+
+        width: 55%;
+
+        height: 55%;    .shape-1 {    .section-title-d365 .divider-d365 {
+
+        top: 22.5%;
+
+        left: 22.5%;        width: 600px;        width: 60px;
+
+        border-color: rgba(192,132,252,0.3);
+
+        animation-delay: 1.5s;        height: 600px;        height: 4px;
+
+    }
+
+        background: radial-gradient(circle, rgba(138,43,226,0.4) 0%, transparent 70%);        background-color: #0078d4;
+
+    .contour-5 {
+
+        width: 40%;        top: -200px;        margin: 0 auto 16px;
+
+        height: 40%;
+
+        top: 30%;        right: -100px;        border-radius: 2px;
+
+        left: 30%;
+
+        border-color: rgba(216,180,254,0.2);        animation-delay: 0s;    }
+
+        animation-delay: 2s;
+
+    }    }
+
+
+
+    @keyframes pulse {    .section-title-d365 p {
+
+        0%, 100% {
+
+            transform: scale(1);    .shape-2 {        font-size: 16px;
+
+            opacity: 0.7;
+
+        }        width: 500px;        color: #605e5c;
+
+        50% {
+
+            transform: scale(1.05);        height: 500px;        margin-bottom: 0;
+
+            opacity: 0.4;
+
+        }        background: radial-gradient(circle, rgba(75,0,130,0.3) 0%, transparent 70%);    }
+
+    }
+
+        bottom: -150px;
+
+    /* Hero Content */
+
+    .hero-content {        left: -50px;    .service-card-d365 {
+
+        position: relative;
+
+        z-index: 10;        animation-delay: 5s;        background: white;
+
+        max-width: 1200px;
+
+        padding: 0 40px;    }        border: 1px solid #edebe9;
+
+        width: 100%;
+
+    }        border-radius: 2px;
+
+
+
+    .hero-grid {    .shape-3 {        padding: 32px 24px;
+
+        display: grid;
+
+        grid-template-columns: 1fr 1fr;        width: 400px;        text-align: center;
+
+        gap: 60px;
+
+        align-items: center;        height: 400px;        transition: all 0.2s ease;
+
+    }
+
+        background: radial-gradient(circle, rgba(147,51,234,0.3) 0%, transparent 70%);        box-shadow: 0 1.6px 3.6px 0 rgba(0,0,0,.132), 0 0.3px 0.9px 0 rgba(0,0,0,.108);
+
+    /* Left Side - Main Content */
+
+    .hero-left h1 {        top: 50%;        height: 100%;
+
+        font-size: 80px;
+
+        font-weight: 800;        left: 50%;        margin-bottom: 24px;
+
+        color: #fff;
+
+        margin-bottom: 30px;        transform: translate(-50%, -50%);    }
+
+        line-height: 1;
+
+        letter-spacing: -2px;        animation-delay: 10s;
+
+    }
+
+    }    .service-card-d365:hover {
+
+    .search-bar {
+
+        position: relative;        box-shadow: 0 6.4px 14.4px 0 rgba(0,0,0,.132), 0 1.2px 3.6px 0 rgba(0,0,0,.108);
+
+        max-width: 500px;
+
+        margin-bottom: 30px;    @keyframes float {        transform: translateY(-4px);
+
+    }
+
+        0%, 100% {        border-color: #0078d4;
+
+    .search-bar input {
+
+        width: 100%;            transform: translate(0, 0) scale(1);    }
+
+        padding: 16px 50px 16px 20px;
+
+        background: rgba(255,255,255,0.1);        }
+
+        border: 2px solid rgba(255,255,255,0.2);
+
+        border-radius: 50px;        33% {    .service-icon-d365 {
+
+        color: #fff;
+
+        font-size: 16px;            transform: translate(50px, -50px) scale(1.1);        font-size: 48px;
+
+        transition: all 0.3s ease;
+
+    }        }        color: #0078d4;
+
+
+
+    .search-bar input:focus {        66% {        margin-bottom: 20px;
+
+        outline: none;
+
+        background: rgba(255,255,255,0.15);            transform: translate(-30px, 30px) scale(0.9);    }
+
+        border-color: rgba(138,43,226,0.5);
+
+    }        }
+
+
+
+    .search-bar input::placeholder {    }    .service-card-d365 h4 {
+
+        color: rgba(255,255,255,0.5);
+
+    }        color: #323130;
+
+
+
+    .search-bar button {    /* Animated Contour Lines */        font-weight: 600;
+
+        position: absolute;
+
+        right: 8px;    .contour-lines {        margin-bottom: 12px;
+
+        top: 50%;
+
+        transform: translateY(-50%);        position: absolute;        font-size: 18px;
+
+        background: transparent;
+
+        border: none;        top: 50%;    }
+
+        color: #fff;
+
+        font-size: 20px;        right: 5%;
+
+        cursor: pointer;
+
+        padding: 10px 15px;        transform: translateY(-50%);    .service-card-d365 p {
+
+    }
+
+        width: 500px;        color: #605e5c;
+
+    .hero-buttons {
+
+        display: flex;        height: 500px;        line-height: 1.6;
+
+        gap: 15px;
+
+        margin-top: 30px;        z-index: 4;        margin: 0;
+
+    }
+
+        opacity: 0.7;        font-size: 14px;
+
+    .btn-modern {
+
+        padding: 14px 32px;    }    }
+
+        border-radius: 50px;
+
         font-weight: 600;
-        margin-bottom: 12px;
-        font-size: 18px;
+
+        font-size: 16px;
+
+        transition: all 0.3s ease;    .contour {    /* Products Section - D365 */
+
+        border: none;
+
+        cursor: pointer;        position: absolute;    .products-section-d365 {
+
+        text-decoration: none;
+
+        display: inline-block;        border: 2px solid;        padding: 80px 0;
+
     }
 
-    .service-card-d365 p {
-        color: #605e5c;
-        line-height: 1.6;
-        margin: 0;
-        font-size: 14px;
-    }
+        border-radius: 50%;        background-color: white;
 
-    /* Products Section - D365 */
-    .products-section-d365 {
-        padding: 80px 0;
-        background-color: white;
+    .btn-primary-modern {
+
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);        animation: pulse 4s infinite ease-in-out;    }
+
+        color: #fff;
+
+        box-shadow: 0 10px 30px rgba(102,126,234,0.3);    }
+
     }
 
     .product-card-d365 {
-        background: white;
-        border: 1px solid #edebe9;
-        border-radius: 2px;
+
+    .btn-primary-modern:hover {
+
+        transform: translateY(-2px);    .contour-1 {        background: white;
+
+        box-shadow: 0 15px 40px rgba(102,126,234,0.4);
+
+        color: #fff;        width: 100%;        border: 1px solid #edebe9;
+
+    }
+
+        height: 100%;        border-radius: 2px;
+
+    .btn-secondary-modern {
+
+        background: transparent;        border-color: rgba(138,43,226,0.6);        overflow: hidden;
+
+        color: #fff;
+
+        border: 2px solid rgba(255,255,255,0.3);        animation-delay: 0s;        transition: all 0.2s ease;
+
+    }
+
+    }        box-shadow: 0 1.6px 3.6px 0 rgba(0,0,0,.132), 0 0.3px 0.9px 0 rgba(0,0,0,.108);
+
+    .btn-secondary-modern:hover {
+
+        background: rgba(255,255,255,0.1);        height: 100%;
+
+        border-color: rgba(255,255,255,0.5);
+
+        color: #fff;    .contour-2 {        margin-bottom: 24px;
+
+    }
+
+        width: 85%;    }
+
+    /* Right Side - Info Card */
+
+    .hero-right {        height: 85%;
+
+        display: flex;
+
+        flex-direction: column;        top: 7.5%;    .product-card-d365:hover {
+
+        gap: 30px;
+
+    }        left: 7.5%;        border-color: #0078d4;
+
+
+
+    .info-card {        border-color: rgba(147,51,234,0.5);        box-shadow: 0 6.4px 14.4px 0 rgba(0,0,0,.132), 0 1.2px 3.6px 0 rgba(0,0,0,.108);
+
+        background: rgba(255,255,255,0.05);
+
+        backdrop-filter: blur(20px);        animation-delay: 0.5s;        transform: translateY(-4px);
+
+        border: 1px solid rgba(255,255,255,0.1);
+
+        border-radius: 20px;    }    }
+
+        padding: 40px;
+
+        position: relative;
+
         overflow: hidden;
-        transition: all 0.2s ease;
-        box-shadow: 0 1.6px 3.6px 0 rgba(0,0,0,.132), 0 0.3px 0.9px 0 rgba(0,0,0,.108);
-        height: 100%;
-        margin-bottom: 24px;
+
+    }    .contour-3 {    .product-image-d365 {
+
+
+
+    .info-card::before {        width: 70%;        background: linear-gradient(135deg, #0078d4 0%, #005a9e 100%);
+
+        content: '';
+
+        position: absolute;        height: 70%;        color: white;
+
+        top: 0;
+
+        left: 0;        top: 15%;        padding: 60px 15px;
+
+        width: 100%;
+
+        height: 100%;        left: 15%;        text-align: center;
+
+        background: linear-gradient(135deg, rgba(138,43,226,0.1) 0%, rgba(75,0,130,0.05) 100%);
+
+        z-index: 0;        border-color: rgba(168,85,247,0.4);        font-size: 56px;
+
     }
 
-    .product-card-d365:hover {
-        border-color: #0078d4;
-        box-shadow: 0 6.4px 14.4px 0 rgba(0,0,0,.132), 0 1.2px 3.6px 0 rgba(0,0,0,.108);
-        transform: translateY(-4px);
-    }
+        animation-delay: 1s;    }
 
-    .product-image-d365 {
-        background: linear-gradient(135deg, #0078d4 0%, #005a9e 100%);
-        color: white;
-        padding: 60px 15px;
-        text-align: center;
-        font-size: 56px;
-    }
+    .info-card-content {
 
-    .product-details-d365 {
-        padding: 20px;
-    }
+        position: relative;    }
 
-    .product-name-d365 {
-        font-weight: 600;
-        font-size: 16px;
-        color: #323130;
-        margin-bottom: 6px;
-    }
+        z-index: 1;
 
-    .product-category-d365 {
-        font-size: 12px;
-        color: #605e5c;
-        margin-bottom: 12px;
-    }
+    }    .product-details-d365 {
 
-    .product-price-d365 {
-        font-size: 20px;
-        font-weight: 600;
-        color: #0078d4;
-        margin-bottom: 12px;
-    }
 
-    .product-details-d365 p {
-        color: #605e5c;
-        font-size: 14px;
-        line-height: 1.6;
-        margin: 0;
-    }
 
-    /* Testimonials Section - D365 */
-    .testimonials-section-d365 {
-        background-color: #faf9f8;
-        padding: 80px 0;
-    }
+    .info-icon {    .contour-4 {        padding: 20px;
 
-    .testimonial-card-d365 {
-        background: white;
-        border-radius: 2px;
-        border: 1px solid #edebe9;
-        padding: 32px 24px;
-        box-shadow: 0 1.6px 3.6px 0 rgba(0,0,0,.132), 0 0.3px 0.9px 0 rgba(0,0,0,.108);
-        height: 100%;
-        transition: all 0.2s ease;
-        margin-bottom: 24px;
-    }
-
-    .testimonial-card-d365:hover {
-        box-shadow: 0 6.4px 14.4px 0 rgba(0,0,0,.132), 0 1.2px 3.6px 0 rgba(0,0,0,.108);
-        transform: translateY(-4px);
-        border-color: #0078d4;
-    }
-
-    .testimonial-quote-d365 {
-        font-size: 32px;
-        color: #0078d4;
-        margin-bottom: 16px;
-    }
-
-    .testimonial-content-d365 {
-        font-style: italic;
-        color: #605e5c;
-        margin-bottom: 20px;
-        line-height: 1.6;
-        font-size: 14px;
-    }
-
-    .testimonial-rating-d365 {
-        margin-bottom: 20px;
-    }
-
-    .testimonial-rating-d365 i {
-        color: #ffb900;
-        margin-right: 4px;
-        font-size: 14px;
-    }
-
-    .testimonial-rating-d365 i.text-muted {
-        color: #edebe9 !important;
-    }
-
-    .testimonial-author-d365 {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-    }
-
-    .testimonial-avatar-d365 {
-        width: 48px;
-        height: 48px;
-        border-radius: 50%;
-        object-fit: cover;
-    }
-
-    .testimonial-avatar-placeholder-d365 {
-        width: 48px;
-        height: 48px;
-        border-radius: 50%;
-        background: linear-gradient(135deg, #0078d4 0%, #005a9e 100%);
-        color: white;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: 600;
-        font-size: 20px;
-    }
-
-    .testimonial-name-d365 {
-        font-weight: 600;
-        color: #323130;
-        font-size: 16px;
-        margin-bottom: 2px;
-    }
-
-    .testimonial-meta-d365 {
-        font-size: 12px;
-        color: #605e5c;
-    }
-
-    /* Contact Section - D365 */
-    .contact-section-d365 {
-        padding: 80px 0;
-        background-color: white;
-    }
-
-    .contact-section-d365 h2 {
-        color: #323130;
-        font-weight: 600;
-        font-size: 32px;
-        margin-bottom: 16px;
-    }
-
-    .contact-section-d365 .divider-d365 {
-        width: 60px;
-        height: 4px;
-        background-color: #0078d4;
-        margin-bottom: 32px;
-        border-radius: 2px;
-    }
-
-    .contact-info-d365 {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        margin-bottom: 20px;
-        font-size: 14px;
-        color: #605e5c;
-    }
-
-    .contact-info-d365 i {
-        color: #0078d4;
-        font-size: 18px;
-        width: 24px;
-    }
-
-    .contact-section-d365 form input,
-    .contact-section-d365 form textarea {
-        border: 1px solid #edebe9;
-        border-radius: 2px;
-        padding: 8px 12px;
-        font-size: 14px;
-        color: #323130;
-        transition: all 0.2s ease;
-    }
-
-    .contact-section-d365 form input:focus,
-    .contact-section-d365 form textarea:focus {
-        border-color: #0078d4;
-        box-shadow: 0 0 0 1px #0078d4;
-        outline: none;
-    }
-
-    .contact-section-d365 .btn-primary {
-        background-color: #0078d4;
-        border-color: #0078d4;
-        font-weight: 600;
-        color: white;
-        padding: 8px 16px;
-        font-size: 14px;
-        border-radius: 2px;
-        transition: all 0.2s ease;
-    }
-
-    .contact-section-d365 .btn-primary:hover {
-        background-color: #106ebe;
-        border-color: #106ebe;
-        color: white;
-    }
-
-    /* Empty State - D365 */
-    .empty-state-d365 {
-        text-align: center;
-        padding: 60px 20px;
-        background: white;
-        border: 1px solid #edebe9;
-        border-radius: 2px;
-    }
-
-    .empty-state-d365 i {
         font-size: 48px;
-        color: #a19f9d;
-        margin-bottom: 16px;
+
+        margin-bottom: 20px;        width: 55%;    }
+
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+
+        -webkit-background-clip: text;        height: 55%;
+
+        -webkit-text-fill-color: transparent;
+
+        background-clip: text;        top: 22.5%;    .product-name-d365 {
+
     }
 
-    .empty-state-d365 p {
-        font-size: 14px;
-        color: #605e5c;
-        margin: 0;
+        left: 22.5%;        font-weight: 600;
+
+    .info-card h2 {
+
+        font-size: 32px;        border-color: rgba(192,132,252,0.3);        font-size: 16px;
+
+        font-weight: 700;
+
+        margin-bottom: 15px;        animation-delay: 1.5s;        color: #323130;
+
+        color: #fff;
+
+    }    }        margin-bottom: 6px;
+
+
+
+    .info-card p {    }
+
+        color: rgba(255,255,255,0.7);
+
+        line-height: 1.6;    .contour-5 {
+
+        font-size: 15px;
+
+    }        width: 40%;    .product-category-d365 {
+
+
+
+    /* Scroll Indicator */        height: 40%;        font-size: 12px;
+
+    .scroll-indicator {
+
+        position: absolute;        top: 30%;        color: #605e5c;
+
+        bottom: 40px;
+
+        left: 50%;        left: 30%;        margin-bottom: 12px;
+
+        transform: translateX(-50%);
+
+        z-index: 10;        border-color: rgba(216,180,254,0.2);    }
+
+        display: flex;
+
+        flex-direction: column;        animation-delay: 2s;
+
+        align-items: center;
+
+        gap: 10px;    }    .product-price-d365 {
+
+        cursor: pointer;
+
+        animation: bounce 2s infinite;        font-size: 20px;
+
     }
 
-    @media (max-width: 768px) {
-        .hero-d365 h1 {
-            font-size: 32px;
-        }
+    @keyframes pulse {        font-weight: 600;
 
-        .hero-d365 p {
-            font-size: 16px;
-        }
+    .scroll-indicator .mouse {
 
-        .section-title-d365 h2 {
-            font-size: 24px;
-        }
+        width: 30px;        0%, 100% {        color: #0078d4;
 
-        .services-section-d365,
-        .products-section-d365,
-        .testimonials-section-d365,
-        .contact-section-d365 {
-            padding: 40px 0;
-        }
+        height: 50px;
 
-        .section-title-d365 {
-            margin-bottom: 40px;
-        }
+        border: 2px solid rgba(255,255,255,0.5);            transform: scale(1);        margin-bottom: 12px;
+
+        border-radius: 15px;
+
+        position: relative;            opacity: 0.7;    }
+
     }
-</style>
+
+        }
+
+    .scroll-indicator .mouse::before {
+
+        content: '';        50% {    .product-details-d365 p {
+
+        position: absolute;
+
+        top: 8px;            transform: scale(1.05);        color: #605e5c;
+
+        left: 50%;
+
+        transform: translateX(-50%);            opacity: 0.4;        font-size: 14px;
+
+        width: 4px;
+
+        height: 8px;        }        line-height: 1.6;
+
+        background: rgba(255,255,255,0.5);
+
+        border-radius: 2px;    }        margin: 0;
+
+        animation: scroll 1.5s infinite;
+
+    }    }
+
+
+
+    @keyframes scroll {    /* Hero Content */
+
+        0% {
+
+            top: 8px;    .hero-content {    /* Testimonials Section - D365 */
+
+            opacity: 1;
+
+        }        position: relative;    .testimonials-section-d365 {
+
+        100% {
+
+            top: 30px;        z-index: 10;        background-color: #faf9f8;
+
+            opacity: 0;
+
+        }        max-width: 1200px;        padding: 80px 0;
+
+    }
+
+        padding: 0 40px;    }
+
+    @keyframes bounce {
+
+        0%, 100% {        width: 100%;
+
+            transform: translateX(-50%) translateY(0);
+
+        }    }    .testimonial-card-d365 {
+
+        50% {
+
+            transform: translateX(-50%) translateY(-10px);        background: white;
+
+        }
+
+    }    .hero-grid {        border-radius: 2px;
+
+
+
+    /* Responsive Design */        display: grid;        border: 1px solid #edebe9;
+
+    @media (max-width: 992px) {
+
+        .hero-grid {        grid-template-columns: 1fr 1fr;        padding: 32px 24px;
+
+            grid-template-columns: 1fr;
+
+            gap: 40px;        gap: 60px;        box-shadow: 0 1.6px 3.6px 0 rgba(0,0,0,.132), 0 0.3px 0.9px 0 rgba(0,0,0,.108);
+
+        }
+
+        align-items: center;        height: 100%;
+
+        .hero-left h1 {
+
+            font-size: 60px;    }        transition: all 0.2s ease;
+
+        }
+
+        margin-bottom: 24px;
+
+        .contour-lines {
+
+            right: 50%;    /* Left Side - Main Content */    }
+
+            transform: translate(50%, -50%);
+
+            opacity: 0.3;    .hero-left h1 {
+
+            width: 400px;
+
+            height: 400px;        font-size: 80px;    .testimonial-card-d365:hover {
+
+        }
+
+    }        font-weight: 800;        box-shadow: 0 6.4px 14.4px 0 rgba(0,0,0,.132), 0 1.2px 3.6px 0 rgba(0,0,0,.108);
+
+
+
+    @media (max-width: 768px) {        color: #fff;        transform: translateY(-4px);
+
+        .hero-left h1 {
+
+            font-size: 48px;        margin-bottom: 30px;        border-color: #0078d4;
+
+        }
+
+        line-height: 1;    }
+
+        .hero-buttons {
+
+            flex-direction: column;        letter-spacing: -2px;
+
+        }
+
+    }    .testimonial-quote-d365 {
+
+        .btn-modern {
+
+            width: 100%;        font-size: 32px;
+
+            text-align: center;
+
+        }    .search-bar {        color: #0078d4;
+
+
+
+        .info-card {        position: relative;        margin-bottom: 16px;
+
+            padding: 30px;
+
+        }        max-width: 500px;    }
+
+
+
+        .shape {        margin-bottom: 30px;
+
+            filter: blur(60px);
+
+        }    }    .testimonial-content-d365 {
+
+    }
+
+</style>        font-style: italic;
+
 {% endblock %}
 
+    .search-bar input {        color: #605e5c;
+
 {% block content %}
-    <!-- Hero Section -->
-    {% if hero_sections %}
-        {% for hero in hero_sections %}
-            <section class="hero-d365">
-                <div class="container">
-                    <h1>{{ hero.title }}</h1>
-                    <p>{{ hero.subtitle }}</p>
-                    <a href="{{ hero.cta_link or '#services' }}" class="btn btn-primary btn-lg">
-                        <i class="fas fa-arrow-right me-2"></i>{{ hero.cta_text or 'Learn More' }}
+
+<!-- Modern Hero Section -->        width: 100%;        margin-bottom: 20px;
+
+<section class="hero-modern">
+
+    <!-- Animated Background Images -->        padding: 16px 50px 16px 20px;        line-height: 1.6;
+
+    <div class="hero-background">
+
+        <div class="background-image active" style="background-image: url('{{ url_for('static', filename='uploads/facility_5.jpg') }}');"></div>        background: rgba(255,255,255,0.1);        font-size: 14px;
+
+        <div class="background-image" style="background-image: url('{{ url_for('static', filename='uploads/fuel_tanker_2.jpg') }}');"></div>
+
+        <div class="background-image" style="background-image: url('{{ url_for('static', filename='uploads/mining_operation_2.jpg') }}');"></div>        border: 2px solid rgba(255,255,255,0.2);    }
+
+    </div>
+
+        border-radius: 50px;
+
+    <!-- Gradient Shapes -->
+
+    <div class="gradient-shapes">        color: #fff;    .testimonial-rating-d365 {
+
+        <div class="shape shape-1"></div>
+
+        <div class="shape shape-2"></div>        font-size: 16px;        margin-bottom: 20px;
+
+        <div class="shape shape-3"></div>
+
+    </div>        transition: all 0.3s ease;    }
+
+
+
+    <!-- Animated Contour Lines -->    }
+
+    <div class="contour-lines">
+
+        <div class="contour contour-1"></div>    .testimonial-rating-d365 i {
+
+        <div class="contour contour-2"></div>
+
+        <div class="contour contour-3"></div>    .search-bar input:focus {        color: #ffb900;
+
+        <div class="contour contour-4"></div>
+
+        <div class="contour contour-5"></div>        outline: none;        margin-right: 4px;
+
+    </div>
+
+        background: rgba(255,255,255,0.15);        font-size: 14px;
+
+    <!-- Hero Content -->
+
+    <div class="hero-content">        border-color: rgba(138,43,226,0.5);    }
+
+        <div class="hero-grid">
+
+            <!-- Left Side -->    }
+
+            <div class="hero-left">
+
+                <h1>Welcome.</h1>    .testimonial-rating-d365 i.text-muted {
+
+                
+
+                <div class="search-bar">    .search-bar input::placeholder {        color: #edebe9 !important;
+
+                    <input type="text" placeholder="Search for products, services..." id="heroSearch">
+
+                    <button type="button" onclick="performSearch()">        color: rgba(255,255,255,0.5);    }
+
+                        <i class="fas fa-search"></i>
+
+                    </button>    }
+
+                </div>
+
+    .testimonial-author-d365 {
+
+                <div class="hero-buttons">
+
+                    <a href="{{ url_for('customer_products') }}" class="btn-modern btn-primary-modern">    .search-bar button {        display: flex;
+
+                        FREE TRIAL
+
+                    </a>        position: absolute;        align-items: center;
+
+                    <a href="{{ url_for('contact') }}" class="btn-modern btn-secondary-modern">
+
+                        see more        right: 8px;        gap: 12px;
+
                     </a>
-                </div>
-            </section>
-        {% endfor %}
-    {% else %}
-        <section class="hero-d365">
-            <div class="container">
+
+                </div>        top: 50%;    }
+
+            </div>
+
+        transform: translateY(-50%);
+
+            <!-- Right Side -->
+
+            <div class="hero-right">        background: transparent;    .testimonial-avatar-d365 {
+
+                <div class="info-card">
+
+                    <div class="info-card-content">        border: none;        width: 48px;
+
+                        <div class="info-icon">
+
+                            <i class="fas fa-rocket"></i>        color: #fff;        height: 48px;
+
+                        </div>
+
+                        <h2>Landing page.</h2>        font-size: 20px;        border-radius: 50%;
+
+                        <p>
+
+                            360Degree Supply provides comprehensive industrial solutions for mining,         cursor: pointer;        object-fit: cover;
+
+                            fuel supply, and mineral trading. We deliver quality products with 
+
+                            reliable service across South Africa and the SADC region. Our commitment         padding: 10px 15px;    }
+
+                            to excellence ensures your operations run smoothly and efficiently.
+
+                        </p>    }
+
+                    </div>
+
+                </div>    .testimonial-avatar-placeholder-d365 {
+
+            </div>
+
+        </div>    .hero-buttons {        width: 48px;
+
+    </div>
+
+        display: flex;        height: 48px;
+
+    <!-- Scroll Indicator -->
+
+    <div class="scroll-indicator" onclick="scrollToContent()">        gap: 15px;        border-radius: 50%;
+
+        <div class="mouse"></div>
+
+    </div>        margin-top: 30px;        background: linear-gradient(135deg, #0078d4 0%, #005a9e 100%);
+
+</section>
+
+{% endblock %}    }        color: white;
+
+
+
+{% block extra_js %}        display: flex;
+
+<script>
+
+    // Background Image Rotation    .btn-modern {        align-items: center;
+
+    let currentImageIndex = 0;
+
+    const images = document.querySelectorAll('.background-image');        padding: 14px 32px;        justify-content: center;
+
+    
+
+    function rotateBackgroundImages() {        border-radius: 50px;        font-weight: 600;
+
+        // Remove active class from current image
+
+        images[currentImageIndex].classList.remove('active');        font-weight: 600;        font-size: 20px;
+
+        
+
+        // Move to next image        font-size: 16px;    }
+
+        currentImageIndex = (currentImageIndex + 1) % images.length;
+
+                transition: all 0.3s ease;
+
+        // Add active class to new image
+
+        images[currentImageIndex].classList.add('active');        border: none;    .testimonial-name-d365 {
+
+    }
+
+            cursor: pointer;        font-weight: 600;
+
+    // Rotate images every 5 seconds
+
+    setInterval(rotateBackgroundImages, 5000);        text-decoration: none;        color: #323130;
+
+    
+
+    // Search functionality        display: inline-block;        font-size: 16px;
+
+    function performSearch() {
+
+        const searchTerm = document.getElementById('heroSearch').value;    }        margin-bottom: 2px;
+
+        if (searchTerm.trim()) {
+
+            window.location.href = `{{ url_for('customer_products') }}?search=${encodeURIComponent(searchTerm)}`;    }
+
+        }
+
+    }    .btn-primary-modern {
+
+    
+
+    // Enter key to search        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);    .testimonial-meta-d365 {
+
+    document.getElementById('heroSearch').addEventListener('keypress', function(e) {
+
+        if (e.key === 'Enter') {        color: #fff;        font-size: 12px;
+
+            performSearch();
+
+        }        box-shadow: 0 10px 30px rgba(102,126,234,0.3);        color: #605e5c;
+
+    });
+
+        }    }
+
+    // Smooth scroll to content
+
+    function scrollToContent() {
+
+        window.scrollTo({
+
+            top: window.innerHeight,    .btn-primary-modern:hover {    /* Contact Section - D365 */
+
+            behavior: 'smooth'
+
+        });        transform: translateY(-2px);    .contact-section-d365 {
+
+    }
+
+            box-shadow: 0 15px 40px rgba(102,126,234,0.4);        padding: 80px 0;
+
+    // Parallax effect on mouse move
+
+    document.addEventListener('mousemove', (e) => {        color: #fff;        background-color: white;
+
+        const shapes = document.querySelectorAll('.shape');
+
+        const contours = document.querySelectorAll('.contour');    }    }
+
+        
+
+        const mouseX = e.clientX / window.innerWidth;
+
+        const mouseY = e.clientY / window.innerHeight;
+
+            .btn-secondary-modern {    .contact-section-d365 h2 {
+
+        shapes.forEach((shape, index) => {
+
+            const speed = (index + 1) * 0.5;        background: transparent;        color: #323130;
+
+            const x = (mouseX - 0.5) * speed * 50;
+
+            const y = (mouseY - 0.5) * speed * 50;        color: #fff;        font-weight: 600;
+
+            shape.style.transform = `translate(${x}px, ${y}px)`;
+
+        });        border: 2px solid rgba(255,255,255,0.3);        font-size: 32px;
+
+        
+
+        contours.forEach((contour, index) => {    }        margin-bottom: 16px;
+
+            const speed = (index + 1) * 0.3;
+
+            const x = (mouseX - 0.5) * speed * 30;    }
+
+            const y = (mouseY - 0.5) * speed * 30;
+
+            contour.style.transform = `translate(${x}px, ${y}px)`;    .btn-secondary-modern:hover {
+
+        });
+
+    });        background: rgba(255,255,255,0.1);    .contact-section-d365 .divider-d365 {
+
+</script>
+
+{% endblock %}        border-color: rgba(255,255,255,0.5);        width: 60px;
+
+
+        color: #fff;        height: 4px;
+
+    }        background-color: #0078d4;
+
+        margin-bottom: 32px;
+
+    /* Right Side - Info Card */        border-radius: 2px;
+
+    .hero-right {    }
+
+        display: flex;
+
+        flex-direction: column;    .contact-info-d365 {
+
+        gap: 30px;        display: flex;
+
+    }        align-items: center;
+
+        gap: 12px;
+
+    .info-card {        margin-bottom: 20px;
+
+        background: rgba(255,255,255,0.05);        font-size: 14px;
+
+        backdrop-filter: blur(20px);        color: #605e5c;
+
+        border: 1px solid rgba(255,255,255,0.1);    }
+
+        border-radius: 20px;
+
+        padding: 40px;    .contact-info-d365 i {
+
+        position: relative;        color: #0078d4;
+
+        overflow: hidden;        font-size: 18px;
+
+    }        width: 24px;
+
+    }
+
+    .info-card::before {
+
+        content: '';    .contact-section-d365 form input,
+
+        position: absolute;    .contact-section-d365 form textarea {
+
+        top: 0;        border: 1px solid #edebe9;
+
+        left: 0;        border-radius: 2px;
+
+        width: 100%;        padding: 8px 12px;
+
+        height: 100%;        font-size: 14px;
+
+        background: linear-gradient(135deg, rgba(138,43,226,0.1) 0%, rgba(75,0,130,0.05) 100%);        color: #323130;
+
+        z-index: 0;        transition: all 0.2s ease;
+
+    }    }
+
+
+
+    .info-card-content {    .contact-section-d365 form input:focus,
+
+        position: relative;    .contact-section-d365 form textarea:focus {
+
+        z-index: 1;        border-color: #0078d4;
+
+    }        box-shadow: 0 0 0 1px #0078d4;
+
+        outline: none;
+
+    .info-icon {    }
+
+        font-size: 48px;
+
+        margin-bottom: 20px;    .contact-section-d365 .btn-primary {
+
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);        background-color: #0078d4;
+
+        -webkit-background-clip: text;        border-color: #0078d4;
+
+        -webkit-text-fill-color: transparent;        font-weight: 600;
+
+        background-clip: text;        color: white;
+
+    }        padding: 8px 16px;
+
+        font-size: 14px;
+
+    .info-card h2 {        border-radius: 2px;
+
+        font-size: 32px;        transition: all 0.2s ease;
+
+        font-weight: 700;    }
+
+        margin-bottom: 15px;
+
+        color: #fff;    .contact-section-d365 .btn-primary:hover {
+
+    }        background-color: #106ebe;
+
+        border-color: #106ebe;
+
+    .info-card p {        color: white;
+
+        color: rgba(255,255,255,0.7);    }
+
+        line-height: 1.6;
+
+        font-size: 15px;    /* Empty State - D365 */
+
+    }    .empty-state-d365 {
+
+        text-align: center;
+
+    /* Scroll Indicator */        padding: 60px 20px;
+
+    .scroll-indicator {        background: white;
+
+        position: absolute;        border: 1px solid #edebe9;
+
+        bottom: 40px;        border-radius: 2px;
+
+        left: 50%;    }
+
+        transform: translateX(-50%);
+
+        z-index: 10;    .empty-state-d365 i {
+
+        display: flex;        font-size: 48px;
+
+        flex-direction: column;        color: #a19f9d;
+
+        align-items: center;        margin-bottom: 16px;
+
+        gap: 10px;    }
+
+        cursor: pointer;
+
+        animation: bounce 2s infinite;    .empty-state-d365 p {
+
+    }        font-size: 14px;
+
+        color: #605e5c;
+
+    .scroll-indicator .mouse {        margin: 0;
+
+        width: 30px;    }
+
+        height: 50px;
+
+        border: 2px solid rgba(255,255,255,0.5);    @media (max-width: 768px) {
+
+        border-radius: 15px;        .hero-d365 h1 {
+
+        position: relative;            font-size: 32px;
+
+    }        }
+
+
+
+    .scroll-indicator .mouse::before {        .hero-d365 p {
+
+        content: '';            font-size: 16px;
+
+        position: absolute;        }
+
+        top: 8px;
+
+        left: 50%;        .section-title-d365 h2 {
+
+        transform: translateX(-50%);            font-size: 24px;
+
+        width: 4px;        }
+
+        height: 8px;
+
+        background: rgba(255,255,255,0.5);        .services-section-d365,
+
+        border-radius: 2px;        .products-section-d365,
+
+        animation: scroll 1.5s infinite;        .testimonials-section-d365,
+
+    }        .contact-section-d365 {
+
+            padding: 40px 0;
+
+    @keyframes scroll {        }
+
+        0% {
+
+            top: 8px;        .section-title-d365 {
+
+            opacity: 1;            margin-bottom: 40px;
+
+        }        }
+
+        100% {    }
+
+            top: 30px;</style>
+
+            opacity: 0;{% endblock %}
+
+        }
+
+    }{% block content %}
+
+    <!-- Hero Section -->
+
+    @keyframes bounce {    {% if hero_sections %}
+
+        0%, 100% {        {% for hero in hero_sections %}
+
+            transform: translateX(-50%) translateY(0);            <section class="hero-d365">
+
+        }                <div class="container">
+
+        50% {                    <h1>{{ hero.title }}</h1>
+
+            transform: translateX(-50%) translateY(-10px);                    <p>{{ hero.subtitle }}</p>
+
+        }                    <a href="{{ hero.cta_link or '#services' }}" class="btn btn-primary btn-lg">
+
+    }                        <i class="fas fa-arrow-right me-2"></i>{{ hero.cta_text or 'Learn More' }}
+
+                    </a>
+
+    /* Responsive Design */                </div>
+
+    @media (max-width: 992px) {            </section>
+
+        .hero-grid {        {% endfor %}
+
+            grid-template-columns: 1fr;    {% else %}
+
+            gap: 40px;        <section class="hero-d365">
+
+        }            <div class="container">
+
                 <h1>Welcome to 360Degree Supply</h1>
-                <p>Your trusted partner for industrial supplies and services across South Africa</p>
-                <a href="#services" class="btn btn-primary btn-lg">
-                    <i class="fas fa-arrow-right me-2"></i>Explore Our Services
-                </a>
-            </div>
-        </section>
-    {% endif %}
 
-    <!-- Services Section -->
-    <section class="services-section-d365" id="services">
-        <div class="container">
-            <div class="section-title-d365">
+        .hero-left h1 {                <p>Your trusted partner for industrial supplies and services across South Africa</p>
+
+            font-size: 60px;                <a href="#services" class="btn btn-primary btn-lg">
+
+        }                    <i class="fas fa-arrow-right me-2"></i>Explore Our Services
+
+                </a>
+
+        .contour-lines {            </div>
+
+            right: 50%;        </section>
+
+            transform: translate(50%, -50%);    {% endif %}
+
+            opacity: 0.3;
+
+            width: 400px;    <!-- Services Section -->
+
+            height: 400px;    <section class="services-section-d365" id="services">
+
+        }        <div class="container">
+
+    }            <div class="section-title-d365">
+
                 <h2>Our Services</h2>
-                <div class="divider-d365"></div>
-                <p>Comprehensive industrial solutions tailored to your business needs</p>
-            </div>
-            
+
+    @media (max-width: 768px) {                <div class="divider-d365"></div>
+
+        .hero-left h1 {                <p>Comprehensive industrial solutions tailored to your business needs</p>
+
+            font-size: 48px;            </div>
+
+        }            
+
             <div class="row">
-                {% if services %}
-                    {% for service in services %}
-                        <div class="col-md-6 col-lg-4">
+
+        .hero-buttons {                {% if services %}
+
+            flex-direction: column;                    {% for service in services %}
+
+        }                        <div class="col-md-6 col-lg-4">
+
                             <div class="service-card-d365">
-                                <div class="service-icon-d365">
-                                    <i class="fas fa-{{ service.icon or 'cog' }}"></i>
-                                </div>
-                                <h4>{{ service.title }}</h4>
+
+        .btn-modern {                                <div class="service-icon-d365">
+
+            width: 100%;                                    <i class="fas fa-{{ service.icon or 'cog' }}"></i>
+
+            text-align: center;                                </div>
+
+        }                                <h4>{{ service.title }}</h4>
+
                                 <p>{{ service.description or 'Professional service description' }}</p>
-                            </div>
-                        </div>
-                    {% endfor %}
-                {% else %}
-                    <div class="col-12">
-                        <div class="empty-state-d365">
-                            <i class="fas fa-tools"></i>
-                            <p>No services available yet. Check back soon!</p>
-                        </div>
-                    </div>
-                {% endif %}
-            </div>
-        </div>
-    </section>
 
-    <!-- Products Section -->
-    <section class="products-section-d365" id="products">
-        <div class="container">
-            <div class="section-title-d365">
-                <h2>Featured Products</h2>
+        .info-card {                            </div>
+
+            padding: 30px;                        </div>
+
+        }                    {% endfor %}
+
+                {% else %}
+
+        .shape {                    <div class="col-12">
+
+            filter: blur(60px);                        <div class="empty-state-d365">
+
+        }                            <i class="fas fa-tools"></i>
+
+    }                            <p>No services available yet. Check back soon!</p>
+
+</style>                        </div>
+
+{% endblock %}                    </div>
+
+                {% endif %}
+
+{% block content %}            </div>
+
+<!-- Modern Hero Section -->        </div>
+
+<section class="hero-modern">    </section>
+
+    <!-- Animated Background Images -->
+
+    <div class="hero-background">    <!-- Products Section -->
+
+        <div class="background-image active" style="background-image: url('{{ url_for('static', filename='uploads/facility_5.jpg') }}');"></div>    <section class="products-section-d365" id="products">
+
+        <div class="background-image" style="background-image: url('{{ url_for('static', filename='uploads/fuel_tanker_2.jpg') }}');"></div>        <div class="container">
+
+        <div class="background-image" style="background-image: url('{{ url_for('static', filename='uploads/mining_operation_2.jpg') }}');"></div>            <div class="section-title-d365">
+
+    </div>                <h2>Featured Products</h2>
+
                 <div class="divider-d365"></div>
-                <p>Quality industrial supplies for your business operations</p>
-            </div>
-            
-            <div class="row">
-                {% if products %}
-                    {% for product in products %}
+
+    <!-- Gradient Shapes -->                <p>Quality industrial supplies for your business operations</p>
+
+    <div class="gradient-shapes">            </div>
+
+        <div class="shape shape-1"></div>            
+
+        <div class="shape shape-2"></div>            <div class="row">
+
+        <div class="shape shape-3"></div>                {% if products %}
+
+    </div>                    {% for product in products %}
+
                         <div class="col-md-6 col-lg-4">
-                            <div class="product-card-d365">
-                                <div class="product-image-d365">
-                                    <i class="fas fa-box"></i>
-                                </div>
-                                <div class="product-details-d365">
-                                    <div class="product-name-d365">{{ product.name }}</div>
-                                    <div class="product-category-d365">
-                                        <i class="fas fa-tag me-1"></i>{{ product.category or 'Uncategorized' }}
+
+    <!-- Animated Contour Lines -->                            <div class="product-card-d365">
+
+    <div class="contour-lines">                                <div class="product-image-d365">
+
+        <div class="contour contour-1"></div>                                    <i class="fas fa-box"></i>
+
+        <div class="contour contour-2"></div>                                </div>
+
+        <div class="contour contour-3"></div>                                <div class="product-details-d365">
+
+        <div class="contour contour-4"></div>                                    <div class="product-name-d365">{{ product.name }}</div>
+
+        <div class="contour contour-5"></div>                                    <div class="product-category-d365">
+
+    </div>                                        <i class="fas fa-tag me-1"></i>{{ product.category or 'Uncategorized' }}
+
                                     </div>
-                                    <div class="product-price-d365">R{{ "%.2f"|format(product.price or 0) }}</div>
-                                    <p>{{ product.description|truncate(100) or 'Product description coming soon' }}</p>
-                                </div>
-                            </div>
-                        </div>
-                    {% endfor %}
-                {% else %}
-                    <div class="col-12">
-                        <div class="empty-state-d365">
-                            <i class="fas fa-box-open"></i>
-                            <p>No products available yet. Our catalog is being updated!</p>
-                        </div>
-                    </div>
-                {% endif %}
-            </div>
 
-            {% if products %}
-            <div class="text-center mt-4">
-                <a href="/products" class="btn btn-primary">
-                    <i class="fas fa-store me-2"></i>View All Products
-                </a>
-            </div>
-            {% endif %}
-        </div>
-    </section>
+    <!-- Hero Content -->                                    <div class="product-price-d365">R{{ "%.2f"|format(product.price or 0) }}</div>
 
-    <!-- Testimonials Section -->
-    <section class="testimonials-section-d365" id="testimonials">
-        <div class="container">
-            <div class="section-title-d365">
-                <h2>What Our Clients Say</h2>
-                <div class="divider-d365"></div>
-                <p>Trusted by leading companies across mining, logistics, and industrial sectors</p>
-            </div>
+    <div class="hero-content">                                    <p>{{ product.description|truncate(100) or 'Product description coming soon' }}</p>
 
-            {% if testimonials %}
-            <div class="row">
-                {% for testimonial in testimonials %}
-                <div class="col-md-6 col-lg-4">
-                    <div class="testimonial-card-d365">
-                        <div class="testimonial-quote-d365">
-                            <i class="fas fa-quote-left"></i>
-                        </div>
-                        
-                        <p class="testimonial-content-d365">
-                            "{{ testimonial.content }}"
-                        </p>
-                        
-                        <div class="testimonial-rating-d365">
-                            {% for i in range(5) %}
-                                {% if i < testimonial.rating %}
-                                    <i class="fas fa-star"></i>
+        <div class="hero-grid">                                </div>
+
+            <!-- Left Side -->                            </div>
+
+            <div class="hero-left">                        </div>
+
+                <h1>Welcome.</h1>                    {% endfor %}
+
                                 {% else %}
-                                    <i class="fas fa-star text-muted"></i>
-                                {% endif %}
-                            {% endfor %}
-                        </div>
-                        
-                        <div class="testimonial-author-d365">
-                            {% if testimonial.avatar_url %}
-                                <img src="{{ testimonial.avatar_url }}" 
-                                     alt="{{ testimonial.client_name }}" 
-                                     class="testimonial-avatar-d365">
-                            {% else %}
-                                <div class="testimonial-avatar-placeholder-d365">
-                                    {{ testimonial.client_name[0].upper() }}
-                                </div>
-                            {% endif %}
-                            
-                            <div class="testimonial-info-d365">
-                                <div class="testimonial-name-d365">
-                                    {{ testimonial.client_name }}
-                                </div>
-                                {% if testimonial.position or testimonial.company %}
-                                <div class="testimonial-meta-d365">
-                                    {% if testimonial.position %}{{ testimonial.position }}{% endif %}{% if testimonial.company %}{% if testimonial.position %}, {% endif %}{{ testimonial.company }}{% endif %}
-                                </div>
-                                {% endif %}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                {% endfor %}
-            </div>
-            {% else %}
-            <div class="empty-state-d365">
-                <i class="fas fa-comments"></i>
-                <p>No testimonials available yet. Be our first reviewer!</p>
-            </div>
-            {% endif %}
-        </div>
-    </section>
 
-    <!-- Contact Section -->
-    <section class="contact-section-d365" id="contact">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-6 mb-4 mb-md-0">
-                    <h2>Get In Touch</h2>
-                    <div class="divider-d365"></div>
-                    
-                    {% if company_info %}
-                        <div class="contact-info-d365">
-                            <i class="fas fa-map-marker-alt"></i>
-                            <span>{{ company_info.address or 'South Africa' }}</span>
-                        </div>
-                        <div class="contact-info-d365">
-                            <i class="fas fa-phone"></i>
-                            <span>{{ company_info.phone or '+27 XX XXX XXXX' }}</span>
-                        </div>
-                        <div class="contact-info-d365">
-                            <i class="fas fa-envelope"></i>
-                            <span>{{ company_info.email or 'info@360degreesupply.com' }}</span>
-                        </div>
-                        <div class="contact-info-d365">
-                            <i class="fas fa-clock"></i>
-                            <span>Monday - Friday: 8:00 AM - 5:00 PM</span>
-                        </div>
+                <div class="search-bar">                    <div class="col-12">
+
+                    <input type="text" placeholder="Search for products, services..." id="heroSearch">                        <div class="empty-state-d365">
+
+                    <button onclick="performSearch()">                            <i class="fas fa-box-open"></i>
+
+                        <i class="fas fa-search"></i>                            <p>No products available yet. Our catalog is being updated!</p>
+
+                    </button>                        </div>
+
+                </div>                    </div>
+
+                {% endif %}
+
+                <div class="hero-buttons">            </div>
+
+                    <a href="{{ url_for('customer_products') }}" class="btn-modern btn-primary-modern">
+
+                        FREE TRIAL            {% if products %}
+
+                    </a>            <div class="text-center mt-4">
+
+                    <a href="{{ url_for('customer_products') }}" class="btn-modern btn-secondary-modern">                <a href="/products" class="btn btn-primary">
+
+                        see more                    <i class="fas fa-store me-2"></i>View All Products
+
+                    </a>                </a>
+
+                </div>            </div>
+
+            </div>            {% endif %}
+
+        </div>
+
+            <!-- Right Side -->    </section>
+
+            <div class="hero-right">
+
+                <div class="info-card">    <!-- Testimonials Section -->
+
+                    <div class="info-card-content">    <section class="testimonials-section-d365" id="testimonials">
+
+                        <div class="info-icon">        <div class="container">
+
+                            <i class="fas fa-rocket"></i>            <div class="section-title-d365">
+
+                        </div>                <h2>What Our Clients Say</h2>
+
+                        <h2>Landing page.</h2>                <div class="divider-d365"></div>
+
+                        <p>                <p>Trusted by leading companies across mining, logistics, and industrial sectors</p>
+
+                            360Degree Supply delivers comprehensive industrial solutions across South Africa.             </div>
+
+                            From chrome concentrate and minerals to bulk fuel supply, we provide reliable, 
+
+                            quality products with competitive pricing and secure supply chains. Partner with             {% if testimonials %}
+
+                            us for expert mining support and long-term agreements.            <div class="row">
+
+                        </p>                {% for testimonial in testimonials %}
+
+                    </div>                <div class="col-md-6 col-lg-4">
+
+                </div>                    <div class="testimonial-card-d365">
+
+            </div>                        <div class="testimonial-quote-d365">
+
+        </div>                            <i class="fas fa-quote-left"></i>
+
+    </div>                        </div>
+
+                        
+
+    <!-- Scroll Indicator -->                        <p class="testimonial-content-d365">
+
+    <div class="scroll-indicator" onclick="scrollToContent()">                            "{{ testimonial.content }}"
+
+        <div class="mouse"></div>                        </p>
+
+    </div>                        
+
+</section>                        <div class="testimonial-rating-d365">
+
+{% endblock %}                            {% for i in range(5) %}
+
+                                {% if i < testimonial.rating %}
+
+{% block extra_js %}                                    <i class="fas fa-star"></i>
+
+<script>                                {% else %}
+
+    // Background Image Rotation                                    <i class="fas fa-star text-muted"></i>
+
+    let currentImageIndex = 0;                                {% endif %}
+
+    const images = document.querySelectorAll('.background-image');                            {% endfor %}
+
+                            </div>
+
+    function rotateBackgroundImages() {                        
+
+        // Remove active class from current image                        <div class="testimonial-author-d365">
+
+        images[currentImageIndex].classList.remove('active');                            {% if testimonial.avatar_url %}
+
+                                        <img src="{{ testimonial.avatar_url }}" 
+
+        // Move to next image                                     alt="{{ testimonial.client_name }}" 
+
+        currentImageIndex = (currentImageIndex + 1) % images.length;                                     class="testimonial-avatar-d365">
+
+                                    {% else %}
+
+        // Add active class to new image                                <div class="testimonial-avatar-placeholder-d365">
+
+        images[currentImageIndex].classList.add('active');                                    {{ testimonial.client_name[0].upper() }}
+
+    }                                </div>
+
+                                {% endif %}
+
+    // Rotate images every 5 seconds                            
+
+    setInterval(rotateBackgroundImages, 5000);                            <div class="testimonial-info-d365">
+
+                                    <div class="testimonial-name-d365">
+
+    // Search functionality                                    {{ testimonial.client_name }}
+
+    function performSearch() {                                </div>
+
+        const searchTerm = document.getElementById('heroSearch').value;                                {% if testimonial.position or testimonial.company %}
+
+        if (searchTerm.trim()) {                                <div class="testimonial-meta-d365">
+
+            window.location.href = `{{ url_for('customer_products') }}?search=${encodeURIComponent(searchTerm)}`;                                    {% if testimonial.position %}{{ testimonial.position }}{% endif %}{% if testimonial.company %}{% if testimonial.position %}, {% endif %}{{ testimonial.company }}{% endif %}
+
+        }                                </div>
+
+    }                                {% endif %}
+
+                                </div>
+
+    // Enter key to search                        </div>
+
+    document.getElementById('heroSearch').addEventListener('keypress', function(e) {                    </div>
+
+        if (e.key === 'Enter') {                </div>
+
+            performSearch();                {% endfor %}
+
+        }            </div>
+
+    });            {% else %}
+
+                <div class="empty-state-d365">
+
+    // Smooth scroll to content                <i class="fas fa-comments"></i>
+
+    function scrollToContent() {                <p>No testimonials available yet. Be our first reviewer!</p>
+
+        window.scrollTo({            </div>
+
+            top: window.innerHeight,            {% endif %}
+
+            behavior: 'smooth'        </div>
+
+        });    </section>
+
+    }
+
+        <!-- Contact Section -->
+
+    // Parallax effect on mouse move    <section class="contact-section-d365" id="contact">
+
+    document.addEventListener('mousemove', (e) => {        <div class="container">
+
+        const shapes = document.querySelectorAll('.shape');            <div class="row">
+
+        const contours = document.querySelectorAll('.contour');                <div class="col-md-6 mb-4 mb-md-0">
+
+                            <h2>Get In Touch</h2>
+
+        const mouseX = e.clientX / window.innerWidth;                    <div class="divider-d365"></div>
+
+        const mouseY = e.clientY / window.innerHeight;                    
+
+                            {% if company_info %}
+
+        shapes.forEach((shape, index) => {                        <div class="contact-info-d365">
+
+            const speed = (index + 1) * 0.5;                            <i class="fas fa-map-marker-alt"></i>
+
+            const x = (mouseX - 0.5) * speed * 50;                            <span>{{ company_info.address or 'South Africa' }}</span>
+
+            const y = (mouseY - 0.5) * speed * 50;                        </div>
+
+            shape.style.transform = `translate(${x}px, ${y}px)`;                        <div class="contact-info-d365">
+
+        });                            <i class="fas fa-phone"></i>
+
+                                    <span>{{ company_info.phone or '+27 XX XXX XXXX' }}</span>
+
+        contours.forEach((contour, index) => {                        </div>
+
+            const speed = (index + 1) * 0.3;                        <div class="contact-info-d365">
+
+            const x = (mouseX - 0.5) * speed * 30;                            <i class="fas fa-envelope"></i>
+
+            const y = (mouseY - 0.5) * speed * 30;                            <span>{{ company_info.email or 'info@360degreesupply.com' }}</span>
+
+            contour.style.transform = `translate(${x}px, ${y}px)`;                        </div>
+
+        });                        <div class="contact-info-d365">
+
+    });                            <i class="fas fa-clock"></i>
+
+</script>                            <span>Monday - Friday: 8:00 AM - 5:00 PM</span>
+
+{% endblock %}                        </div>
+
                     {% else %}
                         <p style="color: #605e5c; font-size: 14px;">Contact us for more information about our products and services.</p>
                         <div class="contact-info-d365">
