@@ -14,7 +14,7 @@ from models import (
     db, User, SiteSettings, CompanyInfo, Service, Product, HeroSection,
     ContentSection, PaymentMethod, PaymentTerm, Transaction,
     ContactSubmission, MenuItem, Testimonial, Customer, Cart, CartItem,
-    Order, OrderItem, Invoice, InvoicePayment, InvoiceItem, ProofOfPayment
+    Order, OrderItem, Invoice, InvoicePayment, InvoiceItem, ProofOfPayment, AuditLog
 )
 from email_service import EmailService
 import json
@@ -27,6 +27,12 @@ from pricing import pricing_service
 from ocr_service import OCRService
 from s3_storage import storage_service
 import bleach
+from security_utils import (
+    validate_password_strength, check_account_locked, record_failed_login,
+    clear_failed_login_attempts, generate_2fa_secret, get_2fa_qr_code,
+    verify_2fa_token, require_2fa, secure_file_upload, log_security_event,
+    get_client_ip
+)
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -492,13 +498,50 @@ def admin_login():
         email = request.form.get('email')
         password = request.form.get('password')
         
+        # Check if account is locked
+        is_locked, lock_message = check_account_locked(email)
+        if is_locked:
+            log_security_event('login_blocked_locked', username=email, 
+                             details=lock_message, ip_address=get_client_ip())
+            flash(lock_message, 'error')
+            return redirect(url_for('login'))
+        
         user = User.query.filter_by(email=email).first()
         
         if user and user.check_password(password) and user.is_admin:
-            login_user(user)
-            return redirect(url_for('admin_dashboard'))
+            # Clear failed attempts on successful login
+            clear_failed_login_attempts(email)
+            
+            # Check if 2FA is enabled
+            if user.two_factor_enabled and user.two_factor_secret:
+                # Store user ID in session for 2FA verification
+                session['2fa_user_id'] = user.id
+                session['2fa_remember'] = request.form.get('remember', False)
+                log_security_event('login_awaiting_2fa', user_id=user.id, 
+                                 username=email, ip_address=get_client_ip())
+                return redirect(url_for('verify_2fa'))
+            else:
+                # No 2FA, log in directly
+                login_user(user, remember=request.form.get('remember', False))
+                session['2fa_verified'] = True  # Mark as verified (no 2FA required)
+                log_security_event('login_success', user_id=user.id, 
+                                 username=email, ip_address=get_client_ip())
+                flash('Login successful!', 'success')
+                return redirect(url_for('admin_dashboard'))
         else:
-            flash('Invalid email or password', 'error')
+            # Record failed login attempt
+            is_now_locked = record_failed_login(email)
+            
+            if is_now_locked:
+                log_security_event('account_locked', username=email, 
+                                 details='Account locked due to multiple failed attempts',
+                                 ip_address=get_client_ip())
+                flash('Too many failed login attempts. Account locked for 30 minutes.', 'error')
+            else:
+                log_security_event('login_failed', username=email, 
+                                 details='Invalid credentials', ip_address=get_client_ip())
+                flash('Invalid email or password', 'error')
+            
             return redirect(url_for('login'))
     
     return redirect(url_for('login'))
@@ -506,8 +549,117 @@ def admin_login():
 @app.route('/admin/logout')
 @login_required
 def admin_logout():
+    if current_user.is_authenticated:
+        log_security_event('logout', user_id=current_user.id, 
+                         username=current_user.email, ip_address=get_client_ip())
     logout_user()
+    session.pop('2fa_verified', None)
+    session.pop('2fa_user_id', None)
     return redirect(url_for('index'))
+
+
+# ============================================================================
+# 2FA Routes
+# ============================================================================
+
+@app.route('/verify-2fa', methods=['GET', 'POST'])
+@limiter.limit("10 per minute")
+def verify_2fa():
+    """Verify 2FA token after password login"""
+    user_id = session.get('2fa_user_id')
+    if not user_id:
+        flash('Session expired. Please login again.', 'error')
+        return redirect(url_for('login'))
+    
+    user = User.query.get(user_id)
+    if not user:
+        flash('User not found', 'error')
+        return redirect(url_for('login'))
+    
+    if request.method == 'POST':
+        token = request.form.get('token', '').strip()
+        
+        if verify_2fa_token(user.two_factor_secret, token):
+            # 2FA successful
+            remember = session.get('2fa_remember', False)
+            login_user(user, remember=remember)
+            session['2fa_verified'] = True
+            session.pop('2fa_user_id', None)
+            session.pop('2fa_remember', None)
+            
+            log_security_event('2fa_success', user_id=user.id, 
+                             username=user.email, ip_address=get_client_ip())
+            flash('Login successful!', 'success')
+            return redirect(url_for('admin_dashboard'))
+        else:
+            log_security_event('2fa_failed', user_id=user.id, 
+                             username=user.email, ip_address=get_client_ip())
+            flash('Invalid 2FA code. Please try again.', 'error')
+    
+    return render_template('admin/verify_2fa.html', user=user)
+
+
+@app.route('/admin/2fa/setup', methods=['GET', 'POST'])
+@login_required
+def setup_2fa():
+    """Setup 2FA for admin account"""
+    if not current_user.is_admin:
+        flash('Access denied', 'error')
+        return redirect(url_for('index'))
+    
+    if request.method == 'POST':
+        action = request.form.get('action')
+        
+        if action == 'enable':
+            token = request.form.get('token', '').strip()
+            secret = session.get('temp_2fa_secret')
+            
+            if not secret:
+                flash('Session expired. Please try again.', 'error')
+                return redirect(url_for('setup_2fa'))
+            
+            if verify_2fa_token(secret, token):
+                # Save 2FA secret to user
+                current_user.two_factor_secret = secret
+                current_user.two_factor_enabled = True
+                db.session.commit()
+                session.pop('temp_2fa_secret', None)
+                
+                log_security_event('2fa_enabled', user_id=current_user.id, 
+                                 username=current_user.email, ip_address=get_client_ip())
+                flash('2FA enabled successfully!', 'success')
+                return redirect(url_for('admin_dashboard'))
+            else:
+                flash('Invalid code. Please scan the QR code again and try.', 'error')
+        
+        elif action == 'disable':
+            password = request.form.get('password')
+            if current_user.check_password(password):
+                current_user.two_factor_secret = None
+                current_user.two_factor_enabled = False
+                db.session.commit()
+                
+                log_security_event('2fa_disabled', user_id=current_user.id, 
+                                 username=current_user.email, ip_address=get_client_ip())
+                flash('2FA disabled', 'success')
+                return redirect(url_for('admin_dashboard'))
+            else:
+                flash('Invalid password', 'error')
+    
+    # Generate new secret for setup
+    if not current_user.two_factor_enabled:
+        secret = generate_2fa_secret()
+        session['temp_2fa_secret'] = secret
+        qr_code = get_2fa_qr_code(current_user.email, secret)
+    else:
+        secret = None
+        qr_code = None
+    
+    return render_template('admin/setup_2fa.html', 
+                         qr_code=qr_code, 
+                         secret=secret,
+                         two_factor_enabled=current_user.two_factor_enabled)
+
 
 @app.route('/admin')
 @login_required
@@ -1023,11 +1175,10 @@ def customer_register():
             flash('Passwords do not match', 'danger')
             return redirect(url_for('customer_register'))
 
-        if len(password) < 6:
-            flash(
-                'Password must be at least 6 characters',
-                'danger'
-            )
+        # Validate password strength
+        is_strong, password_error = validate_password_strength(password)
+        if not is_strong:
+            flash(password_error, 'danger')
             return redirect(url_for('customer_register'))
 
         # Check if customer exists
@@ -2270,13 +2421,22 @@ def handle_eft_payment(invoice, request):
             flash('No file selected', 'warning')
             return redirect(url_for('customer_pay_invoice', invoice_id=invoice.id))
         
-        # Validate file type
+        # Validate file with secure_file_upload
         allowed_extensions = {'pdf', 'jpg', 'jpeg', 'png'}
-        file_ext = file.filename.rsplit('.', 1)[1].lower() if '.' in file.filename else ''
+        max_size_mb = 10  # 10MB limit
         
-        if file_ext not in allowed_extensions:
-            flash('Invalid file type. Please upload PDF, JPG, or PNG', 'danger')
+        is_valid, error_msg, secure_filename = secure_file_upload(
+            file, 
+            allowed_extensions=allowed_extensions,
+            max_size_mb=max_size_mb
+        )
+        
+        if not is_valid:
+            flash(f'Upload validation failed: {error_msg}', 'danger')
             return redirect(url_for('customer_pay_invoice', invoice_id=invoice.id))
+        
+        # Reset file pointer after validation
+        file.seek(0)
         
         # Upload to S3 cloud storage using the helper function
         from s3_storage import upload_proof_of_payment
@@ -2288,12 +2448,22 @@ def handle_eft_payment(invoice, request):
         
         # Extract filename from S3 URL for storage
         import uuid
+        file_ext = secure_filename.rsplit('.', 1)[1].lower()
         filename = f"pop_{invoice.invoice_number}_{uuid.uuid4().hex[:8]}.{file_ext}"
         
-        # Get file size (estimate if not available)
+        # Get file size
         file.seek(0, os.SEEK_END)
         file_size = file.tell()
         file.seek(0)
+        
+        # Log security event
+        log_security_event(
+            event_type='proof_of_payment_uploaded',
+            user_id=None,
+            username=invoice.customer.email if invoice.customer else 'guest',
+            details=f'Invoice: {invoice.invoice_number}, File: {filename}, Size: {file_size} bytes',
+            ip_address=get_client_ip()
+        )
         
         # Create pending payment record
         payment = InvoicePayment(

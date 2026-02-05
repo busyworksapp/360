@@ -368,6 +368,14 @@
             <i class="fas fa-bolt"></i> Quick Actions
         </div>
         <div class="quick-actions">
+            <a href="{{ url_for('setup_2fa') }}" class="btn-d365-primary" style="background: {% if current_user.two_factor_enabled %}linear-gradient(135deg, #107c10 0%, #094509 100%){% else %}linear-gradient(135deg, #d83b01 0%, #a52a00 100%){% endif %};">
+                <i class="fas fa-shield-alt"></i> 
+                {% if current_user.two_factor_enabled %}
+                    2FA Enabled ✓
+                {% else %}
+                    Enable 2FA
+                {% endif %}
+            </a>
             <a href="/admin/services" class="btn-d365-primary">
                 <i class="fas fa-plus"></i> Add Service
             </a>

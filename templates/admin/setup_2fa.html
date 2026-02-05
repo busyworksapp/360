@@ -1,0 +1,199 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Two-Factor Authentication Setup - Admin{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <h2 class="mb-4">
+                <i class="fas fa-shield-alt"></i> Two-Factor Authentication
+            </h2>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            {% if two_factor_enabled %}
+            {# 2FA is currently enabled #}
+            <div class="card shadow mb-4">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-check-circle"></i> 2FA is Active
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-success">
+                        <i class="fas fa-shield-alt"></i>
+                        <strong>Your account is protected!</strong> Two-factor authentication is currently enabled.
+                    </div>
+
+                    <p class="mb-4">
+                        Every time you log in, you'll need to enter a code from your authenticator app in addition to your password.
+                    </p>
+
+                    <h6 class="mb-3">Want to disable 2FA?</h6>
+                    <p class="text-muted">
+                        Disabling two-factor authentication will make your account less secure. 
+                        You'll only need your password to log in.
+                    </p>
+
+                    <form method="POST" action="{{ url_for('setup_2fa') }}" onsubmit="return confirm('Are you sure you want to disable 2FA? This will make your account less secure.');">
+                        <input type="hidden" name="action" value="disable">
+                        
+                        <div class="form-group mb-3">
+                            <label for="password">Confirm Your Password</label>
+                            <input type="password" 
+                                   class="form-control" 
+                                   id="password" 
+                                   name="password" 
+                                   placeholder="Enter your current password"
+                                   required>
+                        </div>
+
+                        <button type="submit" class="btn btn-danger">
+                            <i class="fas fa-times-circle"></i> Disable Two-Factor Authentication
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            {% else %}
+            {# 2FA is not enabled - show setup #}
+            <div class="card shadow mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-mobile-alt"></i> Enable Two-Factor Authentication
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i>
+                        <strong>Enhance your security!</strong> Add an extra layer of protection to your admin account.
+                    </div>
+
+                    <h6 class="mb-3">Step 1: Install an Authenticator App</h6>
+                    <p class="mb-3">Download one of these apps on your phone:</p>
+                    <ul class="mb-4">
+                        <li><strong>Google Authenticator</strong> - <a href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2" target="_blank">Android</a> | <a href="https://apps.apple.com/app/google-authenticator/id388497605" target="_blank">iOS</a></li>
+                        <li><strong>Microsoft Authenticator</strong> - <a href="https://play.google.com/store/apps/details?id=com.azure.authenticator" target="_blank">Android</a> | <a href="https://apps.apple.com/app/microsoft-authenticator/id983156458" target="_blank">iOS</a></li>
+                        <li><strong>Authy</strong> - <a href="https://authy.com/download/" target="_blank">All Platforms</a></li>
+                    </ul>
+
+                    <h6 class="mb-3">Step 2: Scan this QR Code</h6>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="text-center mb-4">
+                                {% if qr_code %}
+                                <img src="{{ qr_code }}" alt="QR Code" class="img-fluid border rounded p-3" style="max-width: 300px;">
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="alert alert-secondary">
+                                <h6 class="alert-heading">Can't scan?</h6>
+                                <p>Enter this code manually:</p>
+                                <code class="text-dark" style="font-size: 1.1rem; word-break: break-all;">{{ secret }}</code>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h6 class="mb-3">Step 3: Enter the 6-digit Code</h6>
+                    <p class="text-muted mb-3">After scanning, your app will generate a 6-digit code. Enter it below to complete setup:</p>
+
+                    <form method="POST" action="{{ url_for('setup_2fa') }}">
+                        <input type="hidden" name="action" value="enable">
+                        
+                        <div class="form-group mb-3">
+                            <label for="token">Verification Code</label>
+                            <input type="text" 
+                                   class="form-control form-control-lg" 
+                                   id="token" 
+                                   name="token" 
+                                   placeholder="000000" 
+                                   maxlength="6" 
+                                   pattern="[0-9]{6}"
+                                   inputmode="numeric"
+                                   style="font-size: 1.5rem; letter-spacing: 0.5rem; text-align: center;"
+                                   required
+                                   autofocus>
+                        </div>
+
+                        <button type="submit" class="btn btn-success btn-lg">
+                            <i class="fas fa-check-circle"></i> Enable Two-Factor Authentication
+                        </button>
+                    </form>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card shadow">
+                <div class="card-header bg-info text-white">
+                    <h6 class="mb-0"><i class="fas fa-question-circle"></i> About 2FA</h6>
+                </div>
+                <div class="card-body">
+                    <h6>What is Two-Factor Authentication?</h6>
+                    <p class="small text-muted">
+                        2FA adds an extra layer of security by requiring both your password 
+                        and a time-based code from your phone to log in.
+                    </p>
+
+                    <h6 class="mt-3">Why should I enable it?</h6>
+                    <ul class="small text-muted">
+                        <li>Protects against password theft</li>
+                        <li>Prevents unauthorized access</li>
+                        <li>Industry best practice for admin accounts</li>
+                        <li>Required for PCI compliance</li>
+                    </ul>
+
+                    <h6 class="mt-3">How does it work?</h6>
+                    <ol class="small text-muted">
+                        <li>Enter your password as usual</li>
+                        <li>Open your authenticator app</li>
+                        <li>Enter the 6-digit code shown</li>
+                        <li>You're logged in!</li>
+                    </ol>
+
+                    <div class="alert alert-warning small mt-3">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <strong>Important:</strong> Don't lose access to your authenticator app! 
+                        Make sure to back it up or save backup codes.
+                    </div>
+                </div>
+            </div>
+
+            <div class="card shadow mt-3">
+                <div class="card-header">
+                    <h6 class="mb-0"><i class="fas fa-history"></i> Security Activity</h6>
+                </div>
+                <div class="card-body">
+                    <p class="small text-muted mb-2">Recent 2FA events:</p>
+                    <ul class="list-unstyled small">
+                        <li class="mb-2">
+                            <i class="fas fa-circle text-success" style="font-size: 0.5rem;"></i>
+                            <span class="text-muted">Status logs coming soon...</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-12">
+            <a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Back to Dashboard
+            </a>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Format the token input
+    document.getElementById('token')?.addEventListener('input', function(e) {
+        this.value = this.value.replace(/[^0-9]/g, '');
+    });
+</script>
+{% endblock %}

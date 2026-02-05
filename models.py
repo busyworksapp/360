@@ -16,6 +16,11 @@ class User(UserMixin, db.Model):
     is_admin = db.Column(db.Boolean, default=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     
+    # 2FA fields
+    two_factor_secret = db.Column(db.String(32), nullable=True)
+    two_factor_enabled = db.Column(db.Boolean, default=False)
+    backup_codes = db.Column(db.Text, nullable=True)  # JSON array of backup codes
+    
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
     
@@ -769,6 +774,24 @@ class ProofOfPayment(db.Model):
     def __repr__(self):
         return f'<ProofOfPayment {self.id} - Invoice {self.invoice_id}>'
 
+
+class AuditLog(db.Model):
+    """Enhanced audit logging for security events"""
+    __tablename__ = 'audit_logs'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    event_type = db.Column(db.String(100), nullable=False)  # login_success, login_failed, 2fa_enabled, etc.
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
+    username = db.Column(db.String(120), nullable=True)
+    details = db.Column(db.Text, nullable=True)
+    ip_address = db.Column(db.String(50), nullable=True)
+    user_agent = db.Column(db.String(500), nullable=True)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    
+    user = db.relationship('User', backref='audit_logs')
+    
+    def __repr__(self):
+        return f'<AuditLog {self.id} - {self.event_type} at {self.timestamp}>'
 
 
 
