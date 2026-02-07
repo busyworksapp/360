@@ -19,11 +19,11 @@
     </div>
 
     <!-- Products Card -->
-    <div class="d365-card">
+    <div class="stat-card" style="background: #2C2C2C !important; border: 1px solid #4A4A4A !important;; border: 1px solid #4A4A4A !important; border: 1px solid #4A4A4A !important">
         <div class="card-header-d365">
             <h2>All Products</h2>
         </div>
-        <div class="card-body-d365" style="padding: 0;">
+        <div class="card-body-d365" style="padding: 0;; border: 1px solid #4A4A4A !important; border: 1px solid #4A4A4A !important">
             <table class="table-d365">
                 <thead>
                     <tr>
@@ -45,16 +45,16 @@
                         </td>
                         <td>
                             {% if product.price_zar %}
-                                <strong>R {{ "%.2f"|format(product.price_zar) }}</strong>
+                                <strong>R {{ "{:,.2f}".format(product.price_zar) }}</strong>
                             {% elif product.price %}
-                                <strong>R {{ "%.2f"|format(product.price) }}</strong>
+                                <strong>R {{ "{:,.2f}".format(product.price) }}</strong>
                             {% else %}
                                 <span style="color: var(--d365-neutral-tertiary);">—</span>
                             {% endif %}
                         </td>
                         <td>
                             {% if product.price_usd %}
-                                <strong>${{ "%.2f"|format(product.price_usd) }}</strong>
+                                <strong>${{ "{:,.2f}".format(product.price_usd) }}</strong>
                             {% else %}
                                 <span style="color: var(--d365-neutral-tertiary);">—</span>
                             {% endif %}
@@ -111,17 +111,17 @@
     .header-content h1 {
         font-size: 28px;
         font-weight: 600;
-        color: var(--d365-neutral-primary);
+        color: #FFFFFF;
         margin: 0 0 4px 0;
     }
 
     .header-content h1 i {
-        color: var(--d365-theme-primary);
+        color: #DAA520;
         margin-right: 8px;
     }
 
     .header-subtitle {
-        color: var(--d365-neutral-secondary);
+        color: #C0C0C0;
         font-size: 14px;
         margin: 0;
     }

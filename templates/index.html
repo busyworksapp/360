@@ -2,491 +2,334 @@
 
 {% block title %}360Degree Supply - Industrial Supplies{% endblock %}
 
+{% set hide_footer = true %}
+
+{% block head %}
+<!-- Preload high-quality background images for instant display -->
+<link rel="preload" as="image" href="{{ url_for('static', filename='uploads/hero_image_1.jpg') }}" fetchpriority="high">
+<link rel="preload" as="image" href="{{ url_for('static', filename='uploads/hero_image_2.jpg') }}" fetchpriority="high">
+<link rel="preload" as="image" href="{{ url_for('static', filename='uploads/hero_image_3.jpg') }}" fetchpriority="high">
+{% endblock %}
+
 {% block extra_css %}
 <style>
-    /* D365 Home Page Styling */
-    
-    /* Hero Section - D365 */
-    .hero-d365 {
-        background: linear-gradient(135deg, #0078d4 0%, #005a9e 100%);
-        color: white;
-        padding: 60px 0;
-        text-align: center;
-        margin-bottom: 40px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    main {
+        padding: 0 !important;
+        margin: 0 !important;
     }
 
-    .hero-d365 h1 {
-        font-size: 32px;
-        font-weight: 600;
-        margin-bottom: 16px;
-        color: white;
+    body {
+        color: #fff;
+        overflow-x: hidden;
     }
 
-    .hero-d365 p {
-        font-size: 16px;
-        margin-bottom: 24px;
-        opacity: 0.95;
-        color: white;
+    /* Hide footer on landing page */
+    footer {
+        display: none !important;
     }
 
-    .hero-d365 .btn-d365 {
-        padding: 10px 32px;
-        font-size: 14px;
-        font-weight: 600;
-        background: white;
-        color: #0078d4;
-        border: none;
-        border-radius: 2px;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        text-decoration: none;
-        display: inline-block;
-    }
-
-    .hero-d365 .btn-d365:hover {
-        background: #f3f2f1;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-    }
-
-    /* Services Section - D365 */
-    .services-section-d365 {
-        background-color: #faf9f8;
-        padding: 60px 0;
-    }
-
-    .section-title-d365 {
-        text-align: center;
-        margin-bottom: 48px;
-    }
-
-    .section-title-d365 h2 {
-        font-size: 28px;
-        font-weight: 600;
-        color: #323130;
-        margin-bottom: 12px;
-    }
-
-    .section-title-d365 .divider-d365 {
-        width: 60px;
-        height: 4px;
-        background-color: #0078d4;
-        margin: 16px auto;
-        border-radius: 2px;
-    }
-
-    .section-title-d365 p {
-        font-size: 14px;
-        color: #605e5c;
-        margin-bottom: 0;
-    }
-
-    .service-card-d365 {
-        background: white;
-        border: 1px solid #edebe9;
-        border-radius: 2px;
-        padding: 32px 24px;
-        text-align: center;
-        transition: all 0.2s ease;
-        box-shadow: 0 1.6px 3.6px 0 rgba(0,0,0,.132), 0 0.3px 0.9px 0 rgba(0,0,0,.108);
-        height: 100%;
-        margin-bottom: 24px;
-    }
-
-    .service-card-d365:hover {
-        box-shadow: 0 6.4px 14.4px 0 rgba(0,0,0,.132), 0 1.2px 3.6px 0 rgba(0,0,0,.108);
-        transform: translateY(-4px);
-        border-color: #0078d4;
-    }
-
-    .service-icon-d365 {
-        font-size: 48px;
-        color: #0078d4;
-        margin-bottom: 20px;
-    }
-
-    .service-card-d365 h4 {
-        font-size: 16px;
-        font-weight: 600;
-        color: #323130;
-        margin-bottom: 12px;
-    }
-
-    .service-card-d365 p {
-        font-size: 12px;
-        color: #605e5c;
-        line-height: 1.6;
-        margin-bottom: 0;
-    }
-
-    /* Products Section - D365 */
-    .products-section-d365 {
-        background-color: white;
-        padding: 60px 0;
-    }
-
-    .product-card-d365 {
-        background: white;
-        border: 1px solid #edebe9;
-        border-radius: 2px;
+    .hero-section {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        padding: 80px 0 100px;
+        position: relative;
         overflow: hidden;
-        transition: all 0.2s ease;
-        height: 100%;
-        box-shadow: 0 1.6px 3.6px 0 rgba(0,0,0,.132), 0 0.3px 0.9px 0 rgba(0,0,0,.108);
-        margin-bottom: 24px;
     }
 
-    .product-card-d365:hover {
-        box-shadow: 0 6.4px 14.4px 0 rgba(0,0,0,.132), 0 1.2px 3.6px 0 rgba(0,0,0,.108);
-        transform: translateY(-4px);
-        border-color: #0078d4;
-    }
-
-    .product-image-d365 {
-        background: linear-gradient(135deg, #0078d4, #005a9e);
-        height: 200px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        font-size: 64px;
-    }
-
-    .product-details-d365 {
-        padding: 24px;
-    }
-
-    .product-name-d365 {
-        color: #323130;
-        font-weight: 600;
-        margin-bottom: 8px;
-        font-size: 14px;
-    }
-
-    .product-category-d365 {
-        color: #605e5c;
-        font-size: 11px;
-        margin-bottom: 12px;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-    }
-
-    .product-price-d365 {
-        font-size: 20px;
-        color: #0078d4;
-        font-weight: 600;
-        margin-bottom: 12px;
-    }
-
-    .product-details-d365 p {
-        font-size: 12px;
-        color: #605e5c;
-        margin-bottom: 16px;
-        line-height: 1.6;
-    }
-
-    .btn-add-cart-d365 {
+    /* Background image rotation */
+    .background-slideshow {
+        position: absolute;
+        top: 0;
+        left: 0;
         width: 100%;
-        padding: 8px 16px;
-        background: #0078d4;
-        color: white;
-        border: none;
-        border-radius: 2px;
-        font-size: 12px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.2s ease;
-    }
-
-    .btn-add-cart-d365:hover {
-        background: #106ebe;
-    }
-
-    /* Testimonials Section - D365 */
-    .testimonials-section-d365 {
-        background-color: #faf9f8;
-        padding: 60px 0;
-    }
-
-    .testimonial-card-d365 {
-        background: white;
-        border: 1px solid #edebe9;
-        border-radius: 2px;
-        padding: 24px;
-        box-shadow: 0 1.6px 3.6px 0 rgba(0,0,0,.132), 0 0.3px 0.9px 0 rgba(0,0,0,.108);
         height: 100%;
-        transition: all 0.2s ease;
-        margin-bottom: 24px;
+        z-index: 0;
+        /* Ensure smooth, high-quality rendering */
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
     }
 
-    .testimonial-card-d365:hover {
-        box-shadow: 0 6.4px 14.4px 0 rgba(0,0,0,.132), 0 1.2px 3.6px 0 rgba(0,0,0,.108);
-        transform: translateY(-4px);
+    .background-image {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        opacity: 0;
+        transition: opacity 2s ease-in-out;
+        image-rendering: -webkit-optimize-contrast;
+        image-rendering: crisp-edges;
+        image-rendering: high-quality;
+        will-change: opacity;
+        backface-visibility: hidden;
+        -webkit-backface-visibility: hidden;
+        transform: translateZ(0);
+        -webkit-transform: translateZ(0);
     }
 
-    .testimonial-quote-d365 {
-        font-size: 32px;
-        color: #0078d4;
-        margin-bottom: 16px;
+    .background-image.active {
+        opacity: 1;
     }
 
-    .testimonial-content-d365 {
-        font-style: italic;
-        color: #605e5c;
-        margin-bottom: 16px;
-        line-height: 1.6;
-        font-size: 12px;
+    
+
+    .hero-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 40px;
+        position: relative;
+        z-index: 10;
     }
 
-    .testimonial-rating-d365 {
-        margin-bottom: 16px;
-    }
-
-    .testimonial-rating-d365 i {
-        color: #0078d4;
-        margin-right: 4px;
-        font-size: 12px;
-    }
-
-    .testimonial-author-d365 {
-        display: flex;
+    .hero-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 80px;
         align-items: center;
-        gap: 12px;
-        padding-top: 16px;
-        border-top: 1px solid #edebe9;
     }
 
-    .testimonial-avatar-d365 {
-        width: 48px;
-        height: 48px;
-        border-radius: 50%;
-        object-fit: cover;
+    .hero-left h1 {
+        font-size: 56px;
+        font-weight: 700;
+        color: #ffffff !important;
+        margin-bottom: 30px;
+        line-height: 1.2;
+        text-shadow: 3px 3px 8px rgba(0, 0, 0, 0.8), 0 0 20px rgba(0, 0, 0, 0.6);
     }
 
-    .testimonial-avatar-placeholder-d365 {
-        width: 48px;
-        height: 48px;
+    .hero-left p {
+        font-size: 20px;
+        color: #ffffff !important;
+        margin-bottom: 40px;
+        line-height: 1.6;
+        text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.8), 0 0 15px rgba(0, 0, 0, 0.5);
+    }
+
+    .cta-button {
+        display: inline-block;
+        padding: 18px 48px;
+        background: linear-gradient(135deg, #ff6b9d 0%, #c94b89 100%);
+        color: #fff;
+        font-size: 18px;
+        font-weight: 600;
+        border-radius: 50px;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        box-shadow: 0 10px 30px rgba(255, 107, 157, 0.3);
+        border: none;
+        cursor: pointer;
+    }
+
+    .cta-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 15px 40px rgba(255, 107, 157, 0.4);
+        color: #fff;
+    }
+
+    .hero-right {
+        position: relative;
+    }
+
+    .dashboard-mockup {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 20px;
+        padding: 40px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        position: relative;
+    }
+
+    .mockup-icon {
+        width: 120px;
+        height: 120px;
+        background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
         border-radius: 50%;
-        background: linear-gradient(135deg, #0078d4 0%, #005a9e 100%);
-        color: white;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-weight: 600;
-        font-size: 20px;
+        margin: 0 auto 30px;
+        box-shadow: 0 10px 30px rgba(74, 222, 128, 0.3);
     }
 
-    .testimonial-name-d365 {
-        font-weight: 600;
-        color: #323130;
-        font-size: 14px;
-        margin-bottom: 2px;
+    .mockup-icon i {
+        font-size: 60px;
+        color: #fff;
     }
 
-    .testimonial-title-d365 {
-        font-size: 11px;
-        color: #605e5c;
-    }
-
-    /* Contact CTA Section - D365 */
-    .contact-cta-d365 {
-        background: white;
-        padding: 60px 0;
+    .stats-card {
+        background: rgba(255, 255, 255, 0.15);
+        border-radius: 12px;
+        padding: 20px;
+        margin-top: 20px;
         text-align: center;
     }
 
-    .contact-cta-d365 h2 {
-        font-size: 28px;
-        font-weight: 600;
-        color: #323130;
-        margin-bottom: 16px;
+    .stats-card h3 {
+        font-size: 32px;
+        margin: 0 0 5px 0;
+        color: #4ade80;
     }
 
-    .contact-cta-d365 p {
+    .stats-card p {
+        margin: 0;
+        color: rgba(255, 255, 255, 0.8);
         font-size: 14px;
-        color: #605e5c;
-        margin-bottom: 32px;
     }
 
-    .btn-contact-d365 {
-        padding: 10px 32px;
+    .trust-section {
+        padding: 60px 40px 80px;
+        text-align: center;
+        background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #7e22ce 100%);
+        position: relative;
+    }
+
+    .trust-title {
         font-size: 14px;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        color: rgba(255, 255, 255, 0.7);
+        margin-bottom: 40px;
         font-weight: 600;
-        background: #0078d4;
-        color: white;
-        border: none;
-        border-radius: 2px;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        text-decoration: none;
-        display: inline-block;
     }
 
-    .btn-contact-d365:hover {
-        background: #106ebe;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(0,120,212,0.3);
-        color: white;
+    .trust-badges {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 40px;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .badge-item {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 15px;
+        padding: 30px 20px;
+        transition: all 0.3s ease;
+    }
+
+    .badge-item:hover {
+        transform: translateY(-5px);
+        background: rgba(255, 255, 255, 0.15);
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+    }
+
+    .badge-icon {
+        font-size: 48px;
+        margin-bottom: 15px;
+        background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .badge-title {
+        font-size: 18px;
+        font-weight: 700;
+        margin-bottom: 8px;
+        color: #fff;
+    }
+
+    .badge-subtitle {
+        font-size: 14px;
+        color: rgba(255, 255, 255, 0.7);
+        line-height: 1.4;
+    }
+
+    .badge-stat {
+        font-size: 32px;
+        font-weight: 700;
+        color: #4ade80;
+        margin-bottom: 5px;
+    }
+
+    @media (max-width: 992px) {
+        .hero-grid {
+            grid-template-columns: 1fr;
+            gap: 50px;
+        }
+
+        .hero-left h1 {
+            font-size: 42px;
+        }
+
+        .trust-badges {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .hero-left h1 {
+            font-size: 36px;
+        }
+
+        .hero-left p {
+            font-size: 18px;
+        }
+
+        .trust-badges {
+            grid-template-columns: 1fr;
+        }
     }
 </style>
 {% endblock %}
 
 {% block content %}
-    <!-- Hero Section -->
-    {% if hero_sections %}
-        {% for hero in hero_sections %}
-            <section class="hero-d365">
-                <div class="container">
-                    <h1>{{ hero.title }}</h1>
-                    <p>{{ hero.subtitle }}</p>
-                    <a href="{{ hero.cta_link or '#services' }}" class="btn-d365">
-                        {{ hero.cta_text or 'Learn More' }}
-                    </a>
+<section class="hero-section">
+    <!-- Background Slideshow -->
+    <div class="background-slideshow">
+        <div class="background-image active" style="background-image: url('{{ url_for('static', filename='uploads/hero_image_1.jpg') }}');"></div>
+        <div class="background-image" style="background-image: url('{{ url_for('static', filename='uploads/hero_image_2.jpg') }}');"></div>
+        <div class="background-image" style="background-image: url('{{ url_for('static', filename='uploads/hero_image_3.jpg') }}');"></div>
+    </div>
+
+    <div class="hero-content">
+        <div class="hero-grid">
+            <div class="hero-left">
+                <h1>Unlock Your Business Potential With 360Degree Supply Solutions</h1>
+                <p>Premium industrial supplies and comprehensive solutions for mining, fuel distribution, and facility management.</p>
+                <a href="{{ url_for('customer_products') }}" class="cta-button">WORK WITH US</a>
+            </div>
+
+            <div class="hero-right">
+                <div class="dashboard-mockup">
+                    <div class="mockup-icon">
+                        <i class="fas fa-rocket"></i>
+                    </div>
+                    <div class="stats-card">
+                        <h3>100%</h3>
+                        <p>Customer Satisfaction</p>
+                    </div>
                 </div>
-            </section>
-        {% endfor %}
-    {% else %}
-        <section class="hero-d365">
-            <div class="container">
-                <h1>Welcome to 360Degree Supply</h1>
-                <p>Your trusted partner for industrial supplies and services</p>
-                <a href="#services" class="btn-d365">Explore Our Services</a>
-            </div>
-        </section>
-    {% endif %}
-
-    <!-- Services Section -->
-    <section class="services-section-d365" id="services">
-        <div class="container">
-            <div class="section-title-d365">
-                <h2>Our Services</h2>
-                <div class="divider-d365"></div>
-                <p>Comprehensive industrial solutions tailored to your needs</p>
-            </div>
-            
-            <div class="row">
-                {% if services %}
-                    {% for service in services %}
-                        <div class="col-md-6 col-lg-4">
-                            <div class="service-card-d365">
-                                <div class="service-icon-d365">
-                                    <i class="fas fa-{{ service.icon or 'cog' }}"></i>
-                                </div>
-                                <h4>{{ service.title }}</h4>
-                                <p>{{ service.description or 'Professional service description' }}</p>
-                            </div>
-                        </div>
-                    {% endfor %}
-                {% else %}
-                    <div class="col-12 text-center">
-                        <p style="color: #605e5c; font-size: 14px;">No services available yet.</p>
-                    </div>
-                {% endif %}
             </div>
         </div>
-    </section>
-
-    <!-- Products Section -->
-    <section class="products-section-d365">
-        <div class="container">
-            <div class="section-title-d365">
-                <h2>Featured Products</h2>
-                <div class="divider-d365"></div>
-                <p>Quality products for your industrial needs</p>
-            </div>
-            
-            <div class="row">
-                {% if products %}
-                    {% for product in products %}
-                        <div class="col-md-6 col-lg-4">
-                            <div class="product-card-d365">
-                                <div class="product-image-d365">
-                                    <i class="fas fa-box"></i>
-                                </div>
-                                <div class="product-details-d365">
-                                    <div class="product-name-d365">{{ product.name }}</div>
-                                    <div class="product-category-d365">{{ product.category or 'Uncategorized' }}</div>
-                                    <div class="product-price-d365">R{{ "%.2f"|format(product.price or 0) }}</div>
-                                    <p>{{ product.description|truncate(80) or 'Quality industrial product' }}</p>
-                                    <form method="POST" action="{{ url_for('add_to_cart', product_id=product.id) }}" style="margin: 0;">
-                                        <button type="submit" class="btn-add-cart-d365">
-                                            <i class="fas fa-shopping-cart"></i> Add to Cart
-                                        </button>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                    {% endfor %}
-                {% else %}
-                    <div class="col-12 text-center">
-                        <p style="color: #605e5c; font-size: 14px;">No products available yet.</p>
-                    </div>
-                {% endif %}
-            </div>
-            
-            {% if products %}
-            <div class="text-center mt-4">
-                <a href="{{ url_for('customer_products') }}" class="btn-contact-d365">
-                    View All Products
-                </a>
-            </div>
-            {% endif %}
-        </div>
-    </section>
-
-    <!-- Testimonials Section -->
-    {% if testimonials %}
-    <section class="testimonials-section-d365">
-        <div class="container">
-            <div class="section-title-d365">
-                <h2>What Our Clients Say</h2>
-                <div class="divider-d365"></div>
-                <p>Trusted by businesses across South Africa</p>
-            </div>
-            
-            <div class="row">
-                {% for testimonial in testimonials %}
-                    <div class="col-md-6 col-lg-4">
-                        <div class="testimonial-card-d365">
-                            <div class="testimonial-quote-d365">"</div>
-                            <div class="testimonial-content-d365">
-                                {{ testimonial.content }}
-                            </div>
-                            <div class="testimonial-rating-d365">
-                                {% for i in range(testimonial.rating or 5) %}
-                                    <i class="fas fa-star"></i>
-                                {% endfor %}
-                            </div>
-                            <div class="testimonial-author-d365">
-                                {% if testimonial.avatar %}
-                                    <img src="{{ testimonial.avatar }}" alt="{{ testimonial.client_name }}" class="testimonial-avatar-d365">
-                                {% else %}
-                                    <div class="testimonial-avatar-placeholder-d365">
-                                        {{ testimonial.client_name[0]|upper if testimonial.client_name else 'A' }}
-                                    </div>
-                                {% endif %}
-                                <div>
-                                    <div class="testimonial-name-d365">{{ testimonial.client_name }}</div>
-                                    <div class="testimonial-title-d365">{{ testimonial.client_title or 'Client' }}</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                {% endfor %}
-            </div>
-        </div>
-    </section>
-    {% endif %}
-
-    <!-- Contact CTA Section -->
-    <section class="contact-cta-d365">
-        <div class="container">
-            <h2>Ready to Get Started?</h2>
-            <p>Contact us today for a quote or to discuss your requirements</p>
-            <a href="{{ url_for('contact') }}" class="btn-contact-d365">
-                <i class="fas fa-envelope"></i> Contact Us
-            </a>
-        </div>
-    </section>
+    </div>
+</section>
 {% endblock %}
+
+{% block extra_js %}
+<script>
+    // Background image rotation
+    let currentImageIndex = 0;
+    const images = document.querySelectorAll('.background-image');
+    
+    function rotateBackgroundImages() {
+        images[currentImageIndex].classList.remove('active');
+        currentImageIndex = (currentImageIndex + 1) % images.length;
+        images[currentImageIndex].classList.add('active');
+    }
+    
+    // Rotate images every 5 seconds
+    setInterval(rotateBackgroundImages, 5000);
+</script>
+{% endblock %}
+
+
+

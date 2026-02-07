@@ -57,6 +57,21 @@ class CompanyInfo(db.Model):
     logo_url = db.Column(db.String(255))
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
+
+class HomePageSettings(db.Model):
+    __tablename__ = 'homepage_settings'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    hero_image = db.Column(db.String(255), default='uploads/hero_background.png')
+    hero_title = db.Column(db.String(500), default='Unlock Your Business Potential With 360Degree Supply Solutions')
+    hero_description = db.Column(db.Text, default='Premium industrial supplies and comprehensive solutions for mining, fuel distribution, and facility management.')
+    hero_button_text = db.Column(db.String(100), default='WORK WITH US')
+    hero_button_link = db.Column(db.String(255), default='/products')
+    show_stats_card = db.Column(db.Boolean, default=True)
+    stats_percentage = db.Column(db.String(10), default='100%')
+    stats_label = db.Column(db.String(100), default='Customer Satisfaction')
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
 class Service(db.Model):
     __tablename__ = 'services'
     
@@ -792,6 +807,7 @@ class AuditLog(db.Model):
     
     def __repr__(self):
         return f'<AuditLog {self.id} - {self.event_type} at {self.timestamp}>'
+
 
 
 

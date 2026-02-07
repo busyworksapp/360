@@ -3,7 +3,7 @@
 {% block title %}Menu Management - Admin{% endblock %}
 
 {% block content %}
-<div style="padding: 16px; background: #faf9f8;">
+<div style="padding: 16px; background: #1C1C1C;">
     <!-- Breadcrumb Navigation -->
     <div class="breadcrumb-d365">
         <a href="{{ url_for('admin_dashboard') }}">Home</a>
@@ -12,7 +12,7 @@
     </div>
     
     <!-- Page Title -->
-    <h1 style="font-size: 20px; font-weight: 600; margin: 4px 0 16px 0; color: #323130;">
+    <h1 style="font-size: 20px; font-weight: 600; margin: 4px 0 16px 0; color: #FFFFFF !important;">
         Menu Management
     </h1>
     
@@ -32,8 +32,8 @@
     </div>
     
     <!-- Table Card -->
-    <div class="d365-card">
-        <div class="card-body-d365" style="padding: 0;">
+    <div class="stat-card" style="background: #2C2C2C !important; border: 1px solid #4A4A4A !important;; border: 1px solid #4A4A4A !important; border: 1px solid #4A4A4A !important">
+        <div class="card-body-d365" style="padding: 0;; border: 1px solid #4A4A4A !important; border: 1px solid #4A4A4A !important">
             <table class="table-d365" id="menuTable">
                 <thead>
                     <tr>
@@ -101,14 +101,14 @@
                             {% if item.url %}
                                 <a href="{{ item.url }}" target="_blank">{{ item.url }}</a>
                             {% else %}
-                                <span style="color: #a19f9d;">N/A</span>
+                                <span style="color: #808080;">N/A</span>
                             {% endif %}
                         </td>
                         <td style="text-align: center;">
                             {% if item.icon %}
-                                <i class="fas {{ item.icon }}" style="color: #0078d4;"></i>
+                                <i class="fas {{ item.icon }}" style="color: #DAA520;"></i>
                             {% else %}
-                                <span style="color: #a19f9d;">—</span>
+                                <span style="color: #808080;">—</span>
                             {% endif %}
                         </td>
                         <td style="text-align: center;">{{ item.order_position }}</td>
@@ -120,12 +120,12 @@
                             {% endif %}
                         </td>
                         <td style="text-align: center;">
-                            <span class="badge-d365 badge-secondary">{{ item.children|length }}</span>
+                            <span class="badge-d365 badge-secondary">{{ "{:,}".format(item.children|length) }}</span>
                         </td>
                     </tr>
                     {% else %}
                     <tr>
-                        <td colspan="6" style="text-align: center; padding: 24px; color: #605e5c;">
+                        <td colspan="6" style="text-align: center; padding: 24px; color: #C0C0C0;">
                             No menu items configured yet
                         </td>
                     </tr>
@@ -136,15 +136,15 @@
     </div>
     
     <!-- Footer -->
-    <div style="margin-top: 12px; font-size: 12px; color: #605e5c;">
-        <span>Total records: {{ menu_items|length }}</span>
+    <div style="margin-top: 12px; font-size: 12px; color: #C0C0C0;">
+        <span>Total records: {{ "{:,}".format(menu_items|length) }}</span>
     </div>
     
     <!-- Info Message -->
-    <div style="margin-top: 16px; padding: 12px; background: #e7f3ff; border-left: 3px solid #0078d4; border-radius: 2px;">
+    <div style="margin-top: 16px; padding: 12px; background: #e7f3ff; border-left: 3px solid #DAA520; border-radius: 2px;">
         <div style="display: flex; align-items: center; gap: 8px;">
-            <i class="fas fa-info-circle" style="color: #0078d4;"></i>
-            <span style="font-size: 12px; color: #323130;">
+            <i class="fas fa-info-circle" style="color: #DAA520;"></i>
+            <span style="font-size: 12px; color: #FFFFFF !important;">
                 Menu items are currently managed through the database. Contact your system administrator to add or modify menu items.
             </span>
         </div>

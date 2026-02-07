@@ -3,7 +3,7 @@
 {% block title %}Payment Methods Management - Admin{% endblock %}
 
 {% block content %}
-<div style="padding: 16px; background: #faf9f8;">
+<div style="padding: 16px; background: #1C1C1C;">
     <!-- Breadcrumb Navigation -->
     <div class="breadcrumb-d365">
         <a href="{{ url_for('admin_dashboard') }}">Home</a>
@@ -12,7 +12,7 @@
     </div>
     
     <!-- Page Title -->
-    <h1 style="font-size: 20px; font-weight: 600; margin: 4px 0 16px 0; color: #323130;">
+    <h1 style="font-size: 20px; font-weight: 600; margin: 4px 0 16px 0; color: #FFFFFF !important;">
         Payment Methods
     </h1>
     
@@ -32,8 +32,8 @@
     </div>
     
     <!-- Table Card -->
-    <div class="d365-card">
-        <div class="card-body-d365" style="padding: 0;">
+    <div class="stat-card" style="background: #2C2C2C !important; border: 1px solid #4A4A4A !important;; border: 1px solid #4A4A4A !important; border: 1px solid #4A4A4A !important">
+        <div class="card-body-d365" style="padding: 0;; border: 1px solid #4A4A4A !important; border: 1px solid #4A4A4A !important">
             <table class="table-d365" id="paymentMethodsTable">
                 <thead>
                     <tr>
@@ -92,14 +92,14 @@
                             {% if method.description %}
                                 {{ method.description[:60] }}{% if method.description|length > 60 %}...{% endif %}
                             {% else %}
-                                <span style="color: #a19f9d;">N/A</span>
+                                <span style="color: #808080;">N/A</span>
                             {% endif %}
                         </td>
                         <td>
                             {% if method.description %}
-                                <span style="font-size: 11px; color: #605e5c;">{{ method.description[:40] }}{% if method.description|length > 40 %}...{% endif %}</span>
+                                <span style="font-size: 11px; color: #C0C0C0;">{{ method.description[:40] }}{% if method.description|length > 40 %}...{% endif %}</span>
                             {% else %}
-                                <span style="font-size: 11px; color: #a19f9d;">No description</span>
+                                <span style="font-size: 11px; color: #808080;">No description</span>
                             {% endif %}
                         </td>
                         <td style="text-align: center;">{{ method.order_position }}</td>
@@ -113,7 +113,7 @@
                     </tr>
                     {% else %}
                     <tr>
-                        <td colspan="5" style="text-align: center; padding: 24px; color: #605e5c;">
+                        <td colspan="5" style="text-align: center; padding: 24px; color: #C0C0C0;">
                             No payment methods configured yet
                         </td>
                     </tr>
@@ -124,15 +124,15 @@
     </div>
     
     <!-- Footer -->
-    <div style="margin-top: 12px; font-size: 12px; color: #605e5c;">
-        <span>Total records: {{ payment_methods|length }}</span>
+    <div style="margin-top: 12px; font-size: 12px; color: #C0C0C0;">
+        <span>Total records: {{ "{:,}".format(payment_methods|length) }}</span>
     </div>
     
     <!-- Info Message -->
-    <div style="margin-top: 16px; padding: 12px; background: #e7f3ff; border-left: 3px solid #0078d4; border-radius: 2px;">
+    <div style="margin-top: 16px; padding: 12px; background: #e7f3ff; border-left: 3px solid #DAA520; border-radius: 2px;">
         <div style="display: flex; align-items: center; gap: 8px;">
-            <i class="fas fa-info-circle" style="color: #0078d4;"></i>
-            <span style="font-size: 12px; color: #323130;">
+            <i class="fas fa-info-circle" style="color: #DAA520;"></i>
+            <span style="font-size: 12px; color: #FFFFFF !important;">
                 Payment methods are currently managed through the database. Contact your system administrator to add or modify payment methods.
             </span>
         </div>

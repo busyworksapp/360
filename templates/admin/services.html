@@ -11,7 +11,7 @@
             <span class="separator">/</span>
             <span>Services</span>
         </div>
-        <h1 style="font-size: 20px; font-weight: 600; margin: 4px 0 0 0; color: #323130;">Services</h1>
+        <h1 style="font-size: 20px; font-weight: 600; margin: 4px 0 0 0; color: #FFFFFF !important;">Services</h1>
     </div>
 
     <!-- Command Bar -->
@@ -29,7 +29,7 @@
                 <i class="fas fa-trash"></i>
                 <span>Delete</span>
             </button>
-            <div style="width: 1px; height: 24px; background: #edebe9; margin: 0 4px;"></div>
+            <div style="width: 1px; height: 24px; background: #4A4A4A; margin: 0 4px;"></div>
             <button class="btn-d365-secondary" style="font-size: 12px; padding: 6px 12px;" onclick="location.reload()">
                 <i class="fas fa-sync"></i>
                 <span>Refresh</span>
@@ -44,8 +44,8 @@
     </div>
 
     <!-- Services Table -->
-    <div class="d365-card">
-        <div class="card-body-d365" style="padding: 0;">
+    <div class="stat-card" style="background: #2C2C2C !important; border: 1px solid #4A4A4A !important;; border: 1px solid #4A4A4A !important; border: 1px solid #4A4A4A !important">
+        <div class="card-body-d365" style="padding: 0;; border: 1px solid #4A4A4A !important; border: 1px solid #4A4A4A !important">
             <table class="table-d365">
                 <thead>
                     <tr>
@@ -108,7 +108,7 @@
                             {{ service.description[:80] }}{% if service.description|length > 80 %}...{% endif %}
                         </td>
                         <td style="text-align: center;">
-                            <i class="fas {{ service.icon }}" style="font-size: 16px; color: #0078d4;"></i>
+                            <i class="fas {{ service.icon }}" style="font-size: 16px; color: #DAA520;"></i>
                         </td>
                         <td style="text-align: center;">{{ service.order_position }}</td>
                         <td>
@@ -121,7 +121,7 @@
                     </tr>
                     {% else %}
                     <tr>
-                        <td colspan="6" style="text-align: center; padding: 48px; color: #a19f9d;">
+                        <td colspan="6" style="text-align: center; padding: 48px; color: #808080;">
                             <i class="fas fa-cogs" style="font-size: 36px; margin-bottom: 12px; display: block; opacity: 0.3;"></i>
                             <p style="margin: 0; font-size: 13px;">No services found. Click "New" to add your first service.</p>
                         </td>
@@ -133,8 +133,8 @@
     </div>
 
     <!-- Footer Info -->
-    <div style="margin-top: 12px; font-size: 12px; color: #605e5c;">
-        <span>Total records: {{ services|length }}</span>
+    <div style="margin-top: 12px; font-size: 12px; color: #C0C0C0;">
+        <span>Total records: {{ "{:,}".format(services|length) }}</span>
     </div>
 </div>
 
@@ -146,20 +146,48 @@
     }
 
     body {
-        background: #faf9f8 !important;
+        background: #1C1C1C !important;
     }
 
     .content {
-        background: #faf9f8 !important;
+        background: #1C1C1C !important;
         padding: 16px 24px !important;
     }
 </style>
 
 <script>
-// Select All Checkbox
-document.getElementById('selectAll')?.addEventListener('change', function() {
+// Add event listeners when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    // Add change event to all checkboxes
     const checkboxes = document.querySelectorAll('.row-select');
-    checkboxes.forEach(cb => cb.checked = this.checked);
+    checkboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            const row = this.closest('tr');
+            if (this.checked) {
+                row.classList.add('selected');
+            } else {
+                row.classList.remove('selected');
+            }
+            updateCommandBar();
+        });
+    });
+    
+    // Select All Checkbox
+    document.getElementById('selectAll')?.addEventListener('change', function() {
+        const checkboxes = document.querySelectorAll('.row-select');
+        checkboxes.forEach(cb => {
+            cb.checked = this.checked;
+            const row = cb.closest('tr');
+            if (this.checked) {
+                row.classList.add('selected');
+            } else {
+                row.classList.remove('selected');
+            }
+        });
+        updateCommandBar();
+    });
+    
+    // Initial update
     updateCommandBar();
 });
 
@@ -173,6 +201,11 @@ function selectRow(row, event) {
     
     const checkbox = row.querySelector('.row-select');
     checkbox.checked = !checkbox.checked;
+    if (checkbox.checked) {
+        row.classList.add('selected');
+    } else {
+        row.classList.remove('selected');
+    }
     updateCommandBar();
 }
 
@@ -245,14 +278,14 @@ document.querySelectorAll('.filter-icon').forEach(icon => {
         dropdown.className = 'filter-dropdown';
         dropdown.style.cssText = `
             position: absolute;
-            background: white;
-            border: 1px solid #8a8886;
+            background: #353535;
+            border: 1px solid #808080;
             border-radius: 2px;
             box-shadow: 0 6.4px 14.4px 0 rgba(0,0,0,.132);
             min-width: 200px;
             max-height: 300px;
             overflow-y: auto;
-            z-index: 1000;
+            z-index: 1,000;
             padding: 8px 0;
         `;
         
@@ -262,11 +295,11 @@ document.querySelectorAll('.filter-icon').forEach(icon => {
             padding: 8px 16px;
             cursor: pointer;
             font-size: 12px;
-            color: #323130;
+            color: #FFFFFF;
         `;
         allOption.textContent = '(Select All)';
         allOption.addEventListener('mouseenter', function() {
-            this.style.background = '#f3f2f1';
+            this.style.background = '#2C2C2C';
         });
         allOption.addEventListener('mouseleave', function() {
             this.style.background = 'white';
@@ -281,7 +314,7 @@ document.querySelectorAll('.filter-icon').forEach(icon => {
         
         // Add divider
         const divider = document.createElement('div');
-        divider.style.cssText = 'height: 1px; background: #edebe9; margin: 4px 0;';
+        divider.style.cssText = 'height: 1px; background: #4A4A4A; margin: 4px 0;';
         dropdown.appendChild(divider);
         
         // Add value options
@@ -291,11 +324,11 @@ document.querySelectorAll('.filter-icon').forEach(icon => {
                 padding: 8px 16px;
                 cursor: pointer;
                 font-size: 12px;
-                color: #323130;
+                color: #FFFFFF;
             `;
             option.textContent = value;
             option.addEventListener('mouseenter', function() {
-                this.style.background = '#f3f2f1';
+                this.style.background = '#2C2C2C';
             });
             option.addEventListener('mouseleave', function() {
                 this.style.background = 'white';

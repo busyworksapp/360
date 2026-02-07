@@ -12,51 +12,51 @@
     </div>
 
     <!-- Page Title -->
-    <h1 style="font-size: 20px; font-weight: 600; margin: 4px 0 16px 0; color: #323130;">
+    <h1 style="font-size: 20px; font-weight: 600; margin: 4px 0 16px 0; color: #FFFFFF !important;">
         Payment Transactions
     </h1>
 
     <!-- Summary Cards -->
     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 20px;">
-        <div class="d365-card">
-            <div class="card-body-d365" style="padding: 16px;">
-                <div style="font-size: 11px; color: #605e5c; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">Total Transactions</div>
-                <div style="font-size: 24px; font-weight: 600; color: #323130;">{{ total_count or 0 }}</div>
+        <div class="stat-card" style="background: #2C2C2C !important; border: 1px solid #4A4A4A !important;; border: 1px solid #4A4A4A !important; border: 1px solid #4A4A4A !important">
+            <div class="card-body-d365" style="padding: 16px;; border: 1px solid #4A4A4A !important; border: 1px solid #4A4A4A !important">
+                <div style="font-size: 11px; color: #C0C0C0; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">Total Transactions</div>
+                <div style="font-size: 24px; font-weight: 600; color: #FFFFFF !important;">{{ total_count or 0 }}</div>
             </div>
         </div>
-        <div class="d365-card">
-            <div class="card-body-d365" style="padding: 16px;">
-                <div style="font-size: 11px; color: #605e5c; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">Total Amount</div>
-                <div style="font-size: 24px; font-weight: 600; color: #0078d4;">${{ "%.2f"|format(total_amount or 0) }}</div>
+        <div class="stat-card" style="background: #2C2C2C !important; border: 1px solid #4A4A4A !important;; border: 1px solid #4A4A4A !important; border: 1px solid #4A4A4A !important">
+            <div class="card-body-d365" style="padding: 16px;; border: 1px solid #4A4A4A !important; border: 1px solid #4A4A4A !important">
+                <div style="font-size: 11px; color: #C0C0C0; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">Total Amount</div>
+                <div style="font-size: 24px; font-weight: 600; color: #DAA520;">${{ "{:,.2f}".format(total_amount or 0) }}</div>
             </div>
         </div>
-        <div class="d365-card">
-            <div class="card-body-d365" style="padding: 16px;">
-                <div style="font-size: 11px; color: #605e5c; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">Completed</div>
-                <div style="font-size: 24px; font-weight: 600; color: #107c10;">{{ completed_count or 0 }}</div>
+        <div class="stat-card" style="background: #2C2C2C !important; border: 1px solid #4A4A4A !important;; border: 1px solid #4A4A4A !important; border: 1px solid #4A4A4A !important">
+            <div class="card-body-d365" style="padding: 16px;; border: 1px solid #4A4A4A !important; border: 1px solid #4A4A4A !important">
+                <div style="font-size: 11px; color: #C0C0C0; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">Completed</div>
+                <div style="font-size: 24px; font-weight: 600; color: #4CAF50;">{{ completed_count or 0 }}</div>
             </div>
         </div>
-        <div class="d365-card">
-            <div class="card-body-d365" style="padding: 16px;">
-                <div style="font-size: 11px; color: #605e5c; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">Failed</div>
-                <div style="font-size: 24px; font-weight: 600; color: #a80000;">{{ failed_count or 0 }}</div>
+        <div class="stat-card" style="background: #2C2C2C !important; border: 1px solid #4A4A4A !important;; border: 1px solid #4A4A4A !important; border: 1px solid #4A4A4A !important">
+            <div class="card-body-d365" style="padding: 16px;; border: 1px solid #4A4A4A !important; border: 1px solid #4A4A4A !important">
+                <div style="font-size: 11px; color: #C0C0C0; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">Failed</div>
+                <div style="font-size: 24px; font-weight: 600; color: #f44336;">{{ failed_count or 0 }}</div>
             </div>
         </div>
     </div>
 
     <!-- Filters Card -->
-    <div class="d365-card" style="margin-bottom: 20px;">
-        <div class="card-header-d365" style="cursor: pointer;" onclick="toggleFilters()">
+    <div class="stat-card" style="margin-bottom: 20px;; border: 1px solid #4A4A4A !important; border: 1px solid #4A4A4A !important">
+        <div class="card-header-d365" style="cursor: pointer;; border: 1px solid #4A4A4A !important; border: 1px solid #4A4A4A !important" onclick="toggleFilters()">
             <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
                 <span style="font-size: 14px; font-weight: 600;">Filters</span>
-                <i class="fas fa-chevron-down" id="filterIcon" style="color: #605e5c; font-size: 12px;"></i>
+                <i class="fas fa-chevron-down" id="filterIcon" style="color: #C0C0C0; font-size: 12px;"></i>
             </div>
         </div>
-        <div class="card-body-d365" id="filterBody" style="display: none;">
+        <div class="card-body-d365" id="filterBody" style="display: none;; border: 1px solid #4A4A4A !important; border: 1px solid #4A4A4A !important">
             <form method="GET" id="filterForm">
                 <!-- Search -->
                 <div style="margin-bottom: 16px;">
-                    <label style="display: block; font-size: 12px; font-weight: 600; color: #323130; margin-bottom: 8px;">
+                    <label style="display: block; font-size: 12px; font-weight: 600; color: #FFFFFF; margin-bottom: 8px;">
                         Search (Order #, Email, Transaction ID)
                     </label>
                     <div class="search-box-d365" style="width: 100%;">
@@ -68,10 +68,10 @@
                 <!-- Filter Grid -->
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 16px;">
                     <div>
-                        <label style="display: block; font-size: 12px; font-weight: 600; color: #323130; margin-bottom: 8px;">
+                        <label style="display: block; font-size: 12px; font-weight: 600; color: #FFFFFF; margin-bottom: 8px;">
                             Payment Gateway
                         </label>
-                        <select name="gateway" style="width: 100%; padding: 8px 12px; border: 1px solid #8a8886; border-radius: 2px; font-size: 14px; color: #323130;">
+                        <select name="gateway" style="width: 100%; padding: 8px 12px; border: 1px solid #808080; border-radius: 2px; font-size: 14px; color: #FFFFFF !important;">
                             <option value="">All Gateways</option>
                             <option value="stripe" {% if current_gateway == 'stripe' %}selected{% endif %}>Stripe</option>
                             <option value="payfast" {% if current_gateway == 'payfast' %}selected{% endif %}>PayFast</option>
@@ -79,10 +79,10 @@
                     </div>
 
                     <div>
-                        <label style="display: block; font-size: 12px; font-weight: 600; color: #323130; margin-bottom: 8px;">
+                        <label style="display: block; font-size: 12px; font-weight: 600; color: #FFFFFF; margin-bottom: 8px;">
                             Transaction Status
                         </label>
-                        <select name="status" style="width: 100%; padding: 8px 12px; border: 1px solid #8a8886; border-radius: 2px; font-size: 14px; color: #323130;">
+                        <select name="status" style="width: 100%; padding: 8px 12px; border: 1px solid #808080; border-radius: 2px; font-size: 14px; color: #FFFFFF !important;">
                             <option value="">All Statuses</option>
                             <option value="completed" {% if current_status == 'completed' %}selected{% endif %}>Completed</option>
                             <option value="pending" {% if current_status == 'pending' %}selected{% endif %}>Pending</option>
@@ -92,10 +92,10 @@
                     </div>
 
                     <div>
-                        <label style="display: block; font-size: 12px; font-weight: 600; color: #323130; margin-bottom: 8px;">
+                        <label style="display: block; font-size: 12px; font-weight: 600; color: #FFFFFF; margin-bottom: 8px;">
                             Sort By
                         </label>
-                        <select name="order_by" style="width: 100%; padding: 8px 12px; border: 1px solid #8a8886; border-radius: 2px; font-size: 14px; color: #323130;">
+                        <select name="order_by" style="width: 100%; padding: 8px 12px; border: 1px solid #808080; border-radius: 2px; font-size: 14px; color: #FFFFFF !important;">
                             <option value="date" {% if current_sort == 'date' %}selected{% endif %}>Date (Newest First)</option>
                             <option value="amount" {% if current_sort == 'amount' %}selected{% endif %}>Amount (Highest)</option>
                             <option value="status" {% if current_sort == 'status' %}selected{% endif %}>Status</option>
@@ -106,17 +106,17 @@
                 <!-- Date Range -->
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 16px;">
                     <div>
-                        <label style="display: block; font-size: 12px; font-weight: 600; color: #323130; margin-bottom: 8px;">
+                        <label style="display: block; font-size: 12px; font-weight: 600; color: #FFFFFF; margin-bottom: 8px;">
                             From Date
                         </label>
-                        <input type="date" name="date_from" value="{{ date_from or '' }}" style="width: 100%; padding: 8px 12px; border: 1px solid #8a8886; border-radius: 2px; font-size: 14px;">
+                        <input type="date" name="date_from" value="{{ date_from or '' }}" style="width: 100%; padding: 8px 12px; border: 1px solid #808080; border-radius: 2px; font-size: 14px;">
                     </div>
 
                     <div>
-                        <label style="display: block; font-size: 12px; font-weight: 600; color: #323130; margin-bottom: 8px;">
+                        <label style="display: block; font-size: 12px; font-weight: 600; color: #FFFFFF; margin-bottom: 8px;">
                             To Date
                         </label>
-                        <input type="date" name="date_to" value="{{ date_to or '' }}" style="width: 100%; padding: 8px 12px; border: 1px solid #8a8886; border-radius: 2px; font-size: 14px;">
+                        <input type="date" name="date_to" value="{{ date_to or '' }}" style="width: 100%; padding: 8px 12px; border: 1px solid #808080; border-radius: 2px; font-size: 14px;">
                     </div>
                 </div>
 
@@ -155,8 +155,8 @@
     </div>
 
     <!-- Transactions Table -->
-    <div class="d365-card">
-        <div class="card-body-d365" style="padding: 0;">
+    <div class="stat-card" style="background: #2C2C2C !important; border: 1px solid #4A4A4A !important;; border: 1px solid #4A4A4A !important; border: 1px solid #4A4A4A !important">
+        <div class="card-body-d365" style="padding: 0;; border: 1px solid #4A4A4A !important; border: 1px solid #4A4A4A !important">
             {% if transactions and transactions|length > 0 %}
             <table class="table-d365">
                 <thead>
@@ -236,24 +236,24 @@
                             <input type="checkbox" class="row-select" value="{{ transaction.id }}">
                         </td>
                         <td>
-                            <a href="{{ url_for('payment.admin_transaction_detail', transaction_id=transaction.id) }}" style="color: #0078d4; text-decoration: none;">
+                            <a href="{{ url_for('payment.admin_transaction_detail', transaction_id=transaction.id) }}" style="color: #DAA520; text-decoration: none;">
                                 {{ transaction.id|truncate(12, True) }}
                             </a>
                         </td>
                         <td>
                             {% if transaction.order %}
-                            <a href="{{ url_for('admin.order_detail', id=transaction.order.id) }}" style="color: #0078d4; text-decoration: none;">
+                            <a href="{{ url_for('admin.order_detail', id=transaction.order.id) }}" style="color: #DAA520; text-decoration: none;">
                                 #{{ transaction.order.order_number }}
                             </a>
                             {% else %}
-                            <span style="color: #a19f9d;">N/A</span>
+                            <span style="color: #808080;">N/A</span>
                             {% endif %}
                         </td>
                         <td>
                             {% if transaction.order and transaction.order.customer %}
                             {{ transaction.order.customer.email|truncate(30, True) }}
                             {% else %}
-                            <span style="color: #a19f9d;">N/A</span>
+                            <span style="color: #808080;">N/A</span>
                             {% endif %}
                         </td>
                         <td>
@@ -265,8 +265,8 @@
                             <span class="badge-d365">{{ transaction.payment_method|upper }}</span>
                             {% endif %}
                         </td>
-                        <td style="font-weight: 600; color: #0078d4;">
-                            ${{ "%.2f"|format(transaction.amount) }}
+                        <td style="font-weight: 600; color: #DAA520;">
+                            ${{ "{:,.2f}".format(transaction.amount) }}
                         </td>
                         <td>
                             {% if transaction.status == 'completed' %}
@@ -289,11 +289,11 @@
                 </tbody>
             </table>
             {% else %}
-            <div style="text-align: center; padding: 60px 20px; color: #605e5c;">
-                <i class="fas fa-receipt" style="font-size: 48px; color: #edebe9; margin-bottom: 16px;"></i>
+            <div style="text-align: center; padding: 60px 20px; color: #C0C0C0;">
+                <i class="fas fa-receipt" style="font-size: 48px; color: #4A4A4A; margin-bottom: 16px;"></i>
                 <p style="font-size: 14px; margin: 0;">No transactions found.</p>
                 {% if search_query or current_gateway or current_status or date_from or date_to %}
-                <a href="{{ url_for('payment.admin_transactions_list') }}" style="color: #0078d4; text-decoration: none; font-size: 12px;">
+                <a href="{{ url_for('payment.admin_transactions_list') }}" style="color: #DAA520; text-decoration: none; font-size: 12px;">
                     Clear filters
                 </a>
                 {% endif %}
@@ -312,7 +312,7 @@
         </a>
         {% endif %}
 
-        <span style="color: #605e5c;">
+        <span style="color: #C0C0C0;">
             Page {{ pagination.page }} of {{ pagination.pages }}
         </span>
 
@@ -327,6 +327,25 @@
 </div>
 
 <script>
+// Add event listeners when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    // Add change event to all checkboxes
+    const checkboxes = document.querySelectorAll('.row-select');
+    checkboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            const row = this.closest('tr');
+            if (this.checked) {
+                row.classList.add('selected');
+            } else {
+                row.classList.remove('selected');
+            }
+            updateCommandBar();
+        });
+    });
+    // Initial update
+    updateCommandBar();
+});
+
 function toggleSelectAll(checkbox) {
     const checkboxes = document.querySelectorAll('.row-select');
     checkboxes.forEach(cb => {

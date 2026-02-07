@@ -3,7 +3,7 @@
 {% block title %}Testimonials - Admin{% endblock %}
 
 {% block content %}
-<div style="padding: 16px; background: #faf9f8;">
+<div style="padding: 16px; background: #1C1C1C;">
     <!-- Breadcrumb Navigation -->
     <div class="breadcrumb-d365">
         <a href="{{ url_for('admin_dashboard') }}">Home</a>
@@ -12,7 +12,7 @@
     </div>
     
     <!-- Page Title -->
-    <h1 style="font-size: 20px; font-weight: 600; margin: 4px 0 16px 0; color: #323130;">
+    <h1 style="font-size: 20px; font-weight: 600; margin: 4px 0 16px 0; color: #FFFFFF !important;">
         Testimonials
     </h1>
     
@@ -41,8 +41,8 @@
     </div>
     
     <!-- Table Card -->
-    <div class="d365-card">
-        <div class="card-body-d365" style="padding: 0;">
+    <div class="stat-card" style="background: #2C2C2C !important; border: 1px solid #4A4A4A !important;; border: 1px solid #4A4A4A !important; border: 1px solid #4A4A4A !important">
+        <div class="card-body-d365" style="padding: 0;; border: 1px solid #4A4A4A !important; border: 1px solid #4A4A4A !important">
             <table class="table-d365" id="testimonialsTable">
                 <thead>
                     <tr>
@@ -128,7 +128,7 @@
                                     {% if i < testimonial.rating %}
                                         <i class="fas fa-star" style="color: #ffb900; font-size: 11px;"></i>
                                     {% else %}
-                                        <i class="far fa-star" style="color: #a19f9d; font-size: 11px;"></i>
+                                        <i class="far fa-star" style="color: #808080; font-size: 11px;"></i>
                                     {% endif %}
                                 {% endfor %}
                             </div>
@@ -144,8 +144,8 @@
                     </tr>
                     {% else %}
                     <tr>
-                        <td colspan="7" style="text-align: center; padding: 24px; color: #605e5c;">
-                            No testimonials found. <a href="{{ url_for('admin_testimonial_add') }}" style="color: #0078d4;">Add one now</a>
+                        <td colspan="7" style="text-align: center; padding: 24px; color: #C0C0C0;">
+                            No testimonials found. <a href="{{ url_for('admin_testimonial_add') }}" style="color: #DAA520;">Add one now</a>
                         </td>
                     </tr>
                     {% endfor %}
@@ -155,12 +155,31 @@
     </div>
     
     <!-- Footer -->
-    <div style="margin-top: 12px; font-size: 12px; color: #605e5c;">
-        <span>Total records: {{ testimonials|length }}</span>
+    <div style="margin-top: 12px; font-size: 12px; color: #C0C0C0;">
+        <span>Total records: {{ "{:,}".format(testimonials|length) }}</span>
     </div>
 </div>
 
 <script>
+// Add event listeners when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    // Add change event to all checkboxes
+    const checkboxes = document.querySelectorAll('.row-select');
+    checkboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            const row = this.closest('tr');
+            if (this.checked) {
+                row.classList.add('selected');
+            } else {
+                row.classList.remove('selected');
+            }
+            updateCommandBar();
+        });
+    });
+    // Initial update
+    updateCommandBar();
+});
+
 function toggleSelectAll(checkbox) {
     const checkboxes = document.querySelectorAll('.row-select');
     checkboxes.forEach(cb => {

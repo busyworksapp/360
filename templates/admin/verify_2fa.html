@@ -17,7 +17,7 @@
                     </div>
 
                     <form method="POST" action="{{ url_for('verify_2fa') }}">
-                        {{ form.hidden_tag() if form else '' }}
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                         
                         <div class="form-group mb-4">
                             <label for="token" class="form-label">Authentication Code</label>

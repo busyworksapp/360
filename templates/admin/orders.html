@@ -11,7 +11,7 @@
             <span class="separator">/</span>
             <span>Orders</span>
         </div>
-        <h1 style="font-size: 20px; font-weight: 600; margin: 4px 0 0 0; color: #323130;">Orders</h1>
+        <h1 style="font-size: 20px; font-weight: 600; margin: 4px 0 0 0; color: #FFFFFF !important;">Orders</h1>
     </div>
 
     <!-- Command Bar with Status Filters -->
@@ -25,9 +25,9 @@
                 <i class="fas fa-edit"></i>
                 <span>Update Status</span>
             </button>
-            <div style="width: 1px; height: 24px; background: #edebe9; margin: 0 4px;"></div>
+            <div style="width: 1px; height: 24px; background: #4A4A4A; margin: 0 4px;"></div>
             <a href="?status=all" class="{% if current_status == 'all' %}btn-d365-primary{% else %}btn-d365-secondary{% endif %}" style="font-size: 12px; padding: 6px 12px;">
-                All ({{ orders.total }})
+                All ({{ "{:,}".format(orders.total) }})
             </a>
             <a href="?status=pending" class="{% if current_status == 'pending' %}btn-d365-primary{% else %}btn-d365-secondary{% endif %}" style="font-size: 12px; padding: 6px 12px;">
                 Pending
@@ -48,8 +48,8 @@
     </div>
 
     <!-- Orders Table -->
-    <div class="d365-card">
-        <div class="card-body-d365" style="padding: 0;">
+    <div class="stat-card" style="background: #2C2C2C !important; border: 1px solid #4A4A4A !important;; border: 1px solid #4A4A4A !important; border: 1px solid #4A4A4A !important">
+        <div class="card-body-d365" style="padding: 0;; border: 1px solid #4A4A4A !important; border: 1px solid #4A4A4A !important">
             {% if orders.items %}
                 <table class="table-d365">
                     <thead>
@@ -128,11 +128,11 @@
                                 </td>
                                 <td>
                                     <div style="font-weight: 600;">{{ order.customer.first_name }} {{ order.customer.last_name }}</div>
-                                    <div style="font-size: 11px; color: #605e5c;">{{ order.customer.email }}</div>
+                                    <div style="font-size: 11px; color: #C0C0C0;">{{ order.customer.email }}</div>
                                 </td>
                                 <td style="font-size: 11px;">{{ order.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
-                                <td style="text-align: center;">{{ order.get_item_count() }}</td>
-                                <td style="text-align: right; font-weight: 600;">R{{ "%.2f"|format(order.total_amount) }}</td>
+                                <td style="text-align: center;">{{ "{:,}".format(order.get_item_count()) }}</td>
+                                <td style="text-align: right; font-weight: 600;">R {{ "{:,.2f}".format(order.total_amount) }}</td>
                                 <td>
                                     {% if order.status == 'pending' %}
                                         <span class="badge-d365 warning" style="font-size: 11px;">PENDING</span>
@@ -149,8 +149,12 @@
                                     {% endif %}
                                 </td>
                                 <td>
-                                    {% if order.payment_status == 'completed' %}
+                                    {% if order.payment_status == 'completed' or order.payment_status == 'paid' %}
                                         <span class="badge-d365 success" style="font-size: 11px;">PAID</span>
+                                    {% elif order.payment_status == 'pending' %}
+                                        <span class="badge-d365 warning" style="font-size: 11px;">PENDING</span>
+                                    {% elif order.payment_status == 'unpaid' or order.payment_status == 'failed' %}
+                                        <span class="badge-d365 danger" style="font-size: 11px;">UNPAID</span>
                                     {% else %}
                                         <span class="badge-d365 warning" style="font-size: 11px;">{{ order.payment_status|upper }}</span>
                                     {% endif %}
@@ -162,22 +166,22 @@
 
                 <!-- Pagination -->
                 {% if orders.pages > 1 %}
-                    <div style="padding: 12px 16px; border-top: 1px solid #edebe9; display: flex; justify-content: center; align-items: center; gap: 8px;">
+                    <div style="padding: 12px 16px; border-top: 1px solid #4A4A4A; display: flex; justify-content: center; align-items: center; gap: 8px;">
                         {% if orders.has_prev %}
-                            <a href="?page={{ orders.prev_num }}&status={{ current_status }}" class="btn-d365-secondary" style="padding: 4px 8px; font-size: 11px;">
+                            <a href="?page={{ "{:,}".format(orders.prev_num) }}&status={{ current_status }}" class="btn-d365-secondary" style="padding: 4px 8px; font-size: 11px;">
                                 <i class="fas fa-chevron-left"></i> Previous
                             </a>
                         {% endif %}
-                        <span style="font-size: 12px; color: #605e5c;">Page {{ orders.page }} of {{ orders.pages }}</span>
+                        <span style="font-size: 12px; color: #C0C0C0;">Page {{ "{:,}".format(orders.page) }} of {{ "{:,}".format(orders.pages) }}</span>
                         {% if orders.has_next %}
-                            <a href="?page={{ orders.next_num }}&status={{ current_status }}" class="btn-d365-secondary" style="padding: 4px 8px; font-size: 11px;">
+                            <a href="?page={{ "{:,}".format(orders.next_num) }}&status={{ current_status }}" class="btn-d365-secondary" style="padding: 4px 8px; font-size: 11px;">
                                 Next <i class="fas fa-chevron-right"></i>
                             </a>
                         {% endif %}
                     </div>
                 {% endif %}
             {% else %}
-                <div style="text-align: center; padding: 48px; color: #a19f9d;">
+                <div style="text-align: center; padding: 48px; color: #808080;">
                     <i class="fas fa-shopping-bag" style="font-size: 36px; margin-bottom: 12px; display: block; opacity: 0.3;"></i>
                     <p style="margin: 0; font-size: 13px;">No orders found matching the selected filter.</p>
                 </div>
@@ -186,8 +190,8 @@
     </div>
 
     <!-- Footer Info -->
-    <div style="margin-top: 12px; font-size: 12px; color: #605e5c;">
-        <span>Total records: {{ orders.total }}</span>
+    <div style="margin-top: 12px; font-size: 12px; color: #C0C0C0;">
+        <span>Total records: {{ "{:,}".format(orders.total) }}</span>
     </div>
 </div>
 
@@ -199,20 +203,48 @@
     }
 
     body {
-        background: #faf9f8 !important;
+        background: #1C1C1C !important;
     }
 
     .content {
-        background: #faf9f8 !important;
+        background: #1C1C1C !important;
         padding: 16px 24px !important;
     }
 </style>
 
 <script>
-// Select All Checkbox
-document.getElementById('selectAll')?.addEventListener('change', function() {
+// Add event listeners when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    // Add change event to all checkboxes
     const checkboxes = document.querySelectorAll('.row-select');
-    checkboxes.forEach(cb => cb.checked = this.checked);
+    checkboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            const row = this.closest('tr');
+            if (this.checked) {
+                row.classList.add('selected');
+            } else {
+                row.classList.remove('selected');
+            }
+            updateCommandBar();
+        });
+    });
+    
+    // Select All Checkbox
+    document.getElementById('selectAll')?.addEventListener('change', function() {
+        const checkboxes = document.querySelectorAll('.row-select');
+        checkboxes.forEach(cb => {
+            cb.checked = this.checked;
+            const row = cb.closest('tr');
+            if (this.checked) {
+                row.classList.add('selected');
+            } else {
+                row.classList.remove('selected');
+            }
+        });
+        updateCommandBar();
+    });
+    
+    // Initial update
     updateCommandBar();
 });
 
@@ -221,6 +253,11 @@ function selectRow(row, event) {
     if (event.target.type === 'checkbox' || event.target.tagName === 'A') return;
     const checkbox = row.querySelector('.row-select');
     checkbox.checked = !checkbox.checked;
+    if (checkbox.checked) {
+        row.classList.add('selected');
+    } else {
+        row.classList.remove('selected');
+    }
     updateCommandBar();
 }
 

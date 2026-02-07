@@ -8,7 +8,7 @@
         /* D365 Payment Page Styling */
         
         .payment-wrapper-d365 {
-            background-color: #faf9f8;
+            background-color: #1C1C1C;
             padding: 40px 0 60px;
             min-height: calc(100vh - 200px);
         }
@@ -27,13 +27,13 @@
         .page-title-d365 h1 {
             font-size: 28px;
             font-weight: 600;
-            color: #323130;
+            color: #FFFFFF;
             margin-bottom: 8px;
         }
 
         .page-title-d365 p {
             font-size: 14px;
-            color: #605e5c;
+            color: #C0C0C0;
             margin: 0;
         }
 
@@ -46,8 +46,8 @@
         }
 
         .payment-method-card-d365 {
-            background: white;
-            border: 2px solid #edebe9;
+            background: #353535;
+            border: 2px solid #4A4A4A;
             border-radius: 2px;
             padding: 32px;
             text-align: center;
@@ -57,39 +57,39 @@
         }
 
         .payment-method-card-d365:hover {
-            border-color: #0078d4;
+            border-color: #DAA520;
             box-shadow: 0 6.4px 14.4px 0 rgba(0,0,0,.132), 0 1.2px 3.6px 0 rgba(0,0,0,.108);
             transform: translateY(-4px);
         }
 
         .payment-method-card-d365.active {
-            border-color: #0078d4;
+            border-color: #DAA520;
             background-color: #f3f9fd;
         }
 
         .payment-method-icon-d365 {
             font-size: 48px;
-            color: #0078d4;
+            color: #DAA520;
             margin-bottom: 20px;
         }
 
         .payment-method-card-d365 h3 {
-            color: #323130;
+            color: #FFFFFF;
             margin-bottom: 12px;
             font-size: 18px;
             font-weight: 600;
         }
 
         .payment-method-card-d365 p {
-            color: #605e5c;
+            color: #C0C0C0;
             margin-bottom: 0;
             font-size: 12px;
         }
 
         /* Payment Form */
         .payment-form-d365 {
-            background: white;
-            border: 1px solid #edebe9;
+            background: #353535;
+            border: 1px solid #4A4A4A;
             border-radius: 2px;
             padding: 32px;
             box-shadow: 0 1.6px 3.6px 0 rgba(0,0,0,.132), 0 0.3px 0.9px 0 rgba(0,0,0,.108);
@@ -101,7 +101,7 @@
         }
 
         .form-group-d365 label {
-            color: #323130;
+            color: #FFFFFF;
             font-weight: 600;
             margin-bottom: 8px;
             display: block;
@@ -110,29 +110,29 @@
 
         .form-control-d365 {
             width: 100%;
-            border: 1px solid #8a8886;
+            border: 1px solid #808080;
             padding: 10px 12px;
             border-radius: 2px;
             font-size: 14px;
-            color: #323130;
+            color: #FFFFFF;
             transition: all 0.2s ease;
         }
 
         .form-control-d365:focus {
             outline: none;
-            border-color: #0078d4;
-            box-shadow: 0 0 0 1px #0078d4;
+            border-color: #DAA520;
+            box-shadow: 0 0 0 1px #DAA520;
         }
 
         .stripe-element {
-            border: 1px solid #8a8886;
+            border: 1px solid #808080;
             padding: 12px;
             border-radius: 2px;
-            background-color: white;
+            background-color: #353535;
         }
 
         .btn-pay-d365 {
-            background-color: #0078d4;
+            background-color: #DAA520;
             border: none;
             color: white;
             padding: 12px 40px;
@@ -145,7 +145,7 @@
         }
 
         .btn-pay-d365:hover {
-            background-color: #106ebe;
+            background-color: #B8860B;
         }
 
         .btn-pay-d365:disabled {
@@ -216,8 +216,8 @@
     function loadStripeForm() {
         document.getElementById('paymentFormContainer').innerHTML = `
             <div class="payment-form-d365">
-                <h4 style="color: #323130; font-size: 16px; font-weight: 600; margin-bottom: 24px;">
-                    <i class="fab fa-cc-stripe" style="color: #0078d4;"></i> Card Payment
+                <h4 style="color: #FFFFFF; font-size: 16px; font-weight: 600; margin-bottom: 24px;">
+                    <i class="fab fa-cc-stripe" style="color: #DAA520;"></i> Card Payment
                 </h4>
                 <form id="stripe-payment-form">
                     <div class="form-group-d365">
@@ -230,7 +230,7 @@
                         <div id="card-element" class="stripe-element"></div>
                     </div>
                     
-                    <div id="card-errors" role="alert" style="color: #a80000; font-size: 12px; margin-bottom: 16px;"></div>
+                    <div id="card-errors" role="alert" style="color: #f44336; font-size: 12px; margin-bottom: 16px;"></div>
                     
                     <button type="submit" class="btn-pay-d365">
                         <i class="fas fa-lock"></i> Pay Securely
@@ -249,10 +249,11 @@
     function loadPayFastForm() {
         document.getElementById('paymentFormContainer').innerHTML = `
             <div class="payment-form-d365">
-                <h4 style="color: #323130; font-size: 16px; font-weight: 600; margin-bottom: 24px;">
-                    <i class="fas fa-credit-card" style="color: #0078d4;"></i> PayFast Payment
+                <h4 style="color: #FFFFFF; font-size: 16px; font-weight: 600; margin-bottom: 24px;">
+                    <i class="fas fa-credit-card" style="color: #DAA520;"></i> PayFast Payment
                 </h4>
                 <form action="{{ url_for('payfast_payment') }}" method="POST">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                     <div class="form-group-d365">
                         <label for="name_first">First Name</label>
                         <input type="text" id="name_first" name="name_first" class="form-control-d365" required>

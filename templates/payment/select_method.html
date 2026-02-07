@@ -16,7 +16,7 @@
 
     <!-- Order Summary Card -->
     {% if order %}
-    <div class="d365-card">
+    <div class="stat-card" style="background: #2C2C2C !important; border: 1px solid #4A4A4A !important;; border: 1px solid #4A4A4A !important; border: 1px solid #4A4A4A !important">
         <div class="card-header-d365">
             <h2>Order Summary</h2>
         </div>
@@ -27,27 +27,27 @@
             </div>
             <div class="order-summary-item">
                 <span class="order-summary-label">Items:</span>
-                <span class="order-summary-value">{{ order.order_items|length }} item(s)</span>
+                <span class="order-summary-value">{{ "{:,}".format(order.order_items|length) }} item(s)</span>
             </div>
             <div class="order-summary-item">
                 <span class="order-summary-label">Subtotal:</span>
-                <span class="order-summary-value">${{ "%.2f"|format(order.subtotal) }}</span>
+                <span class="order-summary-value">${{ "{:,.2f}".format(order.subtotal) }}</span>
             </div>
             {% if order.tax_amount %}
             <div class="order-summary-item">
                 <span class="order-summary-label">Tax:</span>
-                <span class="order-summary-value">${{ "%.2f"|format(order.tax_amount) }}</span>
+                <span class="order-summary-value">${{ "{:,.2f}".format(order.tax_amount) }}</span>
             </div>
             {% endif %}
             {% if order.shipping_cost %}
             <div class="order-summary-item">
                 <span class="order-summary-label">Shipping:</span>
-                <span class="order-summary-value">${{ "%.2f"|format(order.shipping_cost) }}</span>
+                <span class="order-summary-value">${{ "{:,.2f}".format(order.shipping_cost) }}</span>
             </div>
             {% endif %}
             <div class="order-summary-total">
                 <span>Total Amount:</span>
-                <span>${{ "%.2f"|format(order.total_amount) }}</span>
+                <span>${{ "{:,.2f}".format(order.total_amount) }}</span>
             </div>
         </div>
     </div>
@@ -65,13 +65,14 @@
     {% endif %}
 
     <!-- Payment Method Selection -->
-    <div class="d365-card">
+    <div class="stat-card" style="background: #2C2C2C !important; border: 1px solid #4A4A4A !important;; border: 1px solid #4A4A4A !important; border: 1px solid #4A4A4A !important">
         <div class="card-header-d365">
             <h2>Choose Payment Method</h2>
             <p>Select your preferred payment option</p>
         </div>
         <div class="card-body-d365">
             <form method="POST" action="{{ url_for('payment.select_payment_method') }}" id="paymentForm">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                 <!-- Hidden order ID -->
                 <input type="hidden" name="order_id" value="{{ order.id if order else '' }}">
 
@@ -99,23 +100,23 @@
                 </div>
 
                 <!-- Payment Method Descriptions -->
-                <div class="d365-card" style="background: #f3f2f1; border: none; box-shadow: none;">
+                <div class="stat-card" style="background: #2C2C2C; border: none; box-shadow: none;; border: 1px solid #4A4A4A !important; border: 1px solid #4A4A4A !important">
                     <div class="card-body-d365">
                         <div id="stripeDesc" style="display: none;">
-                            <h4 style="margin: 0 0 8px 0; font-size: 14px; font-weight: 600; color: #323130;">💳 Stripe Payment</h4>
-                            <p style="margin: 0; color: #605e5c; font-size: 12px;">
+                            <h4 style="margin: 0 0 8px 0; font-size: 14px; font-weight: 600; color: #FFFFFF !important;">💳 Stripe Payment</h4>
+                            <p style="margin: 0; color: #C0C0C0; font-size: 12px;">
                                 Secure credit and debit card payments. Fast, reliable, and PCI compliant.
                                 Supports Visa, Mastercard, American Express, and more.
                             </p>
                         </div>
                         <div id="payfastDesc" style="display: none;">
-                            <h4 style="margin: 0 0 8px 0; font-size: 14px; font-weight: 600; color: #323130;">🏦 PayFast Payment</h4>
-                            <p style="margin: 0; color: #605e5c; font-size: 12px;">
+                            <h4 style="margin: 0 0 8px 0; font-size: 14px; font-weight: 600; color: #FFFFFF !important;">🏦 PayFast Payment</h4>
+                            <p style="margin: 0; color: #C0C0C0; font-size: 12px;">
                                 South African payment gateway. Supports EFT, credit cards, debit cards, and digital wallets.
                                 Trusted by thousands of South African businesses.
                             </p>
                         </div>
-                        <div id="noSelection" style="color: #605e5c; font-size: 12px;">
+                        <div id="noSelection" style="color: #C0C0C0; font-size: 12px;">
                             Please select a payment method to view details.
                         </div>
                     </div>

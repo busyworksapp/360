@@ -77,22 +77,27 @@ class Config:
     }
     
     # Session Security
-    SESSION_COOKIE_SECURE = os.getenv('SESSION_COOKIE_SECURE', 'True') == 'True'
+    # Only enforce secure cookies in production
+    is_production = os.getenv('FLASK_ENV') == 'production'
+    SESSION_COOKIE_SECURE = is_production
     SESSION_COOKIE_HTTPONLY = True
     SESSION_COOKIE_SAMESITE = 'Lax'
     PERMANENT_SESSION_LIFETIME = 3600  # 1 hour
-    SESSION_COOKIE_NAME = '__Host-session'
+    # Use __Host- prefix only in production (requires HTTPS)
+    SESSION_COOKIE_NAME = '__Host-session' if is_production else 'session'
     
     # Remember Me Security
-    REMEMBER_COOKIE_SECURE = os.getenv('REMEMBER_COOKIE_SECURE', 'True') == 'True'
+    REMEMBER_COOKIE_SECURE = is_production
     REMEMBER_COOKIE_HTTPONLY = True
     REMEMBER_COOKIE_DURATION = 7  # Days
-    REMEMBER_COOKIE_NAME = '__Host-remember'
+    # Use __Host- prefix only in production (requires HTTPS)
+    REMEMBER_COOKIE_NAME = '__Host-remember' if is_production else 'remember'
     
     # CSRF Protection
     WTF_CSRF_ENABLED = True
     WTF_CSRF_TIME_LIMIT = None  # No time limit
-    WTF_CSRF_SSL_STRICT = True
+    # Only enforce SSL strict in production
+    WTF_CSRF_SSL_STRICT = os.getenv('FLASK_ENV') == 'production'
     
     # Rate Limiting
     RATELIMIT_STORAGE_URL = os.getenv('REDIS_URL', 'memory://')

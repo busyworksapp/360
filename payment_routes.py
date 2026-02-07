@@ -23,12 +23,16 @@ from flask import (
     session
 )
 from flask_login import login_required, current_user
+from flask_wtf.csrf import CSRFProtect
 
 from models import Order, Transaction, db
 from stripe_service import StripePayment, StripePaymentError
 from payfast_service import PayFastPayment, PayFastPaymentError
 from email_service import EmailService
 from config import Config
+
+# Get CSRF instance
+csrf = CSRFProtect()
 
 # Get config values
 SMTP_SERVER = Config.MAIL_SERVER
@@ -381,6 +385,7 @@ def payment_status():
 # ============================================================================
 
 @payment_bp.route('/webhooks/stripe', methods=['POST'])
+@csrf.exempt
 @rate_limit(max_calls=100)
 def stripe_webhook():
     """
@@ -511,6 +516,7 @@ def stripe_webhook():
 
 
 @payment_bp.route('/webhooks/payfast', methods=['POST'])
+@csrf.exempt
 @rate_limit(max_calls=100)
 def payfast_webhook():
     """

@@ -5,13 +5,13 @@
 {% block extra_css %}
 <style>
     .dashboard-container {
-        background: #faf9f8;
+        background: #1C1C1C;
         padding: 0;
     }
 
     .dashboard-header {
-        background: white;
-        border-bottom: 1px solid #edebe9;
+        background: #353535;
+        border-bottom: 1px solid #4A4A4A;
         padding: 16px 24px;
         margin-bottom: 20px;
         display: flex;
@@ -22,19 +22,19 @@
     .dashboard-header h1 {
         font-size: 20px;
         font-weight: 600;
-        color: #323130;
+        color: #FFFFFF;
         margin: 0;
     }
 
     .dashboard-header .subtitle {
         font-size: 12px;
-        color: #605e5c;
+        color: #C0C0C0;
         margin-top: 4px;
     }
 
     .info-section {
-        background: white;
-        border: 1px solid #edebe9;
+        background: #353535;
+        border: 1px solid #4A4A4A;
         padding: 16px;
         margin-bottom: 20px;
     }
@@ -42,19 +42,19 @@
     .info-section h3 {
         font-size: 14px;
         font-weight: 600;
-        color: #323130;
+        color: #FFFFFF;
         margin-bottom: 12px;
         text-transform: uppercase;
         letter-spacing: 0.5px;
         padding-bottom: 8px;
-        border-bottom: 1px solid #edebe9;
+        border-bottom: 1px solid #4A4A4A;
     }
 
     .info-row {
         display: flex;
         justify-content: space-between;
         padding: 8px 0;
-        border-bottom: 1px solid #edebe9;
+        border-bottom: 1px solid #4A4A4A;
     }
 
     .info-row:last-child {
@@ -63,12 +63,12 @@
 
     .info-label {
         font-size: 12px;
-        color: #605e5c;
+        color: #C0C0C0;
     }
 
     .info-value {
         font-size: 14px;
-        color: #323130;
+        color: #FFFFFF;
         font-weight: 600;
     }
 
@@ -82,7 +82,7 @@
 
     .form-label {
         font-size: 12px;
-        color: #605e5c;
+        color: #C0C0C0;
         margin-bottom: 4px;
         font-weight: 600;
         text-transform: uppercase;
@@ -90,22 +90,31 @@
     }
 
     .form-control {
-        border: 1px solid #8a8886;
-        padding: 8px 12px;
+        background: #2C2C2C !important;
+        border: 1px solid #808080 !important;
+        color: #FFFFFF !important;
+        padding: 10px 12px;
         font-size: 14px;
         transition: all 0.1s ease;
     }
 
     .form-control:focus {
-        border-color: #0078d4;
-        box-shadow: 0 0 0 1px #0078d4;
-        outline: none;
+        background: #353535 !important;
+        border-color: #DAA520 !important;
+        box-shadow: 0 0 0 2px rgba(218, 165, 32, 0.3) !important;
+        outline: none !important;
+    }
+    
+    input[type="checkbox"] {
+        width: 16px;
+        height: 16px;
+        accent-color: #DAA520;
     }
 
     .grid-action-btn {
-        background: white;
-        border: 1px solid #8a8886;
-        color: #323130;
+        background: #353535;
+        border: 1px solid #808080;
+        color: #FFFFFF;
         padding: 8px 16px;
         font-size: 14px;
         cursor: pointer;
@@ -115,23 +124,23 @@
     }
 
     .grid-action-btn:hover {
-        background: #f3f2f1;
-        border-color: #323130;
+        background: #2C2C2C;
+        border-color: #FFFFFF;
     }
 
     .grid-action-btn.btn-primary {
-        background: #0078d4;
-        border-color: #0078d4;
+        background: #DAA520;
+        border-color: #DAA520;
         color: white;
     }
 
     .grid-action-btn.btn-primary:hover {
-        background: #106ebe;
+        background: #B8860B;
     }
 
     .grid-action-btn.btn-success {
-        background: #107c10;
-        border-color: #107c10;
+        background: #4CAF50;
+        border-color: #4CAF50;
         color: white;
     }
 
@@ -156,230 +165,240 @@
         </div>
     </div>
 
-    <div class="container-fluid" style="padding: 0 24px;">    <div class="row">
+    <div class="container-fluid" style="padding: 0 24px;">
+        <div class="row">
         <!-- Invoice Summary -->
         <div class="col-md-4">
-            <div class="card shadow-sm mb-4">
-                <div class="card-header" style="background-color: var(--primary); color: white;">
-                    <h5 class="mb-0">
-                        <i class="fas fa-file-invoice"></i> Invoice Summary
-                    </h5>
+            <div class="info-section" style="margin-bottom: 20px;">
+                <h3 style="font-size: 14px; font-weight: 600; color: #DAA520; margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.5px; padding-bottom: 8px; border-bottom: 1px solid #4A4A4A;">
+                    <i class="fas fa-file-invoice"></i> Invoice Summary
+                </h3>
+                
+                <div class="info-row">
+                    <span class="info-label">Invoice Number</span>
+                    <span class="info-value" style="color: #DAA520;">{{ invoice.invoice_number }}</span>
                 </div>
-                <div class="card-body">
-                    <div class="mb-3">
-                        <h6 class="text-muted">Invoice Number</h6>
-                        <p class="h5" style="color: var(--primary);">{{ invoice.invoice_number }}</p>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <h6 class="text-muted">Issue Date</h6>
-                        <p>{{ invoice.issue_date.strftime('%d %B %Y') }}</p>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <h6 class="text-muted">Due Date</h6>
-                        <p class="{% if invoice.is_overdue() %}text-danger{% endif %}">
-                            {{ invoice.due_date.strftime('%d %B %Y') }}
-                            {% if invoice.is_overdue() %}
-                                <span class="badge bg-danger">Overdue</span>
-                            {% endif %}
-                        </p>
-                    </div>
-                    
-                    <hr>
-                    
-                    <div class="mb-2">
-                        <div class="d-flex justify-content-between">
-                            <span>Subtotal:</span>
-                            <strong>R{{ "%.2f"|format(invoice.subtotal) }}</strong>
-                        </div>
-                    </div>
-                    
-                    <div class="mb-2">
-                        <div class="d-flex justify-content-between">
-                            <span>Tax (VAT):</span>
-                            <strong>R{{ "%.2f"|format(invoice.tax_amount) }}</strong>
-                        </div>
-                    </div>
-                    
-                    <div class="mb-2">
-                        <div class="d-flex justify-content-between">
-                            <span>Total:</span>
-                            <strong>R{{ "%.2f"|format(invoice.total_amount) }}</strong>
-                        </div>
-                    </div>
-                    
-                    <div class="mb-2">
-                        <div class="d-flex justify-content-between" style="background-color: rgba(26, 71, 42, 0.05); padding: 8px; border-radius: 4px;">
-                            <span>Paid:</span>
-                            <strong style="color: #28a745;">R{{ "%.2f"|format(invoice.paid_amount) }}</strong>
-                        </div>
-                    </div>
-                    
-                    <hr style="border-width: 2px;">
-                    
-                    <div class="mb-0">
-                        <div class="d-flex justify-content-between" style="background-color: rgba(220, 53, 69, 0.1); padding: 12px; border-radius: 8px;">
-                            <span><strong>Amount Due:</strong></span>
-                            <strong style="font-size: 1.3rem; color: #dc3545;">
-                                R{{ "%.2f"|format(invoice.remaining_balance()) }}
-                            </strong>
-                        </div>
-                    </div>
+                
+                <div class="info-row">
+                    <span class="info-label">Issue Date</span>
+                    <span class="info-value">{{ invoice.issue_date.strftime('%d %B %Y') }}</span>
+                </div>
+                
+                <div class="info-row">
+                    <span class="info-label">Due Date</span>
+                    <span class="info-value" style="{% if invoice.is_overdue() %}color: #f44336;{% else %}color: #FFFFFF;{% endif %}">
+                        {{ invoice.due_date.strftime('%d %B %Y') }}
+                        {% if invoice.is_overdue() %}
+                            <span class="badge badge-d365 badge-danger" style="margin-left: 8px;">Overdue</span>
+                        {% endif %}
+                    </span>
+                </div>
+                
+                <div style="border-top: 2px solid #4A4A4A; margin: 16px 0;"></div>
+                
+                <div class="info-row">
+                    <span class="info-label">Subtotal:</span>
+                    <span class="info-value">R {{ "{:,.2f}".format(invoice.subtotal) }}</span>
+                </div>
+                
+                <div class="info-row">
+                    <span class="info-label">Tax (VAT):</span>
+                    <span class="info-value">R {{ "{:,.2f}".format(invoice.tax_amount) }}</span>
+                </div>
+                
+                <div class="info-row">
+                    <span class="info-label">Total:</span>
+                    <span class="info-value">R {{ "{:,.2f}".format(invoice.total_amount) }}</span>
+                </div>
+                
+                <div class="info-row" style="background-color: rgba(76, 175, 80, 0.15); padding: 8px; margin: 8px -16px; border-radius: 2px;">
+                    <span class="info-label">Paid:</span>
+                    <span class="info-value" style="color: #4CAF50;">R {{ "{:,.2f}".format(invoice.paid_amount) }}</span>
+                </div>
+                
+                <div style="border-top: 3px solid #DAA520; margin: 16px 0;"></div>
+                
+                <div class="info-row" style="background-color: rgba(244, 67, 54, 0.15); padding: 12px; margin: 0 -16px -16px -16px; border-radius: 0 0 2px 2px;">
+                    <span class="info-label" style="font-weight: 700; color: #FFFFFF;">Amount Due:</span>
+                    <span class="info-value" style="font-size: 20px; color: #f44336;">
+                        R{{ "{:,.2f}".format(invoice.remaining_balance()) }}
+                    </span>
                 </div>
             </div>
         </div>
 
         <!-- Payment Form -->
         <div class="col-md-8">
-            <div class="card shadow-sm">
-                <div class="card-header" style="background-color: var(--secondary); color: white;">
-                    <h5 class="mb-0">
-                        <i class="fas fa-lock"></i> Payment Information
-                    </h5>
-                </div>
-                <div class="card-body p-4">
-                    <form method="POST" enctype="multipart/form-data" id="paymentForm">
-                        <div class="alert alert-info mb-4">
-                            <i class="fas fa-info-circle"></i>
-                            <strong>Secure Payment:</strong> Your payment information is encrypted and secure.
-                        </div>
+            <div class="info-section" style="padding: 24px;">
+                <h3 style="font-size: 14px; font-weight: 600; color: #DAA520; margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.5px; padding-bottom: 8px; border-bottom: 1px solid #4A4A4A;">
+                    <i class="fas fa-lock"></i> Payment Information
+                </h3>
+                
+                <form method="POST" enctype="multipart/form-data" id="paymentForm">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                    
+                    <div style="background: #2C5F77; border-left: 4px solid #2196F3; padding: 12px 16px; margin-bottom: 24px; border-radius: 2px;">
+                        <i class="fas fa-info-circle" style="color: #2196F3;"></i>
+                        <strong style="color: #FFFFFF;">Secure Payment:</strong>
+                        <span style="color: #E0E0E0;">Your payment information is encrypted and secure.</span>
+                    </div>
 
-                        <!-- Payment Method Selection -->
-                        <div class="mb-4">
-                            <label class="form-label"><strong>Select Payment Method</strong></label>
-                            
-                            <div class="row g-3">
-                                <div class="col-md-6">
-                                    <div class="form-check payment-option">
-                                        <input class="form-check-input" type="radio" name="payment_method" id="card" value="card" checked>
-                                        <label class="form-check-label w-100" for="card">
-                                            <div class="payment-card">
-                                                <i class="fas fa-credit-card fa-2x mb-2" style="color: var(--primary);"></i>
-                                                <div><strong>Credit/Debit Card</strong></div>
-                                                <small class="text-muted">Visa, Mastercard, Amex</small>
-                                            </div>
-                                        </label>
-                                    </div>
-                                </div>
-                                
-                                <div class="col-md-6">
-                                    <div class="form-check payment-option">
-                                        <input class="form-check-input" type="radio" name="payment_method" id="eft" value="eft">
-                                        <label class="form-check-label w-100" for="eft">
-                                            <div class="payment-card">
-                                                <i class="fas fa-university fa-2x mb-2" style="color: var(--primary);"></i>
-                                                <div><strong>EFT / Bank Transfer</strong></div>
-                                                <small class="text-muted">Direct bank payment</small>
-                                            </div>
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Card Payment Details -->
-                        <div id="cardDetails" class="payment-details">
-                            <h6 class="mb-3" style="color: var(--primary);">Card Details</h6>
-                            
-                            <div class="mb-3">
-                                <label for="cardNumber" class="form-label">Card Number</label>
-                                <input type="text" class="form-control" id="cardNumber" placeholder="1234 5678 9012 3456" maxlength="19">
-                            </div>
-                            
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label for="expiryDate" class="form-label">Expiry Date</label>
-                                    <input type="text" class="form-control" id="expiryDate" placeholder="MM/YY" maxlength="5">
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label for="cvv" class="form-label">CVV</label>
-                                    <input type="text" class="form-control" id="cvv" placeholder="123" maxlength="4">
-                                </div>
-                            </div>
-                            
-                            <div class="mb-3">
-                                <label for="cardName" class="form-label">Cardholder Name</label>
-                                <input type="text" class="form-control" id="cardName" placeholder="John Doe">
-                            </div>
-                        </div>
-
-                        <!-- EFT Details -->
-                        <div id="eftDetails" class="payment-details" style="display: none;">
-                            <div class="alert alert-warning">
-                                <h6 class="mb-3"><i class="fas fa-info-circle"></i> Bank Transfer Instructions</h6>
-                                <p class="mb-2"><strong>Bank Name:</strong> First National Bank</p>
-                                <p class="mb-2"><strong>Account Name:</strong> 360 Degree Supply (Pty) Ltd</p>
-                                <p class="mb-2"><strong>Account Number:</strong> 62123456789</p>
-                                <p class="mb-2"><strong>Branch Code:</strong> 250655</p>
-                                <p class="mb-0"><strong>Reference:</strong> <code class="bg-white px-2">{{ invoice.invoice_number }}</code></p>
-                                <hr>
-                                <p class="mb-0"><small><i class="fas fa-exclamation-triangle"></i> Please use your invoice number as the payment reference.</small></p>
-                            </div>
-
-                            <!-- Proof of Payment Upload -->
-                            <div class="mb-3">
-                                <label for="proofOfPayment" class="form-label">
-                                    <i class="fas fa-upload"></i> <strong>Upload Proof of Payment *</strong>
-                                </label>
-                                <input type="file" class="form-control" id="proofOfPayment" name="proof_of_payment" 
-                                       accept=".pdf,.jpg,.jpeg,.png">
-                                <div class="form-text">
-                                    <i class="fas fa-file-pdf text-danger"></i> PDF or 
-                                    <i class="fas fa-file-image text-info"></i> Image (JPG, PNG) - Max 16MB
-                                </div>
-                                <div class="mt-2 p-2 bg-light rounded">
-                                    <small class="text-success">
-                                        <i class="fas fa-magic"></i> <strong>Intelligent Processing:</strong> 
-                                        Our system will automatically read and verify your payment details from the uploaded document
-                                    </small>
-                                </div>
-                            </div>
-
-                            <!-- File Preview -->
-                            <div id="filePreview" class="mb-3" style="display: none;">
-                                <div class="card bg-light">
-                                    <div class="card-body py-2">
-                                        <div class="d-flex align-items-center">
-                                            <div class="me-3">
-                                                <i class="fas fa-file-alt fa-2x text-secondary"></i>
-                                            </div>
-                                            <div class="flex-grow-1">
-                                                <h6 class="mb-0" id="fileName"></h6>
-                                                <small class="text-muted" id="fileSize"></small>
-                                            </div>
-                                            <button type="button" class="btn btn-sm btn-outline-danger" onclick="clearFile()">
-                                                <i class="fas fa-times"></i>
-                                            </button>
+                    <!-- Payment Method Selection -->
+                    <div style="margin-bottom: 24px;">
+                        <label class="form-label" style="display: block; margin-bottom: 12px; color: #FFFFFF;">SELECT PAYMENT METHOD</label>
+                        
+                        <div class="row" style="margin: 0 -8px;">
+                            <div class="col-md-6" style="padding: 0 8px;">
+                                <div class="payment-option">
+                                    <input class="form-check-input" type="radio" name="payment_method" id="card" value="card" checked style="display: none;">
+                                    <label class="form-check-label w-100" for="card" style="cursor: pointer;">
+                                        <div class="payment-card">
+                                            <i class="fas fa-credit-card fa-2x mb-2" style="color: #DAA520;"></i>
+                                            <div style="color: #FFFFFF; font-weight: 600; margin-top: 8px;">Credit/Debit Card</div>
+                                            <small style="color: #C0C0C0;">Visa, Mastercard, Amex</small>
                                         </div>
-                                    </div>
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6" style="padding: 0 8px;">
+                                <div class="payment-option">
+                                    <input class="form-check-input" type="radio" name="payment_method" id="eft" value="eft" style="display: none;">
+                                    <label class="form-check-label w-100" for="eft" style="cursor: pointer;">
+                                        <div class="payment-card">
+                                            <i class="fas fa-university fa-2x mb-2" style="color: #DAA520;"></i>
+                                            <div style="color: #FFFFFF; font-weight: 600; margin-top: 8px;">EFT / Bank Transfer</div>
+                                            <small style="color: #C0C0C0;">Direct bank payment</small>
+                                        </div>
+                                    </label>
                                 </div>
                             </div>
                         </div>
+                    </div>
 
-                        <div class="alert alert-secondary mt-4">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="termsAccept" required>
-                                <label class="form-check-label" for="termsAccept">
-                                    I agree to the <a href="#">terms and conditions</a> and authorize this payment
-                                </label>
+                    <!-- Card Payment Details -->
+                    <div id="cardDetails" class="payment-details">
+                        <h6 class="mb-3" style="color: #DAA520; font-size: 13px; font-weight: 600; text-transform: uppercase;">Card Details</h6>
+                        
+                        <div class="mb-3">
+                            <label for="cardNumber" class="form-label">Card Number</label>
+                            <input type="text" class="form-control" id="cardNumber" placeholder="1234 5,678 9,012 3456" maxlength="19" 
+                                   style="background: #2C2C2C; border: 1px solid #808080; color: #FFFFFF; padding: 10px 12px; width: 100%; border-radius: 2px;">
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="expiryDate" class="form-label">Expiry Date</label>
+                                <input type="text" class="form-control" id="expiryDate" placeholder="MM/YY" maxlength="5"
+                                       style="background: #2C2C2C; border: 1px solid #808080; color: #FFFFFF; padding: 10px 12px; width: 100%; border-radius: 2px;">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="cvv" class="form-label">CVV</label>
+                                <input type="text" class="form-control" id="cvv" placeholder="123" maxlength="4"
+                                       style="background: #2C2C2C; border: 1px solid #808080; color: #FFFFFF; padding: 10px 12px; width: 100%; border-radius: 2px;">
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="cardName" class="form-label">Cardholder Name</label>
+                            <input type="text" class="form-control" id="cardName" placeholder="John Doe"
+                                   style="background: #2C2C2C; border: 1px solid #808080; color: #FFFFFF; padding: 10px 12px; width: 100%; border-radius: 2px;">
+                        </div>
+                    </div>
+
+                    <!-- EFT Details -->
+                    <div id="eftDetails" class="payment-details" style="display: none;">
+                        <div style="background: #5C4020; border-left: 4px solid #FFC107; padding: 16px; margin-bottom: 20px; border-radius: 2px;">
+                            <h6 class="mb-3" style="color: #FFC107; font-size: 14px; font-weight: 600; margin: 0 0 12px 0;">
+                                <i class="fas fa-info-circle"></i> Bank Transfer Instructions
+                            </h6>
+                            <p class="mb-2" style="color: #E0E0E0; margin-bottom: 8px;">
+                                <strong style="color: #FFFFFF;">Bank Name:</strong> First National Bank
+                            </p>
+                            <p class="mb-2" style="color: #E0E0E0; margin-bottom: 8px;">
+                                <strong style="color: #FFFFFF;">Account Name:</strong> 360 Degree Supply (Pty) Ltd
+                            </p>
+                            <p class="mb-2" style="color: #E0E0E0; margin-bottom: 8px;">
+                                <strong style="color: #FFFFFF;">Account Number:</strong> 62,123,456,789
+                            </p>
+                            <p class="mb-2" style="color: #E0E0E0; margin-bottom: 8px;">
+                                <strong style="color: #FFFFFF;">Branch Code:</strong> 250,655
+                            </p>
+                            <p class="mb-0" style="color: #E0E0E0; margin-bottom: 8px;">
+                                <strong style="color: #FFFFFF;">Reference:</strong> 
+                                <code style="background: #1C1C1C; color: #DAA520; padding: 4px 8px; border-radius: 2px; font-weight: 600;">{{ invoice.invoice_number }}</code>
+                            </p>
+                            <hr style="border-color: #808080; margin: 12px 0;">
+                            <p class="mb-0" style="color: #FFC107; margin: 0;">
+                                <small><i class="fas fa-exclamation-triangle"></i> Please use your invoice number as the payment reference.</small>
+                            </p>
+                        </div>
+
+                        <!-- Proof of Payment Upload -->
+                        <div class="mb-3">
+                            <label for="proofOfPayment" class="form-label">
+                                <i class="fas fa-upload"></i> UPLOAD PROOF OF PAYMENT *
+                            </label>
+                            <input type="file" class="form-control" id="proofOfPayment" name="proof_of_payment" 
+                                   accept=".pdf,.jpg,.jpeg,.png"
+                                   style="background: #2C2C2C; border: 1px solid #808080; color: #FFFFFF; padding: 10px 12px; width: 100%; border-radius: 2px;">
+                            <div style="color: #C0C0C0; font-size: 12px; margin-top: 8px;">
+                                <i class="fas fa-file-pdf" style="color: #f44336;"></i> PDF or 
+                                <i class="fas fa-file-image" style="color: #2196F3;"></i> Image (JPG, PNG) - Max 16MB
+                            </div>
+                            <div style="margin-top: 12px; padding: 12px; background: #1C4025; border-left: 3px solid #4CAF50; border-radius: 2px;">
+                                <small style="color: #A8E6A8;">
+                                    <i class="fas fa-magic"></i> <strong>Intelligent Processing:</strong> 
+                                    Our system will automatically read and verify your payment details from the uploaded document
+                                </small>
                             </div>
                         </div>
 
-                        <div class="d-grid gap-2 mt-4">
-                            <button type="submit" class="btn btn-lg" style="background-color: var(--secondary); color: white;">
-                                <i class="fas fa-lock"></i> Pay R{{ "%.2f"|format(invoice.remaining_balance()) }}
-                            </button>
-                            <a href="{{ url_for('customer_invoice_detail', invoice_id=invoice.id) }}" class="btn btn-outline-secondary">
-                                Cancel
-                            </a>
+                        <!-- File Preview -->
+                        <div id="filePreview" class="mb-3" style="display: none;">
+                            <div style="background: #2C2C2C; border: 1px solid #4A4A4A; padding: 12px; border-radius: 2px;">
+                                <div style="display: flex; align-items: center;">
+                                    <div style="margin-right: 16px;">
+                                        <i class="fas fa-file-alt fa-2x" style="color: #808080;"></i>
+                                    </div>
+                                    <div style="flex-grow: 1;">
+                                        <h6 id="fileName" style="margin: 0 0 4px 0; color: #FFFFFF; font-size: 14px;"></h6>
+                                        <small id="fileSize" style="color: #C0C0C0;"></small>
+                                    </div>
+                                    <button type="button" onclick="clearFile()" 
+                                            style="background: transparent; border: 1px solid #f44336; color: #f44336; padding: 4px 12px; border-radius: 2px; cursor: pointer;">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
                         </div>
-                    </form>
-                </div>
+                    </div>
+
+                    <div style="background: #2C2C2C; border: 1px solid #808080; padding: 16px; margin-top: 24px; border-radius: 2px;">
+                        <div style="display: flex; align-items: start;">
+                            <input type="checkbox" id="termsAccept" required style="margin-right: 12px; margin-top: 4px;">
+                            <label for="termsAccept" style="color: #E0E0E0; font-size: 14px; margin: 0;">
+                                I agree to the <a href="#" style="color: #DAA520;">terms and conditions</a> and authorize this payment
+                            </label>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 24px;">
+                        <button type="submit" style="background: #DAA520 !important; border: none; color: #000000 !important; padding: 14px 40px; font-size: 18px; font-weight: 700 !important; width: 100%; border-radius: 2px; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 2px 4px rgba(0,0,0,0.3); margin-bottom: 12px;"
+                                onmouseover="this.style.background='#FFC107'"
+                                onmouseout="this.style.background='#DAA520'">
+                            <i class="fas fa-lock"></i> Pay R{{ "{:,.2f}".format(invoice.remaining_balance()) }}
+                        </button>
+                        <a href="{{ url_for('customer_invoice_detail', invoice_id=invoice.id) }}" 
+                           class="grid-action-btn" style="display: block; text-align: center; padding: 12px; width: 100%;">
+                            Cancel
+                        </a>
+                    </div>
+                </form>
             </div>
 
-            <div class="text-center mt-4">
-                <p class="text-muted">
+            <div style="text-align: center; margin-top: 24px;">
+                <p style="color: #C0C0C0; margin: 0;">
                     <i class="fas fa-shield-alt"></i> Secured by 256-bit SSL encryption
                 </p>
             </div>
@@ -393,29 +412,27 @@
     }
     
     .payment-card {
-        border: 2px solid #e0e0e0;
-        border-radius: 8px;
+        border: 2px solid #4A4A4A;
+        border-radius: 2px;
         padding: 20px;
         text-align: center;
         cursor: pointer;
-        transition: all 0.3s;
+        transition: all 0.2s;
         height: 100%;
+        background: #2C2C2C;
     }
     
     .payment-card:hover {
-        border-color: var(--primary);
-        background-color: rgba(26, 71, 42, 0.05);
+        border-color: #DAA520;
+        background-color: #353535;
+        box-shadow: 0 2px 8px rgba(218, 165, 32, 0.3);
     }
     
     .form-check-input:checked ~ .form-check-label .payment-card {
-        border-color: var(--primary);
+        border-color: #DAA520;
         border-width: 3px;
-        background-color: rgba(26, 71, 42, 0.1);
-    }
-    
-    .card {
-        border: none;
-        border-radius: 12px;
+        background-color: #3A3520;
+        box-shadow: 0 0 12px rgba(218, 165, 32, 0.4);
     }
 </style>
 
@@ -445,7 +462,7 @@
             const file = this.files[0];
             if (file) {
                 // Validate file size (16MB max)
-                const maxSize = 16 * 1024 * 1024;
+                const maxSize = 16 * 1,024 * 1,024;
                 if (file.size > maxSize) {
                     alert('File size exceeds 16MB. Please upload a smaller file.');
                     this.value = '';
@@ -477,7 +494,7 @@
     // Format file size helper
     function formatFileSize(bytes) {
         if (bytes === 0) return '0 Bytes';
-        const k = 1024;
+        const k = 1,024;
         const sizes = ['Bytes', 'KB', 'MB'];
         const i = Math.floor(Math.log(bytes) / Math.log(k));
         return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];

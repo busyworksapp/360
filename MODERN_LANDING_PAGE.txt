@@ -1,0 +1,468 @@
+MODERN LANDING PAGE - COPY THIS CONTENT TO templates/index.html
+
+Save this entire content to: templates/index.html
+
+=============================================================================
+
+{% extends "base.html" %}
+
+{% block title %}360Degree Supply - Industrial Supplies{% endblock %}
+
+{% block extra_css %}
+<style>
+    main {
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+    body {
+        background: #000;
+        color: #fff;
+        overflow-x: hidden;
+    }
+
+    .hero-modern {
+        position: relative;
+        min-height: 100vh;
+        background: #000;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .hero-background {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 0;
+    }
+
+    .hero-background::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, rgba(0,0,0,0.7) 0%, rgba(75,0,130,0.5) 50%, rgba(138,43,226,0.3) 100%);
+        z-index: 2;
+    }
+
+    .background-image {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-size: cover;
+        background-position: center;
+        opacity: 0;
+        transition: opacity 2s ease-in-out;
+        z-index: 1;
+    }
+
+    .background-image.active {
+        opacity: 0.4;
+    }
+
+    .gradient-shapes {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 3;
+        pointer-events: none;
+    }
+
+    .shape {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(80px);
+        opacity: 0.6;
+        animation: float 20s infinite ease-in-out;
+    }
+
+    .shape-1 {
+        width: 600px;
+        height: 600px;
+        background: radial-gradient(circle, rgba(138,43,226,0.4) 0%, transparent 70%);
+        top: -200px;
+        right: -100px;
+        animation-delay: 0s;
+    }
+
+    .shape-2 {
+        width: 500px;
+        height: 500px;
+        background: radial-gradient(circle, rgba(75,0,130,0.3) 0%, transparent 70%);
+        bottom: -150px;
+        left: -50px;
+        animation-delay: 5s;
+    }
+
+    .shape-3 {
+        width: 400px;
+        height: 400px;
+        background: radial-gradient(circle, rgba(147,51,234,0.3) 0%, transparent 70%);
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        animation-delay: 10s;
+    }
+
+    @keyframes float {
+        0%, 100% { transform: translate(0, 0) scale(1); }
+        33% { transform: translate(50px, -50px) scale(1.1); }
+        66% { transform: translate(-30px, 30px) scale(0.9); }
+    }
+
+    .contour-lines {
+        position: absolute;
+        top: 50%;
+        right: 5%;
+        transform: translateY(-50%);
+        width: 500px;
+        height: 500px;
+        z-index: 4;
+        opacity: 0.7;
+    }
+
+    .contour {
+        position: absolute;
+        border: 2px solid;
+        border-radius: 50%;
+        animation: pulse 4s infinite ease-in-out;
+    }
+
+    .contour-1 { width: 100%; height: 100%; border-color: rgba(138,43,226,0.6); animation-delay: 0s; }
+    .contour-2 { width: 85%; height: 85%; top: 7.5%; left: 7.5%; border-color: rgba(147,51,234,0.5); animation-delay: 0.5s; }
+    .contour-3 { width: 70%; height: 70%; top: 15%; left: 15%; border-color: rgba(168,85,247,0.4); animation-delay: 1s; }
+    .contour-4 { width: 55%; height: 55%; top: 22.5%; left: 22.5%; border-color: rgba(192,132,252,0.3); animation-delay: 1.5s; }
+    .contour-5 { width: 40%; height: 40%; top: 30%; left: 30%; border-color: rgba(216,180,254,0.2); animation-delay: 2s; }
+
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); opacity: 0.7; }
+        50% { transform: scale(1.05); opacity: 0.4; }
+    }
+
+    .hero-content {
+        position: relative;
+        z-index: 10;
+        max-width: 1200px;
+        padding: 0 40px;
+        width: 100%;
+    }
+
+    .hero-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 60px;
+        align-items: center;
+    }
+
+    .hero-left h1 {
+        font-size: 80px;
+        font-weight: 800;
+        color: #fff;
+        margin-bottom: 30px;
+        line-height: 1;
+        letter-spacing: -2px;
+    }
+
+    .search-bar {
+        position: relative;
+        max-width: 500px;
+        margin-bottom: 30px;
+    }
+
+    .search-bar input {
+        width: 100%;
+        padding: 16px 50px 16px 20px;
+        background: rgba(255,255,255,0.1);
+        border: 2px solid rgba(255,255,255,0.2);
+        border-radius: 50px;
+        color: #fff;
+        font-size: 16px;
+        transition: all 0.3s ease;
+    }
+
+    .search-bar input:focus {
+        outline: none;
+        background: rgba(255,255,255,0.15);
+        border-color: rgba(138,43,226,0.5);
+    }
+
+    .search-bar input::placeholder { color: rgba(255,255,255,0.5); }
+
+    .search-bar button {
+        position: absolute;
+        right: 8px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: transparent;
+        border: none;
+        color: #fff;
+        font-size: 20px;
+        cursor: pointer;
+        padding: 10px 15px;
+    }
+
+    .hero-buttons {
+        display: flex;
+        gap: 15px;
+        margin-top: 30px;
+    }
+
+    .btn-modern {
+        padding: 14px 32px;
+        border-radius: 50px;
+        font-weight: 600;
+        font-size: 16px;
+        transition: all 0.3s ease;
+        border: none;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    .btn-primary-modern {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: #fff;
+        box-shadow: 0 10px 30px rgba(102,126,234,0.3);
+    }
+
+    .btn-primary-modern:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 15px 40px rgba(102,126,234,0.4);
+        color: #fff;
+    }
+
+    .btn-secondary-modern {
+        background: transparent;
+        color: #fff;
+        border: 2px solid rgba(255,255,255,0.3);
+    }
+
+    .btn-secondary-modern:hover {
+        background: rgba(255,255,255,0.1);
+        border-color: rgba(255,255,255,0.5);
+        color: #fff;
+    }
+
+    .hero-right {
+        display: flex;
+        flex-direction: column;
+        gap: 30px;
+    }
+
+    .info-card {
+        background: rgba(255,255,255,0.05);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 20px;
+        padding: 40px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .info-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, rgba(138,43,226,0.1) 0%, rgba(75,0,130,0.05) 100%);
+        z-index: 0;
+    }
+
+    .info-card-content {
+        position: relative;
+        z-index: 1;
+    }
+
+    .info-icon {
+        font-size: 48px;
+        margin-bottom: 20px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .info-card h2 {
+        font-size: 32px;
+        font-weight: 700;
+        margin-bottom: 15px;
+        color: #fff;
+    }
+
+    .info-card p {
+        color: rgba(255,255,255,0.7);
+        line-height: 1.6;
+        font-size: 15px;
+    }
+
+    .scroll-indicator {
+        position: absolute;
+        bottom: 40px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 10;
+        animation: bounce 2s infinite;
+    }
+
+    .scroll-indicator .mouse {
+        width: 30px;
+        height: 50px;
+        border: 2px solid rgba(255,255,255,0.5);
+        border-radius: 15px;
+        position: relative;
+    }
+
+    .scroll-indicator .mouse::before {
+        content: '';
+        position: absolute;
+        top: 8px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 4px;
+        height: 8px;
+        background: rgba(255,255,255,0.5);
+        border-radius: 2px;
+        animation: scroll 1.5s infinite;
+    }
+
+    @keyframes scroll {
+        0% { top: 8px; opacity: 1; }
+        100% { top: 30px; opacity: 0; }
+    }
+
+    @keyframes bounce {
+        0%, 100% { transform: translateX(-50%) translateY(0); }
+        50% { transform: translateX(-50%) translateY(-10px); }
+    }
+
+    @media (max-width: 992px) {
+        .hero-grid { grid-template-columns: 1fr; }
+        .hero-left h1 { font-size: 60px; }
+        .contour-lines { right: 50%; transform: translate(50%, -50%); opacity: 0.3; width: 400px; height: 400px; }
+    }
+
+    @media (max-width: 768px) {
+        .hero-left h1 { font-size: 48px; }
+        .hero-buttons { flex-direction: column; }
+        .btn-modern { width: 100%; text-align: center; }
+        .info-card { padding: 30px; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="hero-modern">
+    <div class="hero-background">
+        <div class="background-image active" style="background-image: url('{{ url_for('static', filename='uploads/facility_5.jpg') }}');"></div>
+        <div class="background-image" style="background-image: url('{{ url_for('static', filename='uploads/fuel_tanker_2.jpg') }}');"></div>
+        <div class="background-image" style="background-image: url('{{ url_for('static', filename='uploads/mining_operation_2.jpg') }}');"></div>
+    </div>
+
+    <div class="gradient-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+    </div>
+
+    <div class="contour-lines">
+        <div class="contour contour-1"></div>
+        <div class="contour contour-2"></div>
+        <div class="contour contour-3"></div>
+        <div class="contour contour-4"></div>
+        <div class="contour contour-5"></div>
+    </div>
+
+    <div class="hero-content">
+        <div class="hero-grid">
+            <div class="hero-left">
+                <h1>Welcome.</h1>
+                
+                <div class="search-bar">
+                    <input type="text" placeholder="Search for products, services..." id="heroSearch">
+                    <button onclick="performSearch()"><i class="fas fa-search"></i></button>
+                </div>
+
+                <div class="hero-buttons">
+                    <a href="{{ url_for('customer_products') }}" class="btn-modern btn-primary-modern">FREE TRIAL</a>
+                    <a href="{{ url_for('customer_products') }}" class="btn-modern btn-secondary-modern">see more</a>
+                </div>
+            </div>
+
+            <div class="hero-right">
+                <div class="info-card">
+                    <div class="info-card-content">
+                        <div class="info-icon"><i class="fas fa-rocket"></i></div>
+                        <h2>Landing page.</h2>
+                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="scroll-indicator" onclick="scrollToContent()"><div class="mouse"></div></div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    let currentImageIndex = 0;
+    const images = document.querySelectorAll('.background-image');
+    
+    function rotateBackgroundImages() {
+        images[currentImageIndex].classList.remove('active');
+        currentImageIndex = (currentImageIndex + 1) % images.length;
+        images[currentImageIndex].classList.add('active');
+    }
+    
+    setInterval(rotateBackgroundImages, 5000);
+    
+    function performSearch() {
+        const searchTerm = document.getElementById('heroSearch').value;
+        if (searchTerm.trim()) {
+            window.location.href = `{{ url_for('customer_products') }}?search=${encodeURIComponent(searchTerm)}`;
+        }
+    }
+    
+    document.getElementById('heroSearch').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') performSearch();
+    });
+    
+    function scrollToContent() {
+        window.scrollTo({ top: window.innerHeight, behavior: 'smooth' });
+    }
+    
+    document.addEventListener('mousemove', (e) => {
+        const shapes = document.querySelectorAll('.shape');
+        const contours = document.querySelectorAll('.contour');
+        const mouseX = e.clientX / window.innerWidth;
+        const mouseY = e.clientY / window.innerHeight;
+        
+        shapes.forEach((shape, index) => {
+            const speed = (index + 1) * 0.5;
+            const x = (mouseX - 0.5) * speed * 50;
+            const y = (mouseY - 0.5) * speed * 50;
+            shape.style.transform = `translate(${x}px, ${y}px)`;
+        });
+        
+        contours.forEach((contour, index) => {
+            const speed = (index + 1) * 0.3;
+            const x = (mouseX - 0.5) * speed * 30;
+            const y = (mouseY - 0.5) * speed * 30;
+            contour.style.transform = `translate(${x}px, ${y}px)`;
+        });
+    });
+</script>
+{% endblock %}

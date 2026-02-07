@@ -44,7 +44,7 @@
     <!-- Order Details -->
     <div class="col-md-8">
         <div class="card mb-4">
-            <div class="card-header bg-light">
+            <div class="card-header" style="background: #353535 !important; color: #FFFFFF !important; border-bottom: 1px solid #4A4A4A !important;" style="background: #353535 !important; color: #FFFFFF !important;">
                 <h5 class="mb-0"><i class="fas fa-user"></i> Customer Information</h5>
             </div>
             <div class="card-body">
@@ -71,7 +71,7 @@
 
         <!-- Order Items -->
         <div class="card mb-4">
-            <div class="card-header bg-light">
+            <div class="card-header" style="background: #353535 !important; color: #FFFFFF !important; border-bottom: 1px solid #4A4A4A !important;" style="background: #353535 !important; color: #FFFFFF !important;">
                 <h5 class="mb-0"><i class="fas fa-list"></i> Order Items</h5>
             </div>
             <div class="card-body">
@@ -95,9 +95,9 @@
                                                 <br><small class="text-muted">SKU: {{ item.product.sku or 'N/A' }}</small>
                                             {% endif %}
                                         </td>
-                                        <td>{{ item.quantity }}</td>
-                                        <td>R{{ "%.2f"|format(item.price_at_purchase) }}</td>
-                                        <td><strong>R{{ "%.2f"|format(item.quantity * item.price_at_purchase) }}</strong></td>
+                                        <td>{{ "{:,}".format(item.quantity) }}</td>
+                                        <td>R {{ "{:,.2f}".format(item.price_at_purchase) }}</td>
+                                        <td><strong>R {{ "{:,.2f}".format(item.quantity * item.price_at_purchase) }}</strong></td>
                                     </tr>
                                 {% endfor %}
                             </tbody>
@@ -111,11 +111,12 @@
 
         <!-- Update Status Form -->
         <div class="card">
-            <div class="card-header bg-light">
+            <div class="card-header" style="background: #353535 !important; color: #FFFFFF !important; border-bottom: 1px solid #4A4A4A !important;" style="background: #353535 !important; color: #FFFFFF !important;">
                 <h5 class="mb-0"><i class="fas fa-sync"></i> Update Status</h5>
             </div>
             <div class="card-body">
                 <form method="POST">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <label for="status" class="form-label">Order Status</label>
@@ -145,27 +146,27 @@
 
     <!-- Order Summary Sidebar -->
     <div class="col-md-4">
-        <div class="card sticky-top" style="top: 20px;">
-            <div class="card-header bg-light">
+        <div class="card sticky-top" style="top: 20px;; border: 1px solid #4A4A4A !important; border: 1px solid #4A4A4A !important">
+            <div class="card-header" style="background: #353535 !important; color: #FFFFFF !important; border-bottom: 1px solid #4A4A4A !important;" style="background: #353535 !important; color: #FFFFFF !important;">
                 <h5 class="mb-0"><i class="fas fa-calculator"></i> Order Summary</h5>
             </div>
             <div class="card-body">
                 <table class="table table-sm table-borderless">
                     <tr>
                         <td>Subtotal:</td>
-                        <td class="text-end"><strong>R{{ "%.2f"|format(order.subtotal or 0) }}</strong></td>
+                        <td class="text-end"><strong>R {{ "{:,.2f}".format(order.subtotal or 0) }}</strong></td>
                     </tr>
                     <tr>
                         <td>Shipping:</td>
-                        <td class="text-end"><strong>R{{ "%.2f"|format(order.shipping_cost or 0) }}</strong></td>
+                        <td class="text-end"><strong>R {{ "{:,.2f}".format(order.shipping_cost or 0) }}</strong></td>
                     </tr>
                     <tr>
                         <td>Tax:</td>
-                        <td class="text-end"><strong>R{{ "%.2f"|format(order.tax_amount or 0) }}</strong></td>
+                        <td class="text-end"><strong>R {{ "{:,.2f}".format(order.tax_amount or 0) }}</strong></td>
                     </tr>
                     <tr style="border-top: 2px solid #dee2e6;">
                         <td><strong>Total:</strong></td>
-                        <td class="text-end"><strong style="font-size: 1.2rem; color: var(--primary);">R{{ "%.2f"|format(order.total_amount) }}</strong></td>
+                        <td class="text-end"><strong style="font-size: 1.2rem; color: #DAA520;">R {{ "{:,.2f}".format(order.total_amount) }}</strong></td>
                     </tr>
                 </table>
 

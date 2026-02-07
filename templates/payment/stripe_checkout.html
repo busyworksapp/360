@@ -8,24 +8,24 @@
     /* Stripe Elements D365 Styling */
     .StripeElement {
         padding: 8px 12px;
-        border: 1px solid #8a8886;
+        border: 1px solid #808080;
         border-radius: 2px;
         font-size: 14px;
-        background: white;
+        background: #353535;
         transition: all 0.2s ease;
     }
 
     .StripeElement--focus {
-        border-color: #0078d4;
+        border-color: #DAA520;
         outline: none;
     }
 
     .StripeElement--invalid {
-        border-color: #a80000;
+        border-color: #f44336;
     }
 
     .card-error {
-        color: #a80000;
+        color: #f44336;
         font-size: 11px;
         margin-top: 8px;
         display: flex;
@@ -55,7 +55,7 @@
 
     <!-- Order Summary Card -->
     {% if order %}
-    <div class="d365-card">
+    <div class="stat-card" style="background: #2C2C2C !important; border: 1px solid #4A4A4A !important;; border: 1px solid #4A4A4A !important; border: 1px solid #4A4A4A !important">
         <div class="card-header-d365">
             <h2>Order Summary</h2>
         </div>
@@ -66,27 +66,27 @@
             </div>
             <div class="order-summary-item">
                 <span class="order-summary-label">Items:</span>
-                <span class="order-summary-value">{{ order.order_items|length }} item(s)</span>
+                <span class="order-summary-value">{{ "{:,}".format(order.order_items|length) }} item(s)</span>
             </div>
             <div class="order-summary-item">
                 <span class="order-summary-label">Subtotal:</span>
-                <span class="order-summary-value">${{ "%.2f"|format(order.subtotal) }}</span>
+                <span class="order-summary-value">${{ "{:,.2f}".format(order.subtotal) }}</span>
             </div>
             {% if order.tax_amount %}
             <div class="order-summary-item">
                 <span class="order-summary-label">Tax:</span>
-                <span class="order-summary-value">${{ "%.2f"|format(order.tax_amount) }}</span>
+                <span class="order-summary-value">${{ "{:,.2f}".format(order.tax_amount) }}</span>
             </div>
             {% endif %}
             {% if order.shipping_cost %}
             <div class="order-summary-item">
                 <span class="order-summary-label">Shipping:</span>
-                <span class="order-summary-value">${{ "%.2f"|format(order.shipping_cost) }}</span>
+                <span class="order-summary-value">${{ "{:,.2f}".format(order.shipping_cost) }}</span>
             </div>
             {% endif %}
             <div class="order-summary-total">
                 <span>Total Amount:</span>
-                <span>${{ "%.2f"|format(order.total_amount) }}</span>
+                <span>${{ "{:,.2f}".format(order.total_amount) }}</span>
             </div>
         </div>
     </div>
@@ -110,13 +110,14 @@
     </div>
 
     <!-- Payment Form Card -->
-    <div class="d365-card">
+    <div class="stat-card" style="background: #2C2C2C !important; border: 1px solid #4A4A4A !important;; border: 1px solid #4A4A4A !important; border: 1px solid #4A4A4A !important">
         <div class="card-header-d365">
             <h2>Payment Details</h2>
             <p>Enter your card information securely</p>
         </div>
         <div class="card-body-d365">
             <form method="POST" id="payment-form" class="payment-form">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                 <input type="hidden" name="order_id" value="{{ order.id if order else '' }}">
                 
                 <!-- Cardholder Name -->
@@ -133,8 +134,8 @@
                 </div>
 
                 <!-- Billing Information -->
-                <div style="margin-top: 24px; padding-top: 24px; border-top: 1px solid #edebe9;">
-                    <h3 style="font-size: 14px; font-weight: 600; color: #323130; margin: 0 0 16px 0;">
+                <div style="margin-top: 24px; padding-top: 24px; border-top: 1px solid #4A4A4A;">
+                    <h3 style="font-size: 14px; font-weight: 600; color: #FFFFFF; margin: 0 0 16px 0;">
                         Billing Information
                     </h3>
 
@@ -183,7 +184,7 @@
                         Cancel
                     </button>
                     <button type="submit" class="btn-d365 btn-d365-primary" id="submit-button">
-                        <span id="button-text">Pay ${{ "%.2f"|format(order.total_amount if order else 0) }}</span>
+                        <span id="button-text">Pay ${{ "{:,.2f}".format(order.total_amount if order else 0) }}</span>
                         <span id="spinner" class="spinner" style="display: none;"></span>
                     </button>
                 </div>
@@ -208,15 +209,15 @@
     const style = {
         base: {
             fontSize: '14px',
-            color: '#323130',
+            color: '#FFFFFF',
             fontFamily: '"Segoe UI", Tahoma, Geneva, Verdana, sans-serif',
             '::placeholder': {
-                color: '#a19f9d',
+                color: '#808080',
             },
         },
         invalid: {
-            color: '#a80000',
-            iconColor: '#a80000',
+            color: '#f44336',
+            iconColor: '#f44336',
         },
     };
     

@@ -15,7 +15,7 @@
 
     <!-- Page Title with Status -->
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-        <h1 style="font-size: 20px; font-weight: 600; margin: 0; color: #323130;">
+        <h1 style="font-size: 20px; font-weight: 600; margin: 0; color: #FFFFFF !important;">
             Transaction Details
         </h1>
         {% if transaction.status == 'completed' %}
@@ -32,30 +32,30 @@
     </div>
 
     <!-- Transaction Information Card -->
-    <div class="d365-card">
+    <div class="stat-card" style="background: #2C2C2C !important; border: 1px solid #4A4A4A !important;; border: 1px solid #4A4A4A !important; border: 1px solid #4A4A4A !important">
         <div class="card-header-d365">
             <div>
-                <h2 style="font-size: 16px; font-weight: 600; margin: 0; color: #323130;">Transaction Information</h2>
-                <small style="font-size: 11px; color: #605e5c; margin-top: 4px; display: block;">
+                <h2 style="font-size: 16px; font-weight: 600; margin: 0; color: #FFFFFF !important;">Transaction Information</h2>
+                <small style="font-size: 11px; color: #C0C0C0; margin-top: 4px; display: block;">
                     {{ transaction.created_at.strftime('%B %d, %Y at %I:%M %p') }}
                 </small>
             </div>
         </div>
-        <div class="card-body-d365" style="padding: 0;">
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0; border-bottom: 1px solid #edebe9;">
+        <div class="card-body-d365" style="padding: 0;; border: 1px solid #4A4A4A !important; border: 1px solid #4A4A4A !important">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0; border-bottom: 1px solid #4A4A4A;">
                 <!-- Left Column -->
-                <div style="padding: 24px; border-right: 1px solid #edebe9;">
+                <div style="padding: 24px; border-right: 1px solid #4A4A4A;">
                     <div style="margin-bottom: 20px;">
-                        <div style="font-size: 11px; color: #605e5c; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">
+                        <div style="font-size: 11px; color: #C0C0C0; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">
                             Transaction ID
                         </div>
-                        <div style="font-size: 14px; color: #323130; font-weight: 600; font-family: 'Courier New', monospace;">
+                        <div style="font-size: 14px; color: #FFFFFF; font-weight: 600; font-family: 'Courier New', monospace;">
                             {{ transaction.payment_reference or transaction.id }}
                         </div>
                     </div>
 
                     <div style="margin-bottom: 20px;">
-                        <div style="font-size: 11px; color: #605e5c; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">
+                        <div style="font-size: 11px; color: #C0C0C0; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">
                             Payment Gateway
                         </div>
                         <div>
@@ -70,11 +70,11 @@
                     </div>
 
                     <div>
-                        <div style="font-size: 11px; color: #605e5c; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">
+                        <div style="font-size: 11px; color: #C0C0C0; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">
                             Amount
                         </div>
-                        <div style="font-size: 24px; color: #0078d4; font-weight: 600;">
-                            ${{ "%.2f"|format(transaction.amount) }}
+                        <div style="font-size: 24px; color: #DAA520; font-weight: 600;">
+                            ${{ "{:,.2f}".format(transaction.amount) }}
                         </div>
                     </div>
                 </div>
@@ -82,38 +82,38 @@
                 <!-- Right Column -->
                 <div style="padding: 24px;">
                     <div style="margin-bottom: 20px;">
-                        <div style="font-size: 11px; color: #605e5c; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">
+                        <div style="font-size: 11px; color: #C0C0C0; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">
                             Order Number
                         </div>
                         <div style="font-size: 14px;">
                             {% if transaction.order %}
-                            <a href="{{ url_for('admin.order_detail', id=transaction.order.id) }}" style="color: #0078d4; text-decoration: none; font-weight: 600;">
+                            <a href="{{ url_for('admin.order_detail', id=transaction.order.id) }}" style="color: #DAA520; text-decoration: none; font-weight: 600;">
                                 #{{ transaction.order.order_number }}
                             </a>
                             {% else %}
-                            <span style="color: #a19f9d;">N/A</span>
+                            <span style="color: #808080;">N/A</span>
                             {% endif %}
                         </div>
                     </div>
 
                     <div style="margin-bottom: 20px;">
-                        <div style="font-size: 11px; color: #605e5c; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">
+                        <div style="font-size: 11px; color: #C0C0C0; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">
                             Customer
                         </div>
-                        <div style="font-size: 14px; color: #323130;">
+                        <div style="font-size: 14px; color: #FFFFFF !important;">
                             {% if transaction.order and transaction.order.customer %}
                             {{ transaction.order.customer.email }}
                             {% else %}
-                            <span style="color: #a19f9d;">N/A</span>
+                            <span style="color: #808080;">N/A</span>
                             {% endif %}
                         </div>
                     </div>
 
                     <div>
-                        <div style="font-size: 11px; color: #605e5c; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">
+                        <div style="font-size: 11px; color: #C0C0C0; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">
                             Transaction Date
                         </div>
-                        <div style="font-size: 14px; color: #323130;">
+                        <div style="font-size: 14px; color: #FFFFFF !important;">
                             {{ transaction.created_at.strftime('%Y-%m-%d %H:%M:%S') }}
                         </div>
                     </div>
@@ -124,34 +124,34 @@
 
     <!-- Order Details Card -->
     {% if transaction.order %}
-    <div class="d365-card">
+    <div class="stat-card" style="background: #2C2C2C !important; border: 1px solid #4A4A4A !important;; border: 1px solid #4A4A4A !important; border: 1px solid #4A4A4A !important">
         <div class="card-header-d365">
             <h2>Order Details</h2>
         </div>
-        <div class="card-body-d365" style="padding: 0;">
+        <div class="card-body-d365" style="padding: 0;; border: 1px solid #4A4A4A !important; border: 1px solid #4A4A4A !important">
             <table style="width: 100%; border-collapse: collapse;">
-                <tr style="border-bottom: 1px solid #f3f2f1;">
-                    <td style="padding: 12px 24px; font-size: 12px; color: #605e5c; width: 30%;">Order Number</td>
-                    <td style="padding: 12px 24px; font-size: 12px; color: #323130; font-weight: 600;">
-                        <a href="{{ url_for('admin.order_detail', id=transaction.order.id) }}" style="color: #0078d4; text-decoration: none;">
+                <tr style="border-bottom: 1px solid #2C2C2C;">
+                    <td style="padding: 12px 24px; font-size: 12px; color: #C0C0C0; width: 30%;">Order Number</td>
+                    <td style="padding: 12px 24px; font-size: 12px; color: #FFFFFF; font-weight: 600;">
+                        <a href="{{ url_for('admin.order_detail', id=transaction.order.id) }}" style="color: #DAA520; text-decoration: none;">
                             #{{ transaction.order.order_number }}
                         </a>
                     </td>
                 </tr>
-                <tr style="border-bottom: 1px solid #f3f2f1;">
-                    <td style="padding: 12px 24px; font-size: 12px; color: #605e5c;">Order Status</td>
-                    <td style="padding: 12px 24px; font-size: 12px; color: #323130; font-weight: 600;">
+                <tr style="border-bottom: 1px solid #2C2C2C;">
+                    <td style="padding: 12px 24px; font-size: 12px; color: #C0C0C0;">Order Status</td>
+                    <td style="padding: 12px 24px; font-size: 12px; color: #FFFFFF; font-weight: 600;">
                         {{ transaction.order.status|upper }}
                     </td>
                 </tr>
-                <tr style="border-bottom: 1px solid #f3f2f1;">
-                    <td style="padding: 12px 24px; font-size: 12px; color: #605e5c;">Order Total</td>
-                    <td style="padding: 12px 24px; font-size: 12px; color: #0078d4; font-weight: 600;">
-                        ${{ "%.2f"|format(transaction.order.total_amount) }}
+                <tr style="border-bottom: 1px solid #2C2C2C;">
+                    <td style="padding: 12px 24px; font-size: 12px; color: #C0C0C0;">Order Total</td>
+                    <td style="padding: 12px 24px; font-size: 12px; color: #DAA520; font-weight: 600;">
+                        ${{ "{:,.2f}".format(transaction.order.total_amount) }}
                     </td>
                 </tr>
-                <tr style="border-bottom: 1px solid #f3f2f1;">
-                    <td style="padding: 12px 24px; font-size: 12px; color: #605e5c;">Payment Status</td>
+                <tr style="border-bottom: 1px solid #2C2C2C;">
+                    <td style="padding: 12px 24px; font-size: 12px; color: #C0C0C0;">Payment Status</td>
                     <td style="padding: 12px 24px; font-size: 12px;">
                         {% if transaction.order.payment_status == 'paid' %}
                         <span class="badge-d365 badge-success">PAID</span>
@@ -164,15 +164,15 @@
                         {% endif %}
                     </td>
                 </tr>
-                <tr style="border-bottom: 1px solid #f3f2f1;">
-                    <td style="padding: 12px 24px; font-size: 12px; color: #605e5c;">Number of Items</td>
-                    <td style="padding: 12px 24px; font-size: 12px; color: #323130; font-weight: 600;">
-                        {{ transaction.order.order_items|length }}
+                <tr style="border-bottom: 1px solid #2C2C2C;">
+                    <td style="padding: 12px 24px; font-size: 12px; color: #C0C0C0;">Number of Items</td>
+                    <td style="padding: 12px 24px; font-size: 12px; color: #FFFFFF; font-weight: 600;">
+                        {{ "{:,}".format(transaction.order.order_items|length) }}
                     </td>
                 </tr>
                 <tr>
-                    <td style="padding: 12px 24px; font-size: 12px; color: #605e5c;">Order Date</td>
-                    <td style="padding: 12px 24px; font-size: 12px; color: #323130; font-weight: 600;">
+                    <td style="padding: 12px 24px; font-size: 12px; color: #C0C0C0;">Order Date</td>
+                    <td style="padding: 12px 24px; font-size: 12px; color: #FFFFFF; font-weight: 600;">
                         {{ transaction.order.created_at.strftime('%B %d, %Y at %I:%M %p') }}
                     </td>
                 </tr>
@@ -183,19 +183,19 @@
 
     <!-- Payment Gateway Response -->
     {% if transaction.gateway_response %}
-    <div class="d365-card">
+    <div class="stat-card" style="background: #2C2C2C !important; border: 1px solid #4A4A4A !important;; border: 1px solid #4A4A4A !important; border: 1px solid #4A4A4A !important">
         <div class="card-header-d365">
             <h2>Gateway Response</h2>
             <p>Raw response data from payment gateway</p>
         </div>
         <div class="card-body-d365">
-            <div style="background: #f3f2f1; padding: 16px; border-radius: 2px; border: 1px solid #edebe9; font-family: 'Courier New', monospace; font-size: 11px; color: #323130; overflow-x: auto; white-space: pre-wrap; word-break: break-all;">{{ transaction.gateway_response }}</div>
+            <div style="background: #2C2C2C; padding: 16px; border-radius: 2px; border: 1px solid #4A4A4A; font-family: 'Courier New', monospace; font-size: 11px; color: #FFFFFF; overflow-x: auto; white-space: pre-wrap; word-break: break-all;">{{ transaction.gateway_response }}</div>
         </div>
     </div>
     {% endif %}
 
     <!-- Timeline/History Card -->
-    <div class="d365-card">
+    <div class="stat-card" style="background: #2C2C2C !important; border: 1px solid #4A4A4A !important;; border: 1px solid #4A4A4A !important; border: 1px solid #4A4A4A !important">
         <div class="card-header-d365">
             <h2>Transaction Timeline</h2>
         </div>
@@ -203,13 +203,13 @@
             <div style="position: relative; padding-left: 32px;">
                 <!-- Timeline Item 1 -->
                 <div style="position: relative; padding-bottom: 24px;">
-                    <div style="position: absolute; left: -26px; top: 4px; width: 12px; height: 12px; border-radius: 50%; background: #0078d4; border: 2px solid white; box-shadow: 0 0 0 2px #0078d4;"></div>
-                    <div style="position: absolute; left: -20px; top: 16px; width: 2px; bottom: 0; background: #edebe9;"></div>
-                    <div style="font-size: 11px; color: #605e5c; margin-bottom: 4px;">
+                    <div style="position: absolute; left: -26px; top: 4px; width: 12px; height: 12px; border-radius: 50%; background: #DAA520; border: 2px solid white; box-shadow: 0 0 0 2px #DAA520;"></div>
+                    <div style="position: absolute; left: -20px; top: 16px; width: 2px; bottom: 0; background: #4A4A4A;"></div>
+                    <div style="font-size: 11px; color: #C0C0C0; margin-bottom: 4px;">
                         {{ transaction.created_at.strftime('%B %d, %Y at %I:%M %p') }}
                     </div>
-                    <div style="font-size: 12px; color: #323130; font-weight: 600;">Transaction Created</div>
-                    <div style="font-size: 12px; color: #605e5c; margin-top: 4px;">
+                    <div style="font-size: 12px; color: #FFFFFF; font-weight: 600;">Transaction Created</div>
+                    <div style="font-size: 12px; color: #C0C0C0; margin-top: 4px;">
                         Payment initiated via {{ transaction.payment_method|upper }}
                     </div>
                 </div>
@@ -217,34 +217,34 @@
                 <!-- Timeline Item 2 -->
                 {% if transaction.status == 'completed' %}
                 <div style="position: relative; padding-bottom: 24px;">
-                    <div style="position: absolute; left: -26px; top: 4px; width: 12px; height: 12px; border-radius: 50%; background: #107c10; border: 2px solid white; box-shadow: 0 0 0 2px #107c10;"></div>
-                    <div style="font-size: 11px; color: #605e5c; margin-bottom: 4px;">
+                    <div style="position: absolute; left: -26px; top: 4px; width: 12px; height: 12px; border-radius: 50%; background: #4CAF50; border: 2px solid white; box-shadow: 0 0 0 2px #4CAF50;"></div>
+                    <div style="font-size: 11px; color: #C0C0C0; margin-bottom: 4px;">
                         {{ transaction.updated_at.strftime('%B %d, %Y at %I:%M %p') if transaction.updated_at else 'N/A' }}
                     </div>
-                    <div style="font-size: 12px; color: #323130; font-weight: 600;">Payment Completed</div>
-                    <div style="font-size: 12px; color: #605e5c; margin-top: 4px;">
+                    <div style="font-size: 12px; color: #FFFFFF; font-weight: 600;">Payment Completed</div>
+                    <div style="font-size: 12px; color: #C0C0C0; margin-top: 4px;">
                         Transaction successfully processed
                     </div>
                 </div>
                 {% elif transaction.status == 'failed' %}
                 <div style="position: relative; padding-bottom: 24px;">
-                    <div style="position: absolute; left: -26px; top: 4px; width: 12px; height: 12px; border-radius: 50%; background: #a80000; border: 2px solid white; box-shadow: 0 0 0 2px #a80000;"></div>
-                    <div style="font-size: 11px; color: #605e5c; margin-bottom: 4px;">
+                    <div style="position: absolute; left: -26px; top: 4px; width: 12px; height: 12px; border-radius: 50%; background: #f44336; border: 2px solid white; box-shadow: 0 0 0 2px #f44336;"></div>
+                    <div style="font-size: 11px; color: #C0C0C0; margin-bottom: 4px;">
                         {{ transaction.updated_at.strftime('%B %d, %Y at %I:%M %p') if transaction.updated_at else 'N/A' }}
                     </div>
-                    <div style="font-size: 12px; color: #323130; font-weight: 600;">Payment Failed</div>
-                    <div style="font-size: 12px; color: #605e5c; margin-top: 4px;">
+                    <div style="font-size: 12px; color: #FFFFFF; font-weight: 600;">Payment Failed</div>
+                    <div style="font-size: 12px; color: #C0C0C0; margin-top: 4px;">
                         Transaction could not be completed
                     </div>
                 </div>
                 {% elif transaction.status == 'pending' %}
                 <div style="position: relative; padding-bottom: 24px;">
-                    <div style="position: absolute; left: -26px; top: 4px; width: 12px; height: 12px; border-radius: 50%; background: #fff4ce; border: 2px solid #f7630c; box-shadow: 0 0 0 2px #fff4ce;"></div>
-                    <div style="font-size: 11px; color: #605e5c; margin-bottom: 4px;">
+                    <div style="position: absolute; left: -26px; top: 4px; width: 12px; height: 12px; border-radius: 50%; background: #FFC107 !important; border: 2px solid #f7630c; box-shadow: 0 0 0 2px #fff4ce;"></div>
+                    <div style="font-size: 11px; color: #C0C0C0; margin-bottom: 4px;">
                         Current Status
                     </div>
-                    <div style="font-size: 12px; color: #323130; font-weight: 600;">Payment Pending</div>
-                    <div style="font-size: 12px; color: #605e5c; margin-top: 4px;">
+                    <div style="font-size: 12px; color: #FFFFFF; font-weight: 600;">Payment Pending</div>
+                    <div style="font-size: 12px; color: #C0C0C0; margin-top: 4px;">
                         Awaiting payment confirmation
                     </div>
                 </div>

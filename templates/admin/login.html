@@ -14,7 +14,7 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #0078d4 0%, #106ebe 50%, #005a9e 100%);
+            background: linear-gradient(135deg, #DAA520 0%, #B8860B 50%, #B8860B 100%);
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -28,14 +28,14 @@
         }
 
         .login-card-d365 {
-            background: #ffffff;
+            background: #2C2C2C !important;
             border-radius: 2px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.15);
             overflow: hidden;
         }
 
         .login-header {
-            background: #323130;
+            background: #2C2C2C !important;
             color: #ffffff;
             padding: 40px 32px;
             text-align: center;
@@ -45,7 +45,7 @@
         .brand-icon {
             font-size: 56px;
             margin-bottom: 16px;
-            color: #0078d4;
+            color: #DAA520;
             text-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
 
@@ -77,14 +77,20 @@
 
         .alert-d365.alert-danger {
             background-color: #fde7e9;
-            border-left: 4px solid #a4262c;
-            color: #323130;
+            border-left: 4px solid #f44336;
+            color: #FFFFFF;
+            background: #4A1C1C !important;
+            color: #FFFFFF !important;
+            border-left: 4px solid #f44336 !important;
         }
 
         .alert-d365.alert-success {
             background-color: #dff6dd;
-            border-left: 4px solid #107c10;
-            color: #323130;
+            border-left: 4px solid #4CAF50;
+            color: #FFFFFF;
+            background: #1C4025 !important;
+            color: #FFFFFF !important;
+            border-left: 4px solid #4CAF50 !important;
         }
 
         .alert-d365 i {
@@ -99,7 +105,7 @@
             display: block;
             font-size: 14px;
             font-weight: 600;
-            color: #323130;
+            color: #FFFFFF;
             margin-bottom: 8px;
         }
 
@@ -110,21 +116,21 @@
         .form-control-d365 {
             width: 100%;
             padding: 10px 40px 10px 12px;
-            border: 1px solid #8a8886;
+            border: 1px solid #808080;
             border-radius: 2px;
             font-size: 14px;
-            color: #323130;
+            color: #FFFFFF;
             transition: border-color 0.2s;
         }
 
         .form-control-d365:focus {
             outline: none;
-            border-color: #0078d4;
-            box-shadow: 0 0 0 1px #0078d4;
+            border-color: #DAA520;
+            box-shadow: 0 0 0 1px #DAA520;
         }
 
         .form-control-d365::placeholder {
-            color: #a19f9d;
+            color: #808080;
         }
 
         .input-icon {
@@ -132,14 +138,14 @@
             right: 12px;
             top: 50%;
             transform: translateY(-50%);
-            color: #605e5c;
+            color: #C0C0C0;
             font-size: 14px;
         }
 
         .btn-login-d365 {
             width: 100%;
             padding: 12px;
-            background-color: #0078d4;
+            background-color: #DAA520;
             color: #ffffff;
             border: none;
             border-radius: 2px;
@@ -154,36 +160,36 @@
         }
 
         .btn-login-d365:hover {
-            background-color: #106ebe;
+            background-color: #B8860B;
         }
 
         .btn-login-d365:active {
-            background-color: #005a9e;
+            background-color: #B8860B;
         }
 
         .login-footer {
             padding: 24px 32px;
-            background-color: #f3f2f1;
+            background-color: #2C2C2C;
             text-align: center;
             font-size: 13px;
-            color: #605e5c;
+            color: #C0C0C0;
         }
 
         .login-footer a {
-            color: #0078d4;
+            color: #DAA520;
             text-decoration: none;
             font-weight: 600;
             transition: color 0.2s;
         }
 
         .login-footer a:hover {
-            color: #106ebe;
+            color: #B8860B;
             text-decoration: underline;
         }
 
         .divider {
             margin: 16px 0;
-            border-top: 1px solid #edebe9;
+            border-top: 1px solid #4A4A4A;
         }
 
         @media (max-width: 480px) {
@@ -274,7 +280,7 @@
             
             <!-- Login Footer -->
             <div class="login-footer">
-                <div>© 2024 360Degree Supply (Pty) Ltd</div>
+                <div>© 2,024 360Degree Supply (Pty) Ltd</div>
                 <div class="divider"></div>
                 <a href="http://localhost:5000/">
                     <i class="fas fa-arrow-left"></i> Back to Website
@@ -286,14 +292,14 @@
 </html>
         
         .login-card {
-            background: white;
+            background: #353535;
             border-radius: 0.75rem;
             box-shadow: 0 10px 40px rgba(0,0,0,0.3);
             overflow: hidden;
         }
         
         .login-header {
-            background: linear-gradient(135deg, var(--primary) 0%, #0f2e1e 100%);
+            background: linear-gradient(135deg, #DAA520 0%, #0f2e1e 100%);
             color: white;
             padding: 2rem 1.5rem;
             text-align: center;
@@ -302,7 +308,7 @@
         .login-header .brand-icon {
             font-size: 3rem;
             margin-bottom: 1rem;
-            color: var(--secondary);
+            color: #808080;
         }
         
         .login-header h3 {
@@ -340,12 +346,12 @@
         }
         
         .form-control:focus {
-            border-color: var(--secondary);
+            border-color: #808080;
             box-shadow: 0 0 0 0.2rem rgba(243,156,18,0.25);
         }
         
         .btn-login {
-            background: linear-gradient(135deg, var(--primary) 0%, #0f2e1e 100%);
+            background: linear-gradient(135deg, #DAA520 0%, #0f2e1e 100%);
             border: none;
             color: white;
             padding: 0.75rem;
@@ -356,7 +362,7 @@
         }
         
         .btn-login:hover {
-            background: var(--secondary);
+            background: #808080;
             color: white;
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
@@ -371,7 +377,7 @@
         }
         
         .login-footer a {
-            color: var(--secondary);
+            color: #808080;
             text-decoration: none;
             font-weight: 600;
         }
@@ -379,12 +385,18 @@
         .alert {
             border-radius: 0.5rem;
             margin-bottom: 1.5rem;
+            background: #2C2C2C !important;
+            color: #FFFFFF !important;
+            border: 1px solid #4A4A4A !important;
         }
         
         .alert-danger {
             background: #ffe5e5;
             border: 1px solid #ffcccc;
             color: #d32f2f;
+            background: #4A1C1C !important;
+            color: #FFFFFF !important;
+            border-left: 4px solid #f44336 !important;
         }
         
         .input-icon {
@@ -396,7 +408,7 @@
             right: 0.75rem;
             top: 50%;
             transform: translateY(-50%);
-            color: var(--secondary);
+            color: #808080;
         }
     </style>
 </head>
@@ -470,7 +482,7 @@
             <!-- Login Footer -->
             <div class="login-footer">
                 <small>
-                    © 2024 360Degree Supply (Pty) Ltd<br>
+                    © 2,024 360Degree Supply (Pty) Ltd<br>
                     <a href="http://localhost:5000/">← Back to Website</a>
                 </small>
             </div>

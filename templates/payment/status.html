@@ -15,13 +15,13 @@
 
     <!-- Status Card -->
     {% if status == 'success' %}
-    <div class="d365-card">
-        <div class="card-header-d365" style="background: #dff6dd; border-color: #107c10;">
+    <div class="stat-card" style="background: #2C2C2C !important; border: 1px solid #4A4A4A !important;; border: 1px solid #4A4A4A !important; border: 1px solid #4A4A4A !important">
+        <div class="card-header-d365" style="background: #4CAF50 !important; border-color: #4CAF50;; border: 1px solid #4A4A4A !important; border: 1px solid #4A4A4A !important">
             <div style="display: flex; align-items: center; gap: 12px;">
                 <span style="font-size: 32px;">✅</span>
                 <div>
-                    <h1 style="color: #107c10; margin: 0;">Payment Successful</h1>
-                    <p style="color: #107c10; margin: 4px 0 0 0;">{{ message }}</p>
+                    <h1 style="color: #4CAF50; margin: 0;">Payment Successful</h1>
+                    <p style="color: #4CAF50; margin: 4px 0 0 0;">{{ message }}</p>
                 </div>
             </div>
         </div>
@@ -36,13 +36,13 @@
     </div>
 
     {% elif status == 'failed' %}
-    <div class="d365-card">
-        <div class="card-header-d365" style="background: #fde7e9; border-color: #a80000;">
+    <div class="stat-card" style="background: #2C2C2C !important; border: 1px solid #4A4A4A !important;; border: 1px solid #4A4A4A !important; border: 1px solid #4A4A4A !important">
+        <div class="card-header-d365" style="background: #f44336 !important; border-color: #f44336;; border: 1px solid #4A4A4A !important; border: 1px solid #4A4A4A !important">
             <div style="display: flex; align-items: center; gap: 12px;">
                 <span style="font-size: 32px;">❌</span>
                 <div>
-                    <h1 style="color: #a80000; margin: 0;">Payment Failed</h1>
-                    <p style="color: #a80000; margin: 4px 0 0 0;">{{ message }}</p>
+                    <h1 style="color: #f44336; margin: 0;">Payment Failed</h1>
+                    <p style="color: #f44336; margin: 4px 0 0 0;">{{ message }}</p>
                 </div>
             </div>
         </div>
@@ -57,13 +57,13 @@
     </div>
 
     {% elif status == 'pending' %}
-    <div class="d365-card">
-        <div class="card-header-d365" style="background: #fff4ce; border-color: #f7630c;">
+    <div class="stat-card" style="background: #2C2C2C !important; border: 1px solid #4A4A4A !important;; border: 1px solid #4A4A4A !important; border: 1px solid #4A4A4A !important">
+        <div class="card-header-d365" style="background: #FFC107 !important; border-color: #f7630c;; border: 1px solid #4A4A4A !important; border: 1px solid #4A4A4A !important">
             <div style="display: flex; align-items: center; gap: 12px;">
                 <span style="font-size: 32px;">⏳</span>
                 <div>
-                    <h1 style="color: #8a8886; margin: 0;">Payment Processing</h1>
-                    <p style="color: #8a8886; margin: 4px 0 0 0;">{{ message }}</p>
+                    <h1 style="color: #808080; margin: 0;">Payment Processing</h1>
+                    <p style="color: #808080; margin: 4px 0 0 0;">{{ message }}</p>
                 </div>
             </div>
         </div>
@@ -78,13 +78,13 @@
     </div>
 
     {% else %}
-    <div class="d365-card">
-        <div class="card-header-d365" style="background: #deecf9; border-color: #0078d4;">
+    <div class="stat-card" style="background: #2C2C2C !important; border: 1px solid #4A4A4A !important;; border: 1px solid #4A4A4A !important; border: 1px solid #4A4A4A !important">
+        <div class="card-header-d365" style="background: #2196F3 !important; border-color: #DAA520;; border: 1px solid #4A4A4A !important; border: 1px solid #4A4A4A !important">
             <div style="display: flex; align-items: center; gap: 12px;">
                 <span style="font-size: 32px;">❓</span>
                 <div>
-                    <h1 style="color: #0078d4; margin: 0;">Unknown Status</h1>
-                    <p style="color: #0078d4; margin: 4px 0 0 0;">{{ message }}</p>
+                    <h1 style="color: #DAA520; margin: 0;">Unknown Status</h1>
+                    <p style="color: #DAA520; margin: 4px 0 0 0;">{{ message }}</p>
                 </div>
             </div>
         </div>
@@ -101,7 +101,7 @@
 
     <!-- Order Information -->
     {% if order %}
-    <div class="d365-card">
+    <div class="stat-card" style="background: #2C2C2C !important; border: 1px solid #4A4A4A !important;; border: 1px solid #4A4A4A !important; border: 1px solid #4A4A4A !important">
         <div class="card-header-d365">
             <div>
                 <div class="transaction-id">Order #{{ order.order_number }}</div>
@@ -124,31 +124,31 @@
 
             <div class="transaction-row">
                 <span class="transaction-label">Number of Items:</span>
-                <span class="transaction-value">{{ order.order_items|length }}</span>
+                <span class="transaction-value">{{ "{:,}".format(order.order_items|length) }}</span>
             </div>
 
             <div class="transaction-row">
                 <span class="transaction-label">Subtotal:</span>
-                <span class="transaction-value">${{ "%.2f"|format(order.subtotal) }}</span>
+                <span class="transaction-value">${{ "{:,.2f}".format(order.subtotal) }}</span>
             </div>
 
             {% if order.tax_amount %}
             <div class="transaction-row">
                 <span class="transaction-label">Tax:</span>
-                <span class="transaction-value">${{ "%.2f"|format(order.tax_amount) }}</span>
+                <span class="transaction-value">${{ "{:,.2f}".format(order.tax_amount) }}</span>
             </div>
             {% endif %}
 
             {% if order.shipping_cost %}
             <div class="transaction-row">
                 <span class="transaction-label">Shipping:</span>
-                <span class="transaction-value">${{ "%.2f"|format(order.shipping_cost) }}</span>
+                <span class="transaction-value">${{ "{:,.2f}".format(order.shipping_cost) }}</span>
             </div>
             {% endif %}
 
-            <div class="transaction-row" style="border-top: 2px solid #0078d4; padding-top: 16px; margin-top: 12px;">
-                <span class="transaction-label" style="font-size: 14px; font-weight: 600; color: #0078d4;">Total Amount:</span>
-                <span class="transaction-value" style="font-size: 16px; font-weight: 600; color: #0078d4;">${{ "%.2f"|format(order.total_amount) }}</span>
+            <div class="transaction-row" style="border-top: 2px solid #DAA520; padding-top: 16px; margin-top: 12px;">
+                <span class="transaction-label" style="font-size: 14px; font-weight: 600; color: #DAA520;">Total Amount:</span>
+                <span class="transaction-value" style="font-size: 16px; font-weight: 600; color: #DAA520;">${{ "{:,.2f}".format(order.total_amount) }}</span>
             </div>
         </div>
     </div>
@@ -156,7 +156,7 @@
 
     <!-- Transaction Details -->
     {% if transaction %}
-    <div class="d365-card">
+    <div class="stat-card" style="background: #2C2C2C !important; border: 1px solid #4A4A4A !important;; border: 1px solid #4A4A4A !important; border: 1px solid #4A4A4A !important">
         <div class="card-header-d365">
             <h2>Transaction Details</h2>
         </div>
@@ -188,7 +188,7 @@
 
             <div class="transaction-row">
                 <span class="transaction-label">Amount:</span>
-                <span class="transaction-value">${{ "%.2f"|format(transaction.amount) }}</span>
+                <span class="transaction-value">${{ "{:,.2f}".format(transaction.amount) }}</span>
             </div>
 
             <div class="transaction-row">

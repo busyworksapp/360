@@ -3,7 +3,7 @@
 {% block title %}Contact Submissions - Admin{% endblock %}
 
 {% block content %}
-<div style="padding: 16px; background: #faf9f8;">
+<div style="padding: 16px; background: #1C1C1C;">
     <!-- Breadcrumb Navigation -->
     <div class="breadcrumb-d365">
         <a href="{{ url_for('admin_dashboard') }}">Home</a>
@@ -12,7 +12,7 @@
     </div>
     
     <!-- Page Title -->
-    <h1 style="font-size: 20px; font-weight: 600; margin: 4px 0 16px 0; color: #323130;">
+    <h1 style="font-size: 20px; font-weight: 600; margin: 4px 0 16px 0; color: #FFFFFF !important;">
         Contact Submissions
     </h1>
     
@@ -35,8 +35,8 @@
     </div>
     
     <!-- Table Card -->
-    <div class="d365-card">
-        <div class="card-body-d365" style="padding: 0;">
+    <div class="stat-card" style="background: #2C2C2C !important; border: 1px solid #4A4A4A !important;; border: 1px solid #4A4A4A !important; border: 1px solid #4A4A4A !important">
+        <div class="card-body-d365" style="padding: 0;; border: 1px solid #4A4A4A !important; border: 1px solid #4A4A4A !important">
             <table class="table-d365" id="contactsTable">
                 <thead>
                     <tr>
@@ -113,7 +113,7 @@
                             {% if contact.phone %}
                                 <a href="tel:{{ contact.phone }}">{{ contact.phone }}</a>
                             {% else %}
-                                <span style="color: #a19f9d;">N/A</span>
+                                <span style="color: #808080;">N/A</span>
                             {% endif %}
                         </td>
                         <td style="font-weight: 600;">{{ contact.subject }}</td>
@@ -134,7 +134,7 @@
                     </tr>
                     {% else %}
                     <tr>
-                        <td colspan="7" style="text-align: center; padding: 24px; color: #605e5c;">
+                        <td colspan="7" style="text-align: center; padding: 24px; color: #C0C0C0;">
                             No contact submissions found
                         </td>
                     </tr>
@@ -145,8 +145,8 @@
     </div>
     
     <!-- Footer -->
-    <div style="margin-top: 12px; font-size: 12px; color: #605e5c;">
-        <span>Total records: {{ contacts|length }}</span>
+    <div style="margin-top: 12px; font-size: 12px; color: #C0C0C0;">
+        <span>Total records: {{ "{:,}".format(contacts|length) }}</span>
     </div>
 </div>
 
@@ -154,45 +154,45 @@
 {% for contact in contacts %}
 <div class="modal fade" id="viewMessage{{ contact.id }}" tabindex="-1">
     <div class="modal-dialog modal-lg">
-        <div class="modal-content" style="border-radius: 2px; border: 1px solid #edebe9;">
-            <div class="modal-header" style="background: #323130; color: white; padding: 16px 24px; border-bottom: none;">
+        <div class="modal-content" style="border-radius: 2px; border: 1px solid #4A4A4A;">
+            <div class="modal-header" style="background: #2C2C2C !important; color: white; padding: 16px 24px; border-bottom: none;">
                 <h5 class="modal-title" style="font-size: 16px; font-weight: 600;">Message from {{ contact.name }}</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body" style="padding: 24px;">
                 <div class="row mb-3">
                     <div class="col-md-6">
-                        <p style="margin-bottom: 8px;"><strong style="color: #323130;">Name:</strong><br>{{ contact.name }}</p>
+                        <p style="margin-bottom: 8px;"><strong style="color: #FFFFFF !important;">Name:</strong><br>{{ contact.name }}</p>
                     </div>
                     <div class="col-md-6">
-                        <p style="margin-bottom: 8px;"><strong style="color: #323130;">Email:</strong><br><a href="mailto:{{ contact.email }}" style="color: #0078d4;">{{ contact.email }}</a></p>
+                        <p style="margin-bottom: 8px;"><strong style="color: #FFFFFF !important;">Email:</strong><br><a href="mailto:{{ contact.email }}" style="color: #DAA520;">{{ contact.email }}</a></p>
                     </div>
                 </div>
                 <div class="row mb-3">
                     <div class="col-md-6">
-                        <p style="margin-bottom: 8px;"><strong style="color: #323130;">Phone:</strong><br>
+                        <p style="margin-bottom: 8px;"><strong style="color: #FFFFFF !important;">Phone:</strong><br>
                             {% if contact.phone %}
-                                <a href="tel:{{ contact.phone }}" style="color: #0078d4;">{{ contact.phone }}</a>
+                                <a href="tel:{{ contact.phone }}" style="color: #DAA520;">{{ contact.phone }}</a>
                             {% else %}
-                                <span style="color: #a19f9d;">N/A</span>
+                                <span style="color: #808080;">N/A</span>
                             {% endif %}
                         </p>
                     </div>
                     <div class="col-md-6">
-                        <p style="margin-bottom: 8px;"><strong style="color: #323130;">Date:</strong><br>{{ contact.created_at.strftime('%d %b %Y, %H:%M') }}</p>
+                        <p style="margin-bottom: 8px;"><strong style="color: #FFFFFF !important;">Date:</strong><br>{{ contact.created_at.strftime('%d %b %Y, %H:%M') }}</p>
                     </div>
                 </div>
                 <div class="mb-3">
-                    <p style="margin-bottom: 8px;"><strong style="color: #323130;">Subject:</strong><br>{{ contact.subject }}</p>
+                    <p style="margin-bottom: 8px;"><strong style="color: #FFFFFF !important;">Subject:</strong><br>{{ contact.subject }}</p>
                 </div>
                 <div>
-                    <p style="margin-bottom: 8px;"><strong style="color: #323130;">Message:</strong></p>
-                    <div style="padding: 12px; background: #faf9f8; border-left: 3px solid #0078d4; border-radius: 2px;">
+                    <p style="margin-bottom: 8px;"><strong style="color: #FFFFFF !important;">Message:</strong></p>
+                    <div style="padding: 12px; background: #1C1C1C; border-left: 3px solid #DAA520; border-radius: 2px;">
                         {{ contact.message }}
                     </div>
                 </div>
             </div>
-            <div class="modal-footer" style="padding: 16px 24px; background: #faf9f8; border-top: 1px solid #edebe9;">
+            <div class="modal-footer" style="padding: 16px 24px; background: #1C1C1C; border-top: 1px solid #4A4A4A;">
                 <button type="button" class="btn-d365-secondary" data-bs-dismiss="modal">Close</button>
                 <a href="mailto:{{ contact.email }}" class="btn-d365-primary">
                     <i class="fas fa-reply"></i> Reply
@@ -204,6 +204,25 @@
 {% endfor %}
 
 <script>
+// Add event listeners when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    // Add change event to all checkboxes
+    const checkboxes = document.querySelectorAll('.row-select');
+    checkboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            const row = this.closest('tr');
+            if (this.checked) {
+                row.classList.add('selected');
+            } else {
+                row.classList.remove('selected');
+            }
+            updateCommandBar();
+        });
+    });
+    // Initial update
+    updateCommandBar();
+});
+
 function toggleSelectAll(checkbox) {
     const checkboxes = document.querySelectorAll('.row-select');
     checkboxes.forEach(cb => {

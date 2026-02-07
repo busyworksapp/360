@@ -13,7 +13,7 @@
             <span class="separator">/</span>
             <span>{% if service %}Edit{% else %}Add{% endif %}</span>
         </div>
-        <h1 style="font-size: 20px; font-weight: 600; margin: 4px 0 0 0; color: #323130;">
+        <h1 style="font-size: 20px; font-weight: 600; margin: 4px 0 0 0; color: #FFFFFF !important;">
             <i class="fas fa-cogs"></i> {% if service %}Edit Service{% else %}Add New Service{% endif %}
         </h1>
     </div>
@@ -29,28 +29,29 @@
     </div>
 
     <!-- Service Form -->
-    <div class="d365-card">
+    <div class="stat-card" style="background: #2C2C2C !important; border: 1px solid #4A4A4A !important;; border: 1px solid #4A4A4A !important; border: 1px solid #4A4A4A !important">
         <div class="card-body-d365">
             <form method="POST" enctype="multipart/form-data">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
                     <div class="form-group-d365">
                         <label class="form-label-d365" for="title">Service Title *</label>
                         <input type="text" class="form-control-d365" id="title" name="title" 
                                value="{{ service.title or '' }}" required>
-                        <small style="font-size: 11px; color: #605e5c;">The main title of your service</small>
+                        <small style="font-size: 11px; color: #C0C0C0;">The main title of your service</small>
                     </div>
                     <div class="form-group-d365">
                         <label class="form-label-d365" for="icon">Icon (Font Awesome) *</label>
                         <input type="text" class="form-control-d365" id="icon" name="icon" 
                                value="{{ service.icon or 'fa-box' }}" placeholder="fa-box">
-                        <small style="font-size: 11px; color: #605e5c;">Example: fa-cog, fa-cube, fa-truck</small>
+                        <small style="font-size: 11px; color: #C0C0C0;">Example: fa-cog, fa-cube, fa-truck</small>
                     </div>
                 </div>
 
                 <div class="form-group-d365">
                     <label class="form-label-d365" for="description">Description *</label>
                     <textarea class="form-control-d365" id="description" name="description" rows="4" required>{{ service.description or '' }}</textarea>
-                    <small style="font-size: 11px; color: #605e5c;">Brief description of the service</small>
+                    <small style="font-size: 11px; color: #C0C0C0;">Brief description of the service</small>
                 </div>
 
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
@@ -58,12 +59,12 @@
                         <label class="form-label-d365" for="order_position">Display Order</label>
                         <input type="number" class="form-control-d365" id="order_position" name="order_position" 
                                value="{{ service.order_position or 0 }}" min="0">
-                        <small style="font-size: 11px; color: #605e5c;">Lower numbers appear first</small>
+                        <small style="font-size: 11px; color: #C0C0C0;">Lower numbers appear first</small>
                     </div>
                     <div class="form-group-d365">
                         <label class="form-label-d365" for="image">Service Image</label>
                         <input type="file" class="form-control-d365" id="image" name="image" accept="image/*">
-                        <small style="font-size: 11px; color: #605e5c;">JPG, PNG, GIF (max 5MB)</small>
+                        <small style="font-size: 11px; color: #C0C0C0;">JPG, PNG, GIF (max 5MB)</small>
                     </div>
                 </div>
 
@@ -72,21 +73,21 @@
                     <label class="form-label-d365">Current Image</label>
                     <div>
                         <img src="{{ service.image_url }}" alt="{{ service.title }}" 
-                             style="max-width: 200px; border: 1px solid #edebe9; border-radius: 2px; padding: 8px; background: white;">
+                             style="max-width: 200px; border: 1px solid #4A4A4A; border-radius: 2px; padding: 8px; background: #353535;">
                     </div>
                 </div>
                 {% endif %}
 
                 <div style="margin-bottom: 16px;">
-                    <label style="display: flex; align-items: center; cursor: pointer; font-size: 14px; color: #323130;">
+                    <label style="display: flex; align-items: center; cursor: pointer; font-size: 14px; color: #FFFFFF !important;">
                         <input type="checkbox" id="is_active" name="is_active"
                                {% if service is none or service.is_active %}checked{% endif %}
                                style="margin-right: 8px; width: 16px; height: 16px; cursor: pointer;">
-                        <i class="fas fa-check" style="color: #107c10; margin-right: 4px;"></i> Active (display on website)
+                        <i class="fas fa-check" style="color: #4CAF50; margin-right: 4px;"></i> Active (display on website)
                     </label>
                 </div>
 
-                <div style="display: flex; gap: 8px; padding-top: 16px; border-top: 1px solid #edebe9;">
+                <div style="display: flex; gap: 8px; padding-top: 16px; border-top: 1px solid #4A4A4A;">
                     <button type="submit" class="btn-d365-primary">
                         <i class="fas fa-save"></i> {% if service %}Update Service{% else %}Create Service{% endif %}
                     </button>

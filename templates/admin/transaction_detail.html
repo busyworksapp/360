@@ -45,7 +45,7 @@
         <p class="mb-0">Transaction processed on {{ transaction.created_at.strftime('%d %B %Y at %H:%M:%S') }}</p>
     </div>
     <div>
-        <h3 class="mb-0">R {{ "%.2f"|format(transaction.amount) }}</h3>
+        <h3 class="mb-0">R {{ "{:,.2f}".format(transaction.amount) }}</h3>
     </div>
 </div>
 
@@ -125,7 +125,7 @@
                             </div>
                             <div>
                                 <small class="text-muted d-block">Amount Paid</small>
-                                <h4 class="mb-0 text-success">R {{ "%.2f"|format(transaction.amount) }}</h4>
+                                <h4 class="mb-0 text-success">R {{ "{:,.2f}".format(transaction.amount) }}</h4>
                             </div>
                         </div>
                     </div>
@@ -158,7 +158,7 @@
                             </div>
                             <div>
                                 <small class="text-muted d-block">Payment Reference</small>
-                                <code class="bg-light px-2 py-1 rounded">{{ transaction.payment_reference }}</code>
+                                <code class="bg-light px-2 py-1 rounded" style="background: #353535 !important; color: #FFFFFF !important;">{{ transaction.payment_reference }}</code>
                             </div>
                         </div>
                     </div>
@@ -275,7 +275,7 @@
                 <hr>
                 <div class="mb-0">
                     <small class="text-muted d-block mb-1">Total Amount</small>
-                    <h4 class="mb-0 text-success">R {{ "%.2f"|format(transaction.amount) }}</h4>
+                    <h4 class="mb-0 text-success">R {{ "{:,.2f}".format(transaction.amount) }}</h4>
                 </div>
             </div>
         </div>

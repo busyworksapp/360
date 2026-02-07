@@ -13,7 +13,7 @@
             <span class="separator">/</span>
             <span>Create</span>
         </div>
-        <h1 style="font-size: 20px; font-weight: 600; margin: 4px 0 0 0; color: #323130;">
+        <h1 style="font-size: 20px; font-weight: 600; margin: 4px 0 0 0; color: #FFFFFF !important;">
             <i class="fas fa-file-invoice"></i> Create New Invoice
         </h1>
     </div>
@@ -29,11 +29,12 @@
     </div>
 
     <form method="POST" id="invoiceForm">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
         <div style="display: grid; grid-template-columns: 350px 1fr; gap: 16px;">
             <!-- Left Sidebar -->
             <div>
                 <!-- Customer Selection Card -->
-                <div class="d365-card" style="margin-bottom: 16px;">
+                <div class="stat-card" style="margin-bottom: 16px;; border: 1px solid #4A4A4A !important; border: 1px solid #4A4A4A !important">
                     <div class="card-header-d365">
                         <h3 class="card-title-d365"><i class="fas fa-user"></i> Customer Information</h3>
                     </div>
@@ -53,21 +54,21 @@
                             </select>
                         </div>
 
-                        <div id="customerInfo" style="display: none; margin-top: 16px; padding-top: 16px; border-top: 1px solid #edebe9;">
-                            <div style="font-size: 12px; color: #605e5c; margin-bottom: 8px;">
-                                <strong style="color: #323130;">Email:</strong><br>
+                        <div id="customerInfo" style="display: none; margin-top: 16px; padding-top: 16px; border-top: 1px solid #4A4A4A;">
+                            <div style="font-size: 12px; color: #C0C0C0; margin-bottom: 8px;">
+                                <strong style="color: #FFFFFF !important;">Email:</strong><br>
                                 <span id="customerEmail"></span>
                             </div>
-                            <div style="font-size: 12px; color: #605e5c; margin-bottom: 8px;">
-                                <strong style="color: #323130;">Company:</strong><br>
+                            <div style="font-size: 12px; color: #C0C0C0; margin-bottom: 8px;">
+                                <strong style="color: #FFFFFF !important;">Company:</strong><br>
                                 <span id="customerCompany">-</span>
                             </div>
-                            <div style="font-size: 12px; color: #605e5c; margin-bottom: 8px;">
-                                <strong style="color: #323130;">Total Orders:</strong><br>
+                            <div style="font-size: 12px; color: #C0C0C0; margin-bottom: 8px;">
+                                <strong style="color: #FFFFFF !important;">Total Orders:</strong><br>
                                 <span id="customerOrderCount">0</span>
                             </div>
-                            <div style="font-size: 12px; color: #605e5c;">
-                                <strong style="color: #323130;">Total Value:</strong><br>
+                            <div style="font-size: 12px; color: #C0C0C0;">
+                                <strong style="color: #FFFFFF !important;">Total Value:</strong><br>
                                 R<span id="customerTotalValue">0.00</span>
                             </div>
                         </div>
@@ -75,7 +76,7 @@
                 </div>
 
                 <!-- Invoice Settings Card -->
-                <div class="d365-card">
+                <div class="stat-card" style="background: #2C2C2C !important; border: 1px solid #4A4A4A !important;; border: 1px solid #4A4A4A !important; border: 1px solid #4A4A4A !important">
                     <div class="card-header-d365">
                         <h3 class="card-title-d365"><i class="fas fa-cog"></i> Invoice Settings</h3>
                     </div>
@@ -100,8 +101,8 @@
 
             <!-- Main Content -->
             <div>
-                <div class="d365-card">
-                    <div class="card-header-d365" style="display: flex; justify-content: space-between; align-items: center;">
+                <div class="stat-card" style="background: #2C2C2C !important; border: 1px solid #4A4A4A !important;; border: 1px solid #4A4A4A !important; border: 1px solid #4A4A4A !important">
+                    <div class="card-header-d365" style="display: flex; justify-content: space-between; align-items: center;; border: 1px solid #4A4A4A !important; border: 1px solid #4A4A4A !important">
                         <h3 class="card-title-d365"><i class="fas fa-shopping-cart"></i> Select Orders to Invoice</h3>
                         <div>
                             <button type="button" class="btn-d365-secondary" style="font-size: 11px; padding: 4px 10px; margin-right: 4px;" id="selectAllOrders">
@@ -114,15 +115,15 @@
                     </div>
                     <div class="card-body-d365">
                         <div id="ordersContainer">
-                            <div style="text-align: center; padding: 60px 20px; color: #a19f9d;">
+                            <div style="text-align: center; padding: 60px 20px; color: #808080;">
                                 <i class="fas fa-user-circle" style="font-size: 48px; margin-bottom: 16px;"></i>
-                                <p style="font-size: 14px; color: #605e5c; margin: 0;">Select a customer to view their orders</p>
+                                <p style="font-size: 14px; color: #C0C0C0; margin: 0;">Select a customer to view their orders</p>
                             </div>
                         </div>
 
                         <div id="noOrdersMessage" style="display: none;">
-                            <div style="background: #f3f2f1; border-left: 3px solid #0078d4; padding: 12px 16px; border-radius: 2px;">
-                                <i class="fas fa-info-circle" style="color: #0078d4;"></i> This customer has no orders yet.
+                            <div style="background: #2C2C2C; border-left: 3px solid #DAA520; padding: 12px 16px; border-radius: 2px;">
+                                <i class="fas fa-info-circle" style="color: #DAA520;"></i> This customer has no orders yet.
                             </div>
                         </div>
 
@@ -167,21 +168,21 @@
                                 </table>
                             </div>
 
-                            <div style="margin-top: 16px; padding: 16px; background: #faf9f8; border: 1px solid #edebe9; border-radius: 2px;">
+                            <div style="margin-top: 16px; padding: 16px; background: #1C1C1C; border: 1px solid #4A4A4A; border-radius: 2px;">
                                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
                                     <div>
-                                        <p style="font-size: 12px; color: #605e5c; margin-bottom: 4px;">Selected Orders: <strong style="color: #323130;" id="selectedCount">0</strong></p>
+                                        <p style="font-size: 12px; color: #C0C0C0; margin-bottom: 4px;">Selected Orders: <strong style="color: #FFFFFF !important;" id="selectedCount">0</strong></p>
                                     </div>
                                     <div style="text-align: right;">
-                                        <p style="font-size: 12px; color: #605e5c; margin-bottom: 4px;">Subtotal: <strong style="color: #323130;">R<span id="selectedSubtotal">0.00</span></strong></p>
-                                        <p style="font-size: 12px; color: #605e5c; margin-bottom: 4px;">Tax: <strong style="color: #323130;">R<span id="selectedTax">0.00</span></strong></p>
-                                        <p style="font-size: 16px; font-weight: 600; margin: 0; color: #0078d4;">Total: R<span id="selectedTotal">0.00</span></p>
+                                        <p style="font-size: 12px; color: #C0C0C0; margin-bottom: 4px;">Subtotal: <strong style="color: #FFFFFF !important;">R<span id="selectedSubtotal">0.00</span></strong></p>
+                                        <p style="font-size: 12px; color: #C0C0C0; margin-bottom: 4px;">Tax: <strong style="color: #FFFFFF !important;">R<span id="selectedTax">0.00</span></strong></p>
+                                        <p style="font-size: 16px; font-weight: 600; margin: 0; color: #DAA520;">Total: R<span id="selectedTotal">0.00</span></p>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div style="padding: 12px 16px; border-top: 1px solid #edebe9; text-align: right; background: #faf9f8;">
+                    <div style="padding: 12px 16px; border-top: 1px solid #4A4A4A; text-align: right; background: #1C1C1C;">
                         <button type="submit" class="btn-d365-primary" id="createInvoiceBtn" disabled>
                             <i class="fas fa-file-invoice"></i> Create Invoice
                         </button>
@@ -198,7 +199,7 @@
         transition: background-color 0.1s;
     }
     .order-row:hover {
-        background-color: #f3f2f1;
+        background-color: #2C2C2C;
     }
     .order-row.selected {
         background-color: #deecf9;
@@ -215,9 +216,9 @@ document.getElementById('customer_id').addEventListener('change', function() {
     if (!customerId) {
         document.getElementById('customerInfo').style.display = 'none';
         document.getElementById('ordersContainer').innerHTML = `
-            <div style="text-align: center; padding: 60px 20px; color: #a19f9d;">
+            <div style="text-align: center; padding: 60px 20px; color: #808080;">
                 <i class="fas fa-user-circle" style="font-size: 48px; margin-bottom: 16px;"></i>
-                <p style="font-size: 14px; color: #605e5c; margin: 0;">Select a customer to view their orders</p>
+                <p style="font-size: 14px; color: #C0C0C0; margin: 0;">Select a customer to view their orders</p>
             </div>
         `;
         document.getElementById('createInvoiceBtn').disabled = true;

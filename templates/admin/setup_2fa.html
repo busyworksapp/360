@@ -39,6 +39,7 @@
                     </p>
 
                     <form method="POST" action="{{ url_for('setup_2fa') }}" onsubmit="return confirm('Are you sure you want to disable 2FA? This will make your account less secure.');">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                         <input type="hidden" name="action" value="disable">
                         
                         <div class="form-group mb-3">
@@ -102,6 +103,7 @@
                     <p class="text-muted mb-3">After scanning, your app will generate a 6-digit code. Enter it below to complete setup:</p>
 
                     <form method="POST" action="{{ url_for('setup_2fa') }}">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                         <input type="hidden" name="action" value="enable">
                         
                         <div class="form-group mb-3">

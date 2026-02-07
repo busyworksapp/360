@@ -8,20 +8,20 @@
         max-width: 1400px;
         margin: 0 auto;
         padding: 24px;
-        background-color: #faf9f8;
+        background-color: #1C1C1C;
         min-height: 100vh;
     }
 
     .page-header-d365 {
         margin-bottom: 24px;
         padding-bottom: 16px;
-        border-bottom: 2px solid #0078d4;
+        border-bottom: 2px solid #DAA520;
     }
 
     .page-title-d365 {
         font-size: 28px;
         font-weight: 600;
-        color: #323130;
+        color: #FFFFFF;
         margin: 0;
     }
 
@@ -33,7 +33,7 @@
     }
 
     .stat-card-d365 {
-        background: linear-gradient(135deg, #0078d4 0%, #106ebe 100%);
+        background: #2C2C2C !important!important;
         color: #ffffff;
         padding: 24px;
         border-radius: 2px;
@@ -43,15 +43,15 @@
     }
 
     .stat-card-d365.products {
-        background: linear-gradient(135deg, #107c10 0%, #094509 100%);
+        background: #2C2C2C !important!important;
     }
 
     .stat-card-d365.transactions {
-        background: linear-gradient(135deg, #d83b01 0%, #a52a00 100%);
+        background: #2C2C2C !important!important;
     }
 
     .stat-card-d365.messages {
-        background: linear-gradient(135deg, #8764b8 0%, #5c2e91 100%);
+        background: #2C2C2C !important!important;
     }
 
     .stat-card-d365 h5 {
@@ -86,8 +86,8 @@
     }
 
     .d365-card {
-        background: #ffffff;
-        border: 1px solid #edebe9;
+        background: #2C2C2C !important;
+        border: 1px solid #4A4A4A;
         border-radius: 2px;
         padding: 24px;
     }
@@ -95,10 +95,10 @@
     .card-header-d365 {
         font-size: 18px;
         font-weight: 600;
-        color: #323130;
+        color: #FFFFFF;
         margin-bottom: 16px;
         padding-bottom: 12px;
-        border-bottom: 1px solid #edebe9;
+        border-bottom: 1px solid #4A4A4A;
         display: flex;
         align-items: center;
         gap: 8px;
@@ -110,23 +110,23 @@
     }
 
     .table-d365 thead {
-        background-color: #f3f2f1;
-        border-bottom: 2px solid #edebe9;
+        background-color: #2C2C2C;
+        border-bottom: 2px solid #4A4A4A;
     }
 
     .table-d365 th {
         padding: 12px 8px;
         text-align: left;
         font-weight: 600;
-        color: #323130;
+        color: #FFFFFF;
         font-size: 13px;
     }
 
     .table-d365 td {
         padding: 12px 8px;
-        border-bottom: 1px solid #edebe9;
+        border-bottom: 1px solid #4A4A4A;
         font-size: 13px;
-        color: #323130;
+        color: #FFFFFF;
     }
 
     .table-d365 tr:last-child td {
@@ -134,7 +134,7 @@
     }
 
     .table-d365 tbody tr:hover {
-        background-color: #f3f2f1;
+        background-color: #2C2C2C;
     }
 
     .badge-d365 {
@@ -147,7 +147,7 @@
 
     .badge-d365.success {
         background-color: #dff6dd;
-        color: #107c10;
+        color: #4CAF50;
     }
 
     .badge-d365.warning {
@@ -157,17 +157,17 @@
 
     .badge-d365.danger {
         background-color: #fde7e9;
-        color: #a4262c;
+        color: #f44336;
     }
 
     .badge-d365.info {
         background-color: #e1dfdd;
-        color: #605e5c;
+        color: #C0C0C0;
     }
 
     .btn-d365-primary {
         padding: 10px 20px;
-        background-color: #0078d4;
+        background-color: #DAA520;
         color: #ffffff;
         border: none;
         border-radius: 2px;
@@ -182,7 +182,7 @@
     }
 
     .btn-d365-primary:hover {
-        background-color: #106ebe;
+        background-color: #B8860B;
         color: #ffffff;
         text-decoration: none;
     }
@@ -196,7 +196,7 @@
     .empty-state {
         text-align: center;
         padding: 40px 20px;
-        color: #605e5c;
+        color: #C0C0C0;
     }
 
     .empty-state i {
@@ -234,19 +234,19 @@
     <div class="stats-grid">
         <div class="stat-card-d365">
             <h5><i class="fas fa-cogs"></i> Services</h5>
-            <div class="value">{{ total_services }}</div>
+            <div class="value">{{ "{:,}".format(total_services) }}</div>
             <i class="fas fa-cogs icon-bg"></i>
         </div>
         
         <div class="stat-card-d365 products">
             <h5><i class="fas fa-box"></i> Products</h5>
-            <div class="value">{{ total_products }}</div>
+            <div class="value">{{ "{:,}".format(total_products) }}</div>
             <i class="fas fa-box icon-bg"></i>
         </div>
         
         <div class="stat-card-d365 transactions">
             <h5><i class="fas fa-credit-card"></i> Transactions</h5>
-            <div class="value">{{ total_transactions }}</div>
+            <div class="value">{{ "{:,}".format(total_transactions) }}</div>
             <i class="fas fa-credit-card icon-bg"></i>
         </div>
         
@@ -260,7 +260,7 @@
     <!-- Recent Activity -->
     <div class="content-grid">
         <!-- Recent Transactions -->
-        <div class="d365-card">
+        <div class="stat-card" style="background: #2C2C2C !important; border: 1px solid #4A4A4A !important;; border: 1px solid #4A4A4A !important; border: 1px solid #4A4A4A !important">
             <div class="card-header-d365">
                 <i class="fas fa-history"></i> Recent Transactions
             </div>
@@ -280,12 +280,12 @@
                         {% for tx, order, customer in recent_transactions %}
                             <tr>
                                 <td>
-                                    <code style="font-size: 11px; background: #f3f2f1; padding: 2px 6px; border-radius: 2px;">
+                                    <code style="font-size: 11px; background: #2C2C2C; padding: 2px 6px; border-radius: 2px;">
                                         {{ tx.payment_reference[:20] if tx.payment_reference else 'N/A' }}
                                     </code>
                                 </td>
                                 <td><strong>{{ customer.first_name }} {{ customer.last_name }}</strong></td>
-                                <td><strong>R{{ "%.2f"|format(tx.amount) }}</strong></td>
+                                <td><strong>R {{ "{:,.2f}".format(tx.amount) }}</strong></td>
                                 <td>
                                     {% if tx.status == 'completed' %}
                                         <span class="badge-d365 success">Completed</span>
@@ -314,7 +314,7 @@
         </div>
 
         <!-- Recent Contact Submissions -->
-        <div class="d365-card">
+        <div class="stat-card" style="background: #2C2C2C !important; border: 1px solid #4A4A4A !important;; border: 1px solid #4A4A4A !important; border: 1px solid #4A4A4A !important">
             <div class="card-header-d365">
                 <i class="fas fa-comments"></i> Recent Messages
             </div>
@@ -363,12 +363,12 @@
     </div>
 
     <!-- Quick Actions -->
-    <div class="d365-card">
+    <div class="stat-card" style="background: #2C2C2C !important; border: 1px solid #4A4A4A !important;; border: 1px solid #4A4A4A !important; border: 1px solid #4A4A4A !important">
         <div class="card-header-d365">
             <i class="fas fa-bolt"></i> Quick Actions
         </div>
         <div class="quick-actions">
-            <a href="{{ url_for('setup_2fa') }}" class="btn-d365-primary" style="background: {% if current_user.two_factor_enabled %}linear-gradient(135deg, #107c10 0%, #094509 100%){% else %}linear-gradient(135deg, #d83b01 0%, #a52a00 100%){% endif %};">
+            <a href="{{ url_for('setup_2fa') }}" class="btn-d365-primary" style="background: {% if current_user.two_factor_enabled %}linear-gradient(135deg, #4CAF50 0%, #094509 100%){% else %}linear-gradient(135deg, #DAA520 0%, #a52a00 100%){% endif %};">
                 <i class="fas fa-shield-alt"></i> 
                 {% if current_user.two_factor_enabled %}
                     2FA Enabled ✓

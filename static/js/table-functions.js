@@ -1,10 +1,12 @@
 /**
  * D365 Table Functions - Global filtering and sorting for all tables
  * Apply to all tables with class 'table-d365'
+ * Updated: 2026-02-05 23:05 - Fixed dropdown positioning and dark theme
  */
 
 // Initialize all table functions when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('Table functions initialized - Updated version with dark theme dropdowns');
     initializeTableFiltering();
     initializeTableSorting();
     initializeTableSearch();
@@ -56,17 +58,17 @@ function initializeTableFiltering() {
             const dropdown = document.createElement('div');
             dropdown.className = 'filter-dropdown';
             
-            // Set all styles individually for better control
-            dropdown.style.position = 'fixed';
-            dropdown.style.background = 'white';
-            dropdown.style.border = '1px solid #8a8886';
+            // Set all styles individually for better control (DARK THEME)
+            dropdown.style.position = 'absolute';
+            dropdown.style.background = '#2C2C2C';
+            dropdown.style.border = '1px solid #4A4A4A';
             dropdown.style.borderRadius = '2px';
-            dropdown.style.boxShadow = '0 6.4px 14.4px 0 rgba(0,0,0,.132), 0 1.2px 3.6px rgba(0,0,0,.108)';
+            dropdown.style.boxShadow = '0 6.4px 14.4px 0 rgba(0,0,0,.5), 0 1.2px 3.6px rgba(0,0,0,.3)';
             dropdown.style.minWidth = '200px';
             dropdown.style.maxHeight = '300px';
             dropdown.style.overflowY = 'auto';
-            dropdown.style.zIndex = '10000';
             dropdown.style.padding = '8px 0';
+            dropdown.style.zIndex = '99999';
             
             // Add "Select All" option
             const allOption = document.createElement('div');
@@ -74,15 +76,15 @@ function initializeTableFiltering() {
                 padding: 8px 16px;
                 cursor: pointer;
                 font-size: 12px;
-                color: #323130;
+                color: #FFFFFF;
                 font-weight: 600;
             `;
             allOption.textContent = '(Select All)';
             allOption.addEventListener('mouseenter', function() {
-                this.style.background = '#f3f2f1';
+                this.style.background = '#353535';
             });
             allOption.addEventListener('mouseleave', function() {
-                this.style.background = 'white';
+                this.style.background = '#2C2C2C';
             });
             allOption.addEventListener('click', function() {
                 table.querySelectorAll('tbody tr').forEach(row => {
@@ -96,13 +98,13 @@ function initializeTableFiltering() {
             
             // Add divider
             const divider = document.createElement('div');
-            divider.style.cssText = 'height: 1px; background: #edebe9; margin: 4px 0;';
+            divider.style.cssText = 'height: 1px; background: #4A4A4A; margin: 4px 0;';
             dropdown.appendChild(divider);
             
             // Add value options
             if (values.size === 0) {
                 const noData = document.createElement('div');
-                noData.style.cssText = 'padding: 8px 16px; font-size: 12px; color: #a19f9d; font-style: italic;';
+                noData.style.cssText = 'padding: 8px 16px; font-size: 12px; color: #808080; font-style: italic;';
                 noData.textContent = 'No data to filter';
                 dropdown.appendChild(noData);
             } else {
@@ -112,14 +114,15 @@ function initializeTableFiltering() {
                         padding: 8px 16px;
                         cursor: pointer;
                         font-size: 12px;
-                        color: #323130;
+                        color: #FFFFFF;
+                        background: #2C2C2C;
                     `;
                     option.textContent = value;
                     option.addEventListener('mouseenter', function() {
-                        this.style.background = '#f3f2f1';
+                        this.style.background = '#353535';
                     });
                     option.addEventListener('mouseleave', function() {
-                        this.style.background = 'white';
+                        this.style.background = '#2C2C2C';
                     });
                     option.addEventListener('click', function() {
                         // Filter rows
@@ -153,42 +156,49 @@ function initializeTableFiltering() {
                 });
             }
             
-            // Position dropdown using fixed positioning (relative to viewport)
-            const rect = icon.getBoundingClientRect();
+            // Add to DOM first - append to table container instead of body
+            const tableContainer = table.closest('.stat-card, .card-body-d365') || table.parentElement;
+            if (tableContainer) {
+                tableContainer.style.position = 'relative'; // Ensure container has positioning context
+                tableContainer.appendChild(dropdown);
+            } else {
+                document.body.appendChild(dropdown);
+            }
             
-            // Calculate position (below the icon)
-            let left = rect.left;
-            let top = rect.bottom + 5;
+            // Position dropdown using absolute positioning
+            // Get fresh coordinates after adding to DOM
+            const rect = icon.getBoundingClientRect();
+            const containerRect = tableContainer ? tableContainer.getBoundingClientRect() : { left: 0, top: 0 };
+            
+            console.log('Filter icon position:', {
+                iconLeft: rect.left,
+                iconTop: rect.top,
+                iconBottom: rect.bottom,
+                containerLeft: containerRect.left,
+                containerTop: containerRect.top
+            });
+            
+            // Calculate position relative to container (below the icon)
+            let left = rect.left - containerRect.left;
+            let top = rect.bottom - containerRect.top + 5;
             
             // Ensure dropdown doesn't go off left edge
             if (left < 10) {
                 left = 10;
             }
             
-            // Ensure dropdown doesn't go off right edge of screen
-            const dropdownWidth = 200; // min-width from CSS
-            if (left + dropdownWidth > window.innerWidth - 10) {
-                left = rect.right - dropdownWidth; // Align to right edge of icon
+            // Ensure dropdown doesn't go off right edge
+            const dropdownWidth = 200;
+            const containerWidth = tableContainer ? tableContainer.offsetWidth : window.innerWidth;
+            if (left + dropdownWidth > containerWidth - 10) {
+                left = containerWidth - dropdownWidth - 10;
             }
             
-            // Ensure dropdown doesn't go below viewport
-            const dropdownMaxHeight = 300; // max-height from CSS
-            if (top + dropdownMaxHeight > window.innerHeight - 20) {
-                // Show above the icon instead
-                top = rect.top - dropdownMaxHeight - 5;
-                if (top < 10) {
-                    // Not enough room above either, just limit height
-                    top = 10;
-                    dropdown.style.maxHeight = (window.innerHeight - 30) + 'px';
-                }
-            }
+            console.log('Dropdown position:', { left, top });
             
             // Set position
             dropdown.style.left = left + 'px';
             dropdown.style.top = top + 'px';
-            
-            // Add to DOM
-            document.body.appendChild(dropdown);
             
             // Close dropdown when clicking outside
             setTimeout(() => {

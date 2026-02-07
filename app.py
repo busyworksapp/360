@@ -14,7 +14,8 @@ from models import (
     db, User, SiteSettings, CompanyInfo, Service, Product, HeroSection,
     ContentSection, PaymentMethod, PaymentTerm, Transaction,
     ContactSubmission, MenuItem, Testimonial, Customer, Cart, CartItem,
-    Order, OrderItem, Invoice, InvoicePayment, InvoiceItem, ProofOfPayment, AuditLog
+    Order, OrderItem, Invoice, InvoicePayment, InvoiceItem, ProofOfPayment, AuditLog,
+    HomePageSettings
 )
 from email_service import EmailService
 import json
@@ -720,6 +721,33 @@ def admin_company():
         return redirect(url_for('admin_company'))
     
     return render_template('admin/company.html', company=company_info)
+
+
+@app.route('/admin/homepage', methods=['GET', 'POST'])
+@login_required
+def admin_homepage():
+    settings = HomePageSettings.query.first()
+    if not settings:
+        settings = HomePageSettings()
+        db.session.add(settings)
+        db.session.commit()
+    if request.method == 'POST':
+        settings.hero_title = request.form.get('hero_title')
+        settings.hero_description = request.form.get('hero_description')
+        settings.hero_button_text = request.form.get('hero_button_text')
+        settings.hero_button_link = request.form.get('hero_button_link')
+        settings.show_stats_card = request.form.get('show_stats_card') == 'on'
+        settings.stats_percentage = request.form.get('stats_percentage')
+        settings.stats_label = request.form.get('stats_label')
+        if 'hero_image' in request.files:
+            hero_image_url = save_upload_file(request.files['hero_image'])
+            if hero_image_url:
+                settings.hero_image = hero_image_url
+        db.session.commit()
+        cache.clear()
+        flash('Homepage settings updated successfully!', 'success')
+        return redirect(url_for('admin_homepage'))
+    return render_template('admin/homepage.html', settings=settings)
 
 @app.route('/admin/services')
 @login_required
@@ -2202,6 +2230,7 @@ def send_payment_confirmation_email(transaction):
 
 
 @app.route('/webhook/stripe', methods=['POST'])
+@csrf.exempt
 def stripe_webhook():
     payload = request.data
     sig_header = request.headers.get('Stripe-Signature')
@@ -2229,7 +2258,9 @@ def stripe_webhook():
 
     return jsonify(result)
 
+
 @app.route('/webhook/payfast', methods=['POST'])
+@csrf.exempt
 def payfast_webhook():
     post_data = request.form.to_dict()
     
@@ -2822,3 +2853,6 @@ if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
     debug = os.environ.get('FLASK_ENV') == 'development'
     app.run(debug=debug, host='0.0.0.0', port=port)
+
+
+

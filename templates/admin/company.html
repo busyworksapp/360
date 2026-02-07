@@ -11,15 +11,16 @@
             <span class="separator">/</span>
             <span>Company Information</span>
         </div>
-        <h1 style="font-size: 20px; font-weight: 600; margin: 4px 0 0 0; color: #323130;">
+        <h1 style="font-size: 20px; font-weight: 600; margin: 4px 0 0 0; color: #FFFFFF !important;">
             <i class="fas fa-building"></i> Company Information
         </h1>
     </div>
 
     <!-- Company Form -->
-    <div class="d365-card">
+    <div class="stat-card" style="background: #2C2C2C !important; border: 1px solid #4A4A4A !important;; border: 1px solid #4A4A4A !important; border: 1px solid #4A4A4A !important">
         <div class="card-body-d365">
             <form method="POST" enctype="multipart/form-data">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
                     <div class="form-group-d365">
                         <label class="form-label-d365" for="company_name">Company Name</label>
@@ -79,13 +80,13 @@
                     {% if company and company.logo_url %}
                         <div style="margin-bottom: 12px;">
                             <img src="{{ company.logo_url }}" alt="Company Logo" 
-                                 style="max-width: 200px; max-height: 100px; border: 1px solid #edebe9; border-radius: 2px; padding: 8px; background: white;">
+                                 style="max-width: 200px; max-height: 100px; border: 1px solid #4A4A4A; border-radius: 2px; padding: 8px; background: #353535;">
                         </div>
                     {% endif %}
                     <input type="file" class="form-control-d365" id="logo" name="logo" accept=".png,.jpg,.jpeg,.gif,.webp">
                 </div>
                 
-                <div style="display: flex; gap: 8px; padding-top: 16px; border-top: 1px solid #edebe9;">
+                <div style="display: flex; gap: 8px; padding-top: 16px; border-top: 1px solid #4A4A4A;">
                     <button type="submit" class="btn-d365-primary">
                         <i class="fas fa-save"></i> Save Changes
                     </button>
