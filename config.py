@@ -106,3 +106,21 @@ class Config:
     # OCR settings
     OCR_CONFIDENCE_THRESHOLD = 0.75  # Auto-verify if confidence >= 75%
     PAYMENT_VALIDATION_TOLERANCE = 0.01  # 1% tolerance for amount matching
+    
+    # Production Optimizations
+    LOG_LEVEL = os.getenv('LOG_LEVEL', 'INFO')
+    PREFERRED_URL_SCHEME = 'https' if is_production else 'http'
+    PROPAGATE_EXCEPTIONS = is_production
+    
+    # Performance Settings
+    SQLALCHEMY_ENGINE_OPTIONS = {
+        'pool_size': int(os.getenv('DB_POOL_SIZE', '10')),
+        'pool_recycle': int(os.getenv('DB_POOL_RECYCLE', '3600')),
+        'pool_pre_ping': True,
+        'max_overflow': int(os.getenv('DB_MAX_OVERFLOW', '20')),
+        'pool_timeout': int(os.getenv('DB_POOL_TIMEOUT', '30')),
+    }
+    
+    # Monitoring and Health Checks
+    HEALTH_CHECK_ENABLED = True
+    METRICS_ENABLED = os.getenv('METRICS_ENABLED', 'True') == 'True'

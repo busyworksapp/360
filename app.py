@@ -38,7 +38,14 @@ from security_utils import (
 app = Flask(__name__)
 app.config.from_object(Config)
 
-# Version: 2.2.0 - Production Security Hardening
+# Initialize logging FIRST for early error catching
+from logging_config import setup_logging, log_request
+setup_logging(app)
+log_request(app)
+
+app.logger.info("🚀 Initializing 360Degree Supply Application")
+
+# Version: 2.3.0 - Production Optimization with Gunicorn and Monitoring
 
 db.init_app(app)
 migrate = Migrate(app, db)
@@ -2848,6 +2855,11 @@ def init_db():
     
     db.session.commit()
     print('Database initialized successfully!')
+
+# Register monitoring blueprint
+from monitoring import monitoring_bp
+app.register_blueprint(monitoring_bp)
+app.logger.info("✅ Monitoring endpoints registered: /health, /metrics, /status")
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
