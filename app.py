@@ -91,6 +91,19 @@ is_railway = os.getenv('RAILWAY_ENVIRONMENT') is not None
 is_production = os.getenv('FLASK_ENV') == 'production'
 enable_https = os.getenv('ENABLE_HTTPS') == 'True'
 
+# HTTPS Redirect Middleware - Force all traffic to HTTPS in production
+@app.before_request
+def force_https():
+    """Force HTTPS in production by redirecting HTTP to HTTPS"""
+    if is_railway or is_production:
+        # Check if request is not already HTTPS
+        if not request.is_secure and request.headers.get('X-Forwarded-Proto', 'http') != 'https':
+            # Exclude health check endpoints from redirect
+            if request.path not in ['/health', '/health/detailed', '/metrics', '/status']:
+                url = request.url.replace('http://', 'https://', 1)
+                app.logger.info(f"🔒 Redirecting HTTP to HTTPS: {request.url} -> {url}")
+                return redirect(url, code=301)
+
 # Only enforce HTTPS if running on Railway or explicitly enabled in production
 if is_railway or (is_production and enable_https and os.getenv('RAILWAY_STATIC_URL')):
     print("🔒 HTTPS enforcement enabled (Production/Railway)")
