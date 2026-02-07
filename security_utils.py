@@ -270,9 +270,27 @@ def log_security_event(event_type, user_id=None, username=None, details=None, ip
 
 
 def get_client_ip():
-    """Get real client IP address (handles proxies)"""
-    if request.headers.get('X-Forwarded-For'):
-        return request.headers.get('X-Forwarded-For').split(',')[0].strip()
-    elif request.headers.get('X-Real-IP'):
-        return request.headers.get('X-Real-IP')
+    """Get real client IP address (handles proxies and Cloudflare)
+    
+    Priority order:
+    1. CF-Connecting-IP (Cloudflare's real visitor IP)
+    2. X-Forwarded-For (standard proxy header)
+    3. X-Real-IP (alternative proxy header)
+    4. request.remote_addr (direct connection)
+    """
+    # Cloudflare provides the real visitor IP
+    cf_ip = request.headers.get('CF-Connecting-IP')
+    if cf_ip:
+        return cf_ip
+    
+    # Standard proxy headers
+    forwarded_for = request.headers.get('X-Forwarded-For')
+    if forwarded_for:
+        return forwarded_for.split(',')[0].strip()
+    
+    real_ip = request.headers.get('X-Real-IP')
+    if real_ip:
+        return real_ip
+    
+    # Direct connection
     return request.remote_addr

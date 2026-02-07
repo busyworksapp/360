@@ -94,10 +94,22 @@ enable_https = os.getenv('ENABLE_HTTPS') == 'True'
 # HTTPS Redirect Middleware - Force all traffic to HTTPS in production
 @app.before_request
 def force_https():
-    """Force HTTPS in production by redirecting HTTP to HTTPS"""
+    """Force HTTPS in production by redirecting HTTP to HTTPS
+    
+    Supports both direct Railway access and Cloudflare proxy:
+    - X-Forwarded-Proto: Standard proxy header (Railway, Cloudflare)
+    - CF-Visitor: Cloudflare-specific header with JSON {"scheme":"https"}
+    """
     if is_railway or is_production:
-        # Check if request is not already HTTPS
-        if not request.is_secure and request.headers.get('X-Forwarded-Proto', 'http') != 'https':
+        # Check multiple headers for HTTPS detection (Cloudflare compatibility)
+        forwarded_proto = request.headers.get('X-Forwarded-Proto', 'http')
+        cf_visitor = request.headers.get('CF-Visitor', '{}')
+        
+        # Cloudflare sends CF-Visitor with scheme info
+        is_https_cloudflare = '"scheme":"https"' in cf_visitor
+        is_https = request.is_secure or forwarded_proto == 'https' or is_https_cloudflare
+        
+        if not is_https:
             # Exclude health check endpoints from redirect
             if request.path not in ['/health', '/health/detailed', '/metrics', '/status']:
                 url = request.url.replace('http://', 'https://', 1)

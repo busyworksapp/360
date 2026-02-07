@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SSL Test - 360Degree Supply</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+        .test-box {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 5px solid #4CAF50;
+        }
+        .test-box.error {
+            border-left-color: #f44336;
+        }
+        .result {
+            font-size: 1.2em;
+            margin: 10px 0;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 5px;
+        }
+        .icon {
+            font-size: 3em;
+            text-align: center;
+            margin: 20px 0;
+        }
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.1em;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 20px;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: #45a049;
+        }
+        .secure { color: #4CAF50; }
+        .insecure { color: #f44336; }
+        .warning { color: #ff9800; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔒 SSL Security Test</h1>
+        
+        <div class="test-box" id="protocolTest">
+            <h3>Test 1: Protocol Check</h3>
+            <div class="result" id="protocolResult">Testing...</div>
+        </div>
+
+        <div class="test-box" id="secureContextTest">
+            <h3>Test 2: Secure Context</h3>
+            <div class="result" id="secureContextResult">Testing...</div>
+        </div>
+
+        <div class="test-box" id="locationTest">
+            <h3>Test 3: Current URL</h3>
+            <div class="result" id="locationResult">Testing...</div>
+        </div>
+
+        <div class="test-box" id="certificateTest">
+            <h3>Test 4: Certificate Info</h3>
+            <div class="result" id="certificateResult">Testing...</div>
+        </div>
+
+        <div id="iconDisplay" class="icon"></div>
+
+        <button onclick="runTests()">Run Tests Again</button>
+
+        <div style="margin-top: 30px; padding: 20px; background: rgba(0,0,0,0.2); border-radius: 10px;">
+            <h3>What This Tests:</h3>
+            <ul>
+                <li>✓ Checks if you're accessing via HTTPS</li>
+                <li>✓ Verifies secure context (SSL active)</li>
+                <li>✓ Shows current URL protocol</li>
+                <li>✓ Displays browser security status</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        function runTests() {
+            // Test 1: Protocol
+            const protocol = window.location.protocol;
+            const protocolElement = document.getElementById('protocolResult');
+            const protocolBox = document.getElementById('protocolTest');
+            
+            if (protocol === 'https:') {
+                protocolElement.innerHTML = '<span class="secure">✅ HTTPS Active</span> - Protocol: ' + protocol;
+                protocolBox.classList.remove('error');
+            } else {
+                protocolElement.innerHTML = '<span class="insecure">❌ HTTP Detected</span> - Protocol: ' + protocol;
+                protocolBox.classList.add('error');
+            }
+
+            // Test 2: Secure Context
+            const secureContextElement = document.getElementById('secureContextResult');
+            const secureContextBox = document.getElementById('secureContextTest');
+            
+            if (window.isSecureContext) {
+                secureContextElement.innerHTML = '<span class="secure">✅ Secure Context Confirmed</span> - SSL is working';
+                secureContextBox.classList.remove('error');
+            } else {
+                secureContextElement.innerHTML = '<span class="insecure">❌ Not a Secure Context</span> - SSL may not be working';
+                secureContextBox.classList.add('error');
+            }
+
+            // Test 3: Location
+            const locationElement = document.getElementById('locationResult');
+            locationElement.innerHTML = '<code>' + window.location.href + '</code>';
+
+            // Test 4: Certificate/Browser Info
+            const certificateElement = document.getElementById('certificateResult');
+            const userAgent = navigator.userAgent;
+            const browserInfo = getBrowserInfo(userAgent);
+            
+            certificateElement.innerHTML = `
+                <strong>Browser:</strong> ${browserInfo}<br>
+                <strong>User Agent:</strong> <small>${userAgent}</small><br>
+                <strong>Secure Context API:</strong> ${window.isSecureContext ? 'Available' : 'Not Available'}
+            `;
+
+            // Display overall status icon
+            const iconDisplay = document.getElementById('iconDisplay');
+            if (protocol === 'https:' && window.isSecureContext) {
+                iconDisplay.innerHTML = '🔒 <div style="font-size: 0.5em;">Your Connection is Secure</div>';
+                iconDisplay.style.color = '#4CAF50';
+            } else {
+                iconDisplay.innerHTML = '⚠️ <div style="font-size: 0.5em;">Connection Not Secure</div>';
+                iconDisplay.style.color = '#f44336';
+            }
+        }
+
+        function getBrowserInfo(ua) {
+            if (ua.includes('Chrome') && !ua.includes('Edg')) return 'Google Chrome';
+            if (ua.includes('Edg')) return 'Microsoft Edge';
+            if (ua.includes('Firefox')) return 'Mozilla Firefox';
+            if (ua.includes('Safari') && !ua.includes('Chrome')) return 'Safari';
+            if (ua.includes('Opera') || ua.includes('OPR')) return 'Opera';
+            return 'Unknown Browser';
+        }
+
+        // Run tests on page load
+        window.addEventListener('load', runTests);
+    </script>
+</body>
+</html>
