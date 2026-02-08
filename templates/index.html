@@ -9,11 +9,45 @@
     /* Hero with 360 Degree Circle Animation */
     .hero-section {
         height: 100vh;
-        background: linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.9)), url('https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?w=1920') center/cover fixed;
+        background: #000;
         position: relative;
         display: flex;
         align-items: center;
         overflow: hidden;
+    }
+    
+    .hero-bg-slider {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+    }
+    
+    .hero-bg-slide {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-size: cover;
+        background-position: center;
+        opacity: 0;
+        transition: opacity 2s ease-in-out;
+    }
+    
+    .hero-bg-slide.active {
+        opacity: 1;
+    }
+    
+    .hero-bg-slide::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.8));
     }
     
     .circle-animation {
@@ -271,6 +305,12 @@
 {% block content %}
 <!-- Hero -->
 <section class="hero-section">
+    <div class="hero-bg-slider">
+        <div class="hero-bg-slide active" style="background-image: url('{{ url_for('static', filename='12/IMG_4137.jpeg') }}');"></div>
+        <div class="hero-bg-slide" style="background-image: url('{{ url_for('static', filename='12/IMG_4132.jpeg') }}');"></div>
+        <div class="hero-bg-slide" style="background-image: url('{{ url_for('static', filename='12/bbc690db1ee8433dadf1caae85f93bb8_doubao-seedream-4-5-251128.png') }}');"></div>
+        <div class="hero-bg-slide" style="background-image: url('{{ url_for('static', filename='12/@genlogistics_inc - R⤓Download.jpeg') }}');"></div>
+    </div>
     <div class="circle-animation">
         <div class="circle"></div>
         <div class="circle"></div>
@@ -288,6 +328,21 @@
         </div>
     </div>
 </section>
+
+<script>
+// Background Image Slider
+let currentSlide = 0;
+const slides = document.querySelectorAll('.hero-bg-slide');
+const totalSlides = slides.length;
+
+function nextSlide() {
+    slides[currentSlide].classList.remove('active');
+    currentSlide = (currentSlide + 1) % totalSlides;
+    slides[currentSlide].classList.add('active');
+}
+
+setInterval(nextSlide, 5000);
+</script>
 
 <!-- 360 Concept -->
 <section class="concept-section">
