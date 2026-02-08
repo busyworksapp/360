@@ -1,53 +1,37 @@
 {% extends "base.html" %}
 
-{% block title %}360Degree Supply - Your Trusted Partner in Industrial Supply Solutions{% endblock %}
+{% block title %}360Degree Supply - Mining & Industrial Supply Solutions{% endblock %}
 
 {% block extra_css %}<style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     
-    /* Hero Section with Parallax */
+    /* Hero Section - Mining Theme */
     .hero-section {
         height: 100vh;
-        background: #000;
+        background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.8)), url('https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?w=1920') center/cover;
         position: relative;
-        overflow: hidden;
         display: flex;
         align-items: center;
     }
     
-    .hero-bg {
+    .hero-overlay {
         position: absolute;
         top: 0;
         left: 0;
         width: 100%;
         height: 100%;
-        background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%);
-    }
-    
-    .particles {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-    }
-    
-    .particle {
-        position: absolute;
-        background: #DAA520;
-        border-radius: 50%;
-        animation: float 20s infinite;
-    }
-    
-    @keyframes float {
-        0%, 100% { transform: translateY(0) translateX(0); opacity: 0; }
-        10% { opacity: 1; }
-        90% { opacity: 1; }
-        100% { transform: translateY(-100vh) translateX(50px); opacity: 0; }
+        background: repeating-linear-gradient(
+            45deg,
+            transparent,
+            transparent 10px,
+            rgba(218,165,32,0.03) 10px,
+            rgba(218,165,32,0.03) 20px
+        );
     }
     
     .hero-content {
         position: relative;
         z-index: 10;
-        text-align: center;
         animation: fadeInUp 1s ease;
     }
     
@@ -56,219 +40,285 @@
         to { opacity: 1; transform: translateY(0); }
     }
     
+    .hero-badge {
+        display: inline-block;
+        padding: 8px 20px;
+        background: rgba(218,165,32,0.2);
+        border: 2px solid #DAA520;
+        border-radius: 30px;
+        color: #DAA520;
+        font-size: 14px;
+        font-weight: 700;
+        margin-bottom: 20px;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+    }
+    
     .hero-title {
-        font-size: 64px;
+        font-size: 72px;
         font-weight: 900;
         color: #fff;
         margin-bottom: 24px;
-        text-shadow: 0 4px 20px rgba(218,165,32,0.3);
-        animation: slideInLeft 1s ease 0.2s both;
+        line-height: 1.1;
+        text-shadow: 0 4px 20px rgba(0,0,0,0.5);
     }
     
-    @keyframes slideInLeft {
-        from { opacity: 0; transform: translateX(-50px); }
-        to { opacity: 1; transform: translateX(0); }
+    .hero-title span {
+        color: #DAA520;
     }
     
     .hero-subtitle {
         font-size: 24px;
         color: #c0c0c0;
         margin-bottom: 40px;
-        animation: slideInRight 1s ease 0.4s both;
+        max-width: 700px;
     }
     
-    @keyframes slideInRight {
-        from { opacity: 0; transform: translateX(50px); }
-        to { opacity: 1; transform: translateX(0); }
+    .hero-buttons {
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
     }
     
-    .hero-cta {
-        display: inline-block;
-        padding: 20px 50px;
-        background: linear-gradient(135deg, #DAA520 0%, #FFD700 100%);
-        color: #000;
-        font-size: 18px;
+    .btn-hero {
+        padding: 18px 40px;
+        font-size: 16px;
         font-weight: 700;
-        border-radius: 50px;
+        border-radius: 4px;
         text-decoration: none;
-        transition: all 0.4s ease;
-        box-shadow: 0 10px 30px rgba(218,165,32,0.4);
-        animation: pulse 2s infinite, fadeIn 1s ease 0.6s both;
-        position: relative;
-        overflow: hidden;
+        transition: all 0.3s;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
     }
     
-    .hero-cta::before {
+    .btn-hero-primary {
+        background: #DAA520;
+        color: #000;
+        border: 2px solid #DAA520;
+    }
+    
+    .btn-hero-primary:hover {
+        background: #FFD700;
+        transform: translateY(-3px);
+        box-shadow: 0 10px 30px rgba(218,165,32,0.4);
+    }
+    
+    .btn-hero-secondary {
+        background: transparent;
+        color: #fff;
+        border: 2px solid #fff;
+    }
+    
+    .btn-hero-secondary:hover {
+        background: #fff;
+        color: #000;
+        transform: translateY(-3px);
+    }
+    
+    /* Stats Section */
+    .stats-section {
+        background: #000;
+        padding: 80px 0;
+        border-top: 3px solid #DAA520;
+        border-bottom: 3px solid #DAA520;
+    }
+    
+    .stat-item {
+        text-align: center;
+        padding: 30px;
+        position: relative;
+    }
+    
+    .stat-item::after {
         content: '';
         position: absolute;
+        right: 0;
         top: 50%;
-        left: 50%;
-        width: 0;
-        height: 0;
-        border-radius: 50%;
-        background: rgba(255,255,255,0.3);
-        transform: translate(-50%, -50%);
-        transition: width 0.6s, height 0.6s;
+        transform: translateY(-50%);
+        width: 1px;
+        height: 60%;
+        background: rgba(218,165,32,0.3);
     }
     
-    .hero-cta:hover::before {
-        width: 300px;
-        height: 300px;
+    .stat-item:last-child::after {
+        display: none;
     }
     
-    .hero-cta:hover {
-        transform: translateY(-5px) scale(1.05);
-        box-shadow: 0 15px 40px rgba(218,165,32,0.6);
-    }
-    
-    @keyframes pulse {
-        0%, 100% { box-shadow: 0 10px 30px rgba(218,165,32,0.4); }
-        50% { box-shadow: 0 10px 50px rgba(218,165,32,0.7); }
-    }
-    
-    @keyframes fadeIn {
-        from { opacity: 0; }
-        to { opacity: 1; }
-    }
-    
-    .scroll-indicator {
-        position: absolute;
-        bottom: 30px;
-        left: 50%;
-        transform: translateX(-50%);
-        animation: bounce 2s infinite;
-    }
-    
-    .scroll-indicator i {
-        font-size: 32px;
+    .stat-icon {
+        font-size: 48px;
         color: #DAA520;
+        margin-bottom: 15px;
     }
     
-    @keyframes bounce {
-        0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-        40% { transform: translateY(-20px); }
-        60% { transform: translateY(-10px); }
-    }
-    
-    .section-title {
-        text-align: center;
+    .stat-number {
         font-size: 48px;
         font-weight: 900;
         color: #fff;
-        margin-bottom: 20px;
-        position: relative;
-        display: inline-block;
-        left: 50%;
-        transform: translateX(-50%);
+        margin-bottom: 10px;
     }
     
-    .section-title::after {
-        content: '';
-        position: absolute;
-        bottom: -10px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 100px;
-        height: 4px;
-        background: linear-gradient(90deg, transparent, #DAA520, transparent);
-    }
-    
-    .section-subtitle {
-        text-align: center;
-        font-size: 18px;
+    .stat-label {
+        font-size: 16px;
         color: #888;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+    
+    /* Services Section */
+    .services-section {
+        padding: 100px 0;
+        background: #0a0a0a;
+    }
+    
+    .section-header {
+        text-align: center;
         margin-bottom: 60px;
     }
     
-
-    
-
-    
-    /* Features Section */
-    .features-section {
-        padding: 100px 0;
-        background: linear-gradient(135deg, #1a1a1a 0%, #000 100%);
-        position: relative;
+    .section-badge {
+        display: inline-block;
+        padding: 6px 16px;
+        background: rgba(218,165,32,0.1);
+        border: 1px solid #DAA520;
+        border-radius: 20px;
+        color: #DAA520;
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        margin-bottom: 15px;
     }
     
-    .feature-grid {
+    .section-title {
+        font-size: 48px;
+        font-weight: 900;
+        color: #fff;
+        margin-bottom: 15px;
+    }
+    
+    .section-subtitle {
+        font-size: 18px;
+        color: #888;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+    
+    .services-grid {
         display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 40px;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 30px;
     }
     
-    .feature-item {
-        display: flex;
-        gap: 24px;
-        padding: 30px;
-        background: rgba(218,165,32,0.05);
-        border-radius: 15px;
-        border: 1px solid rgba(218,165,32,0.2);
+    .service-card {
+        background: linear-gradient(135deg, #1a1a1a 0%, #0f0f0f 100%);
+        border: 2px solid #222;
+        padding: 40px 30px;
+        text-align: center;
         transition: all 0.4s;
         position: relative;
         overflow: hidden;
     }
     
-    .feature-item::before {
+    .service-card::before {
         content: '';
         position: absolute;
         top: 0;
         left: -100%;
         width: 100%;
-        height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(218,165,32,0.1), transparent);
+        height: 3px;
+        background: linear-gradient(90deg, transparent, #DAA520, transparent);
         transition: left 0.6s;
     }
     
-    .feature-item:hover::before {
+    .service-card:hover::before {
         left: 100%;
     }
     
-    .feature-item:hover {
-        transform: translateX(10px);
+    .service-card:hover {
         border-color: #DAA520;
-        background: rgba(218,165,32,0.1);
+        transform: translateY(-10px);
+        box-shadow: 0 20px 40px rgba(218,165,32,0.2);
     }
     
-    .feature-icon {
-        width: 70px;
-        height: 70px;
+    .service-icon {
+        font-size: 56px;
+        color: #DAA520;
+        margin-bottom: 20px;
+    }
+    
+    .service-title {
+        font-size: 22px;
+        font-weight: 700;
+        color: #fff;
+        margin-bottom: 15px;
+    }
+    
+    .service-description {
+        font-size: 15px;
+        color: #888;
+        line-height: 1.7;
+    }
+    
+    /* Why Choose Section */
+    .why-section {
+        padding: 100px 0;
+        background: linear-gradient(135deg, #1a1a1a 0%, #000 100%);
+    }
+    
+    .why-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 30px;
+    }
+    
+    .why-card {
+        background: rgba(218,165,32,0.05);
+        border: 1px solid rgba(218,165,32,0.2);
+        padding: 40px 30px;
+        text-align: center;
+        transition: all 0.3s;
+    }
+    
+    .why-card:hover {
+        background: rgba(218,165,32,0.1);
+        border-color: #DAA520;
+        transform: scale(1.05);
+    }
+    
+    .why-icon {
+        width: 80px;
+        height: 80px;
         background: linear-gradient(135deg, #DAA520 0%, #FFD700 100%);
-        border-radius: 15px;
+        border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
-        flex-shrink: 0;
-        transition: transform 0.4s;
+        margin: 0 auto 20px;
     }
     
-    .feature-item:hover .feature-icon {
-        transform: rotate(360deg);
-    }
-    
-    .feature-icon i {
-        font-size: 28px;
+    .why-icon i {
+        font-size: 36px;
         color: #000;
     }
     
-    .feature-content h4 {
+    .why-title {
         font-size: 20px;
         font-weight: 700;
         color: #fff;
-        margin-bottom: 10px;
+        margin-bottom: 12px;
     }
     
-    .feature-content p {
-        font-size: 15px;
-        color: #999;
-        line-height: 1.7;
+    .why-description {
+        font-size: 14px;
+        color: #888;
+        line-height: 1.6;
     }
     
     /* CTA Section */
     .cta-section {
         padding: 100px 0;
         background: linear-gradient(135deg, #DAA520 0%, #B8860B 100%);
-        text-align: center;
         position: relative;
         overflow: hidden;
     }
@@ -276,41 +326,30 @@
     .cta-section::before {
         content: '';
         position: absolute;
-        top: -50%;
-        left: -50%;
-        width: 200%;
-        height: 200%;
-        background: repeating-linear-gradient(
-            45deg,
-            transparent,
-            transparent 10px,
-            rgba(255,255,255,0.05) 10px,
-            rgba(255,255,255,0.05) 20px
-        );
-        animation: moveStripes 20s linear infinite;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="grid" width="100" height="100" patternUnits="userSpaceOnUse"><path d="M 100 0 L 0 0 0 100" fill="none" stroke="rgba(0,0,0,0.1)" stroke-width="2"/></pattern></defs><rect width="100%" height="100%" fill="url(%23grid)"/></svg>');
     }
     
-    @keyframes moveStripes {
-        0% { transform: translate(0, 0); }
-        100% { transform: translate(50px, 50px); }
+    .cta-content {
+        position: relative;
+        z-index: 2;
+        text-align: center;
     }
     
-    .cta-section h2 {
+    .cta-title {
         font-size: 48px;
         font-weight: 900;
         color: #000;
         margin-bottom: 20px;
-        position: relative;
-        z-index: 2;
-        text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
     }
     
-    .cta-section p {
+    .cta-subtitle {
         font-size: 20px;
         color: rgba(0,0,0,0.8);
         margin-bottom: 40px;
-        position: relative;
-        z-index: 2;
     }
     
     .cta-buttons {
@@ -318,62 +357,47 @@
         gap: 20px;
         justify-content: center;
         flex-wrap: wrap;
-        position: relative;
-        z-index: 2;
     }
     
     .btn-cta {
         padding: 18px 40px;
         font-size: 18px;
         font-weight: 700;
-        border-radius: 50px;
+        border-radius: 4px;
         text-decoration: none;
-        transition: all 0.4s;
-        position: relative;
-        overflow: hidden;
+        transition: all 0.3s;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
     }
     
-    .btn-primary-cta {
+    .btn-cta-dark {
         background: #000;
         color: #fff;
-        border: 3px solid #000;
+        border: 2px solid #000;
     }
     
-    .btn-primary-cta:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+    .btn-cta-dark:hover {
+        background: #1a1a1a;
+        transform: translateY(-3px);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.4);
     }
     
-    .btn-secondary-cta {
+    .btn-cta-outline {
         background: transparent;
         color: #000;
-        border: 3px solid #000;
+        border: 2px solid #000;
     }
     
-    .btn-secondary-cta:hover {
+    .btn-cta-outline:hover {
         background: #000;
         color: #fff;
-        transform: translateY(-5px);
-        box-shadow: 0 15px 40px rgba(0,0,0,0.4);
-    }
-    
-    /* Scroll Animations */
-    .scroll-reveal {
-        opacity: 0;
-        transform: translateY(50px);
-        transition: all 0.8s ease;
-    }
-    
-    .scroll-reveal.active {
-        opacity: 1;
-        transform: translateY(0);
+        transform: translateY(-3px);
     }
     
     @media (max-width: 768px) {
-        .hero-title { font-size: 36px; }
-        .hero-subtitle { font-size: 18px; }
-        .section-title { font-size: 32px; }
-        .feature-grid { grid-template-columns: 1fr; }
+        .hero-title { font-size: 42px; }
+        .services-grid, .why-grid { grid-template-columns: 1fr; }
     }
 </style>
 {% endblock %}
@@ -381,91 +405,145 @@
 {% block content %}
 <!-- Hero Section -->
 <section class="hero-section">
-    <div class="hero-bg"></div>
-    <div class="particles" id="particles"></div>
+    <div class="hero-overlay"></div>
     <div class="container">
         <div class="hero-content">
-            <h1 class="hero-title">Transform Your Supply Chain</h1>
-            <p class="hero-subtitle">Industrial Excellence. Delivered.</p>
-            <a href="/products" class="hero-cta">
-                <span style="position: relative; z-index: 2;">Explore Solutions</span>
-            </a>
+            <div class="hero-badge">Mining & Industrial Supply</div>
+            <h1 class="hero-title">Powering <span>Mining Operations</span> Across South Africa</h1>
+            <p class="hero-subtitle">Comprehensive supply solutions for bulk fuel, minerals, equipment, and logistics. Trusted by leading mining operations since 2020.</p>
+            <div class="hero-buttons">
+                <a href="/products" class="btn-hero btn-hero-primary">
+                    <i class="fas fa-shopping-cart"></i> Browse Products
+                </a>
+                <a href="/contact" class="btn-hero btn-hero-secondary">
+                    <i class="fas fa-phone"></i> Request Quote
+                </a>
+            </div>
         </div>
-    </div>
-    <div class="scroll-indicator">
-        <i class="fas fa-chevron-down"></i>
     </div>
 </section>
 
-
-
-
-
-<!-- Features Section -->
-<section class="features-section">
+<!-- Stats Section -->
+<section class="stats-section">
     <div class="container">
-        <h2 class="section-title scroll-reveal">Why Choose Us?</h2>
-        <p class="section-subtitle scroll-reveal">Excellence through reliability and innovation</p>
+        <div class="row">
+            <div class="col-md-3 stat-item">
+                <div class="stat-icon"><i class="fas fa-industry"></i></div>
+                <div class="stat-number">500+</div>
+                <div class="stat-label">Mining Sites Served</div>
+            </div>
+            <div class="col-md-3 stat-item">
+                <div class="stat-icon"><i class="fas fa-truck"></i></div>
+                <div class="stat-number">10K+</div>
+                <div class="stat-label">Deliveries Completed</div>
+            </div>
+            <div class="col-md-3 stat-item">
+                <div class="stat-icon"><i class="fas fa-clock"></i></div>
+                <div class="stat-number">24/7</div>
+                <div class="stat-label">Support Available</div>
+            </div>
+            <div class="col-md-3 stat-item">
+                <div class="stat-icon"><i class="fas fa-award"></i></div>
+                <div class="stat-number">5+</div>
+                <div class="stat-label">Years Experience</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Services Section -->
+<section class="services-section">
+    <div class="container">
+        <div class="section-header">
+            <div class="section-badge">Our Services</div>
+            <h2 class="section-title">Mining Supply Solutions</h2>
+            <p class="section-subtitle">Complete supply chain management for mining and industrial operations</p>
+        </div>
         
-        <div class="feature-grid">
-            <div class="feature-item scroll-reveal">
-                <div class="feature-icon">
-                    <i class="fas fa-check-circle"></i>
-                </div>
-                <div class="feature-content">
-                    <h4>Proven Reliability</h4>
-                    <p>Consistent on-time delivery and unwavering service quality across all sectors since 2020.</p>
-                </div>
+        <div class="services-grid">
+            <div class="service-card">
+                <div class="service-icon"><i class="fas fa-gas-pump"></i></div>
+                <h3 class="service-title">Bulk Fuel Supply</h3>
+                <p class="service-description">Diesel, petrol, and lubricants delivered directly to your mining site with guaranteed quality and competitive pricing.</p>
             </div>
             
-            <div class="feature-item scroll-reveal">
-                <div class="feature-icon">
-                    <i class="fas fa-dollar-sign"></i>
-                </div>
-                <div class="feature-content">
-                    <h4>Competitive Pricing</h4>
-                    <p>Transparent pricing with no hidden costs. Best value in the market guaranteed.</p>
-                </div>
+            <div class="service-card">
+                <div class="service-icon"><i class="fas fa-gem"></i></div>
+                <h3 class="service-title">Mineral Supply</h3>
+                <p class="service-description">High-grade minerals and raw materials sourced from certified suppliers for industrial and manufacturing needs.</p>
             </div>
             
-            <div class="feature-item scroll-reveal">
-                <div class="feature-icon">
-                    <i class="fas fa-users"></i>
-                </div>
-                <div class="feature-content">
-                    <h4>Expert Team</h4>
-                    <p>Experienced professionals providing tailored solutions for your unique challenges.</p>
-                </div>
+            <div class="service-card">
+                <div class="service-icon"><i class="fas fa-truck-loading"></i></div>
+                <h3 class="service-title">Heavy Equipment</h3>
+                <p class="service-description">Mining machinery, excavators, loaders, and industrial equipment sales and rental services.</p>
             </div>
             
-            <div class="feature-item scroll-reveal">
-                <div class="feature-icon">
-                    <i class="fas fa-clock"></i>
-                </div>
-                <div class="feature-content">
-                    <h4>24/7 Support</h4>
-                    <p>Round-the-clock customer support ensuring your operations never stop.</p>
-                </div>
+            <div class="service-card">
+                <div class="service-icon"><i class="fas fa-hard-hat"></i></div>
+                <h3 class="service-title">Safety Equipment</h3>
+                <p class="service-description">Complete range of PPE, safety gear, and mining safety equipment meeting all regulatory standards.</p>
             </div>
             
-            <div class="feature-item scroll-reveal">
-                <div class="feature-icon">
-                    <i class="fas fa-leaf"></i>
-                </div>
-                <div class="feature-content">
-                    <h4>Sustainable Practices</h4>
-                    <p>Committed to environmental responsibility with eco-friendly sourcing.</p>
-                </div>
+            <div class="service-card">
+                <div class="service-icon"><i class="fas fa-shipping-fast"></i></div>
+                <h3 class="service-title">Logistics Solutions</h3>
+                <p class="service-description">End-to-end logistics management with real-time tracking and guaranteed on-time delivery to remote sites.</p>
             </div>
             
-            <div class="feature-item scroll-reveal">
-                <div class="feature-icon">
-                    <i class="fas fa-certificate"></i>
-                </div>
-                <div class="feature-content">
-                    <h4>Certified Quality</h4>
-                    <p>All products meet stringent quality standards with full compliance documentation.</p>
-                </div>
+            <div class="service-card">
+                <div class="service-icon"><i class="fas fa-tools"></i></div>
+                <h3 class="service-title">Maintenance Parts</h3>
+                <p class="service-description">Genuine spare parts and maintenance supplies for all major mining equipment brands.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Why Choose Section -->
+<section class="why-section">
+    <div class="container">
+        <div class="section-header">
+            <div class="section-badge">Why Choose Us</div>
+            <h2 class="section-title">Built for Mining Operations</h2>
+            <p class="section-subtitle">Industry expertise and reliability you can count on</p>
+        </div>
+        
+        <div class="why-grid">
+            <div class="why-card">
+                <div class="why-icon"><i class="fas fa-shield-alt"></i></div>
+                <h3 class="why-title">Mining Certified</h3>
+                <p class="why-description">All products meet mining industry standards and safety regulations</p>
+            </div>
+            
+            <div class="why-card">
+                <div class="why-icon"><i class="fas fa-map-marked-alt"></i></div>
+                <h3 class="why-title">Remote Site Delivery</h3>
+                <p class="why-description">Specialized logistics for hard-to-reach mining locations</p>
+            </div>
+            
+            <div class="why-card">
+                <div class="why-icon"><i class="fas fa-headset"></i></div>
+                <h3 class="why-title">24/7 Emergency Support</h3>
+                <p class="why-description">Round-the-clock support for urgent mining supply needs</p>
+            </div>
+            
+            <div class="why-card">
+                <div class="why-icon"><i class="fas fa-file-contract"></i></div>
+                <h3 class="why-title">Flexible Contracts</h3>
+                <p class="why-description">Long-term supply agreements tailored to your operation</p>
+            </div>
+            
+            <div class="why-card">
+                <div class="why-icon"><i class="fas fa-chart-line"></i></div>
+                <h3 class="why-title">Bulk Discounts</h3>
+                <p class="why-description">Competitive pricing for large-scale mining operations</p>
+            </div>
+            
+            <div class="why-card">
+                <div class="why-icon"><i class="fas fa-clipboard-check"></i></div>
+                <h3 class="why-title">Quality Guaranteed</h3>
+                <p class="why-description">ISO certified with full traceability and documentation</p>
             </div>
         </div>
     </div>
@@ -473,82 +551,21 @@
 
 <!-- CTA Section -->
 <section class="cta-section">
-    <div class="container">
-        <h2>Ready to Get Started?</h2>
-        <p>Join hundreds of satisfied clients who trust 360Degree Supply</p>
-        <div class="cta-buttons">
-            <a href="/contact" class="btn-cta btn-primary-cta">Get in Touch</a>
-            <a href="/products" class="btn-cta btn-secondary-cta">Browse Products</a>
+    <div class="cta-content">
+        <div class="container">
+            <h2 class="cta-title">Ready to Optimize Your Mining Supply Chain?</h2>
+            <p class="cta-subtitle">Get a custom quote for your mining operation today</p>
+            <div class="cta-buttons">
+                <a href="/contact" class="btn-cta btn-cta-dark">
+                    <i class="fas fa-file-invoice"></i> Request Quote
+                </a>
+                <a href="/products" class="btn-cta btn-cta-outline">
+                    <i class="fas fa-box-open"></i> View Catalog
+                </a>
+            </div>
         </div>
     </div>
 </section>
-
-<script>
-// Particle System
-const particlesContainer = document.getElementById('particles');
-for (let i = 0; i < 50; i++) {
-    const particle = document.createElement('div');
-    particle.className = 'particle';
-    particle.style.width = Math.random() * 4 + 2 + 'px';
-    particle.style.height = particle.style.width;
-    particle.style.left = Math.random() * 100 + '%';
-    particle.style.animationDelay = Math.random() * 20 + 's';
-    particle.style.animationDuration = (Math.random() * 10 + 15) + 's';
-    particlesContainer.appendChild(particle);
-}
-
-// Counter Animation
-function animateCounter(element) {
-    const target = parseInt(element.getAttribute('data-target'));
-    const duration = 2000;
-    const step = target / (duration / 16);
-    let current = 0;
-    
-    const timer = setInterval(() => {
-        current += step;
-        if (current >= target) {
-            element.textContent = target + '+';
-            clearInterval(timer);
-        } else {
-            element.textContent = Math.floor(current);
-        }
-    }, 16);
-}
-
-// Scroll Reveal Animation
-const observerOptions = {
-    threshold: 0.1,
-    rootMargin: '0px 0px -50px 0px'
-};
-
-const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            entry.target.classList.add('active');
-            
-            // Trigger counter animation for stats
-            if (entry.target.classList.contains('stat-item')) {
-                const counter = entry.target.querySelector('[data-target]');
-                if (counter && !counter.classList.contains('counted')) {
-                    counter.classList.add('counted');
-                    animateCounter(counter);
-                }
-            }
-        }
-    });
-}, observerOptions);
-
-document.querySelectorAll('.scroll-reveal').forEach(el => {
-    observer.observe(el);
-});
-
-// Smooth Scroll
-document.querySelector('.scroll-indicator').addEventListener('click', () => {
-    document.querySelector('.features-section').scrollIntoView({ behavior: 'smooth' });
-});
-</script>
-{% endblock %}
-
 
 <!-- Footer -->
 <footer style="background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%); color: #fff; padding: 60px 0 20px; border-top: 3px solid #DAA520;">
@@ -556,7 +573,7 @@ document.querySelector('.scroll-indicator').addEventListener('click', () => {
         <div class="row">
             <div class="col-lg-4 col-md-6 mb-4">
                 <h5 style="font-weight: 700; margin-bottom: 20px; font-size: 18px; color: #DAA520 !important;">360Degree Supply</h5>
-                <p style="color: #c0c0c0 !important; font-size: 14px; line-height: 1.8;">Your trusted partner in industrial supply solutions. Delivering excellence across mining, transport, agriculture, and industrial sectors throughout South Africa.</p>
+                <p style="color: #c0c0c0 !important; font-size: 14px; line-height: 1.8;">Your trusted partner in mining and industrial supply solutions. Delivering excellence across South Africa's mining sector.</p>
                 <div style="display: flex; gap: 15px; margin-top: 15px;">
                     <a href="#" style="width: 40px; height: 40px; background: rgba(218,165,32,0.1); border: 2px solid #DAA520; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: all 0.3s;"><i class="fab fa-facebook-f" style="color: #DAA520 !important;"></i></a>
                     <a href="#" style="width: 40px; height: 40px; background: rgba(218,165,32,0.1); border: 2px solid #DAA520; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: all 0.3s;"><i class="fab fa-twitter" style="color: #DAA520 !important;"></i></a>
@@ -586,13 +603,14 @@ document.querySelector('.scroll-indicator').addEventListener('click', () => {
                     <li style="margin-bottom: 10px;"><a href="/privacy" style="color: #c0c0c0 !important; font-size: 14px; text-decoration: none;"><i class="fas fa-chevron-right" style="font-size: 10px; margin-right: 8px;"></i>Privacy Policy</a></li>
                     <li style="margin-bottom: 10px;"><a href="/terms" style="color: #c0c0c0 !important; font-size: 14px; text-decoration: none;"><i class="fas fa-chevron-right" style="font-size: 10px; margin-right: 8px;"></i>Terms & Conditions</a></li>
                 </ul>
-                <p style="margin-top: 20px; font-size: 12px; color: #c0c0c0 !important;"><i class="fas fa-shield-alt" style="color: #DAA520; margin-right: 8px;"></i>POPIA Compliant</p>
-                <p style="font-size: 12px; color: #c0c0c0 !important;"><i class="fas fa-certificate" style="color: #DAA520; margin-right: 8px;"></i>ISO Certified</p>
+                <p style="margin-top: 20px; font-size: 12px; color: #c0c0c0 !important;"><i class="fas fa-shield-alt" style="color: #DAA520; margin-right: 8px;"></i>Mining Certified</p>
+                <p style="font-size: 12px; color: #c0c0c0 !important;"><i class="fas fa-certificate" style="color: #DAA520; margin-right: 8px;"></i>ISO 9001 Certified</p>
             </div>
         </div>
         <div style="border-top: 1px solid rgba(218,165,32,0.2); padding-top: 30px; margin-top: 40px; text-align: center;">
             <p style="margin-bottom: 5px; font-size: 13px; color: #888 !important;">&copy; 2024 360Degree Supply (Pty) Ltd. All rights reserved.</p>
-            <p style="margin-bottom: 5px; font-size: 13px; color: #888 !important;">Trusted Industrial Supply Partner | South African Excellence</p>
+            <p style="margin-bottom: 5px; font-size: 13px; color: #888 !important;">Trusted Mining Supply Partner | South African Excellence</p>
         </div>
     </div>
 </footer>
+{% endblock %}
