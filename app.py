@@ -497,7 +497,7 @@ def contact():
                          menu_items=menu_items)
 
 @app.route('/api/contact', methods=['POST'])
-@limiter.limit("3 per minute")
+@limiter.limit("10 per minute")  # Increased from 3 to 10
 def submit_contact():
     data = request.get_json()
     

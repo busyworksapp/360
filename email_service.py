@@ -46,6 +46,11 @@ class EmailService:
             bool: True if successful, False otherwise
         """
         try:
+            # Skip if no SMTP credentials configured
+            if not self.sender_email or not self.sender_password:
+                logger.warning("Email not sent: SMTP credentials not configured")
+                return False
+            
             # Create message
             message = MIMEMultipart("alternative")
             message["Subject"] = subject
@@ -63,15 +68,17 @@ class EmailService:
             part2 = MIMEText(html_content, "html")
             message.attach(part2)
 
-            # Send email
+            # Send email with timeout
+            logger.info(f"Attempting to send email to {recipient_email} via {self.smtp_server}:{self.smtp_port}")
+            
             if self.use_tls:
                 server = smtplib.SMTP(
-                    self.smtp_server, self.smtp_port
+                    self.smtp_server, self.smtp_port, timeout=30
                 )
                 server.starttls()
             else:
                 server = smtplib.SMTP_SSL(
-                    self.smtp_server, self.smtp_port
+                    self.smtp_server, self.smtp_port, timeout=30
                 )
 
             server.login(self.sender_email, self.sender_password)
@@ -87,6 +94,12 @@ class EmailService:
             )
             return True
 
+        except smtplib.SMTPAuthenticationError as e:
+            logger.error(f"SMTP Authentication failed: {str(e)}")
+            return False
+        except smtplib.SMTPConnectError as e:
+            logger.error(f"SMTP Connection failed: {str(e)}")
+            return False
         except Exception as e:
             logger.error(f"Error sending email: {str(e)}")
             return False
