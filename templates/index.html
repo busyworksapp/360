@@ -1,280 +1,286 @@
 {% extends "base.html" %}
 
-{% block title %}360Degree Supply - Industrial Supplies{% endblock %}
+{% block title %}360Degree Supply - Your Trusted Partner in Industrial Supply Solutions{% endblock %}
 
-{% set hide_footer = true %}
-
-{% block head %}
-<!-- Preload high-quality background images for instant display -->
-<link rel="preload" as="image" href="{{ url_for('static', filename='uploads/hero_image_1.jpg') }}" fetchpriority="high">
-<link rel="preload" as="image" href="{{ url_for('static', filename='uploads/hero_image_2.jpg') }}" fetchpriority="high">
-<link rel="preload" as="image" href="{{ url_for('static', filename='uploads/hero_image_3.jpg') }}" fetchpriority="high">
-{% endblock %}
-
-{% block extra_css %}
-<style>
-    main {
-        padding: 0 !important;
-        margin: 0 !important;
-    }
-
-    body {
-        color: #fff;
-        overflow-x: hidden;
-    }
-
-    /* Hide footer on landing page */
-    footer {
-        display: none !important;
-    }
-
+{% block extra_css %}<style>
+    /* Hero Section */
     .hero-section {
-        min-height: 100vh;
-        display: flex;
-        align-items: center;
-        padding: 80px 0 100px;
+        background: linear-gradient(135deg, #1C1C1C 0%, #2C2C2C 100%);
+        padding: 100px 0 80px;
         position: relative;
         overflow: hidden;
     }
-
-    /* Background image rotation */
-    .background-slideshow {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        z-index: 0;
-        /* Ensure smooth, high-quality rendering */
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
-    }
-
-    .background-image {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
-        opacity: 0;
-        transition: opacity 2s ease-in-out;
-        image-rendering: -webkit-optimize-contrast;
-        image-rendering: crisp-edges;
-        image-rendering: high-quality;
-        will-change: opacity;
-        backface-visibility: hidden;
-        -webkit-backface-visibility: hidden;
-        transform: translateZ(0);
-        -webkit-transform: translateZ(0);
-    }
-
-    .background-image.active {
-        opacity: 1;
-    }
-
     
-
+    .hero-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="grid" width="100" height="100" patternUnits="userSpaceOnUse"><path d="M 100 0 L 0 0 0 100" fill="none" stroke="rgba(218,165,32,0.1)" stroke-width="1"/></pattern></defs><rect width="100%" height="100%" fill="url(%23grid)"/></svg>');
+        opacity: 0.3;
+    }
+    
     .hero-content {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 0 40px;
         position: relative;
-        z-index: 10;
+        z-index: 2;
     }
-
-    .hero-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 80px;
-        align-items: center;
-    }
-
-    .hero-left h1 {
-        font-size: 56px;
+    
+    .hero-title {
+        font-size: 48px;
         font-weight: 700;
-        color: #ffffff !important;
-        margin-bottom: 30px;
+        color: #FFFFFF !important;
+        margin-bottom: 24px;
         line-height: 1.2;
-        text-shadow: 3px 3px 8px rgba(0, 0, 0, 0.8), 0 0 20px rgba(0, 0, 0, 0.6);
     }
-
-    .hero-left p {
+    
+    .hero-subtitle {
         font-size: 20px;
-        color: #ffffff !important;
+        color: #C0C0C0 !important;
         margin-bottom: 40px;
         line-height: 1.6;
-        text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.8), 0 0 15px rgba(0, 0, 0, 0.5);
     }
-
-    .cta-button {
-        display: inline-block;
-        padding: 18px 48px;
-        background: linear-gradient(135deg, #ff6b9d 0%, #c94b89 100%);
-        color: #fff;
-        font-size: 18px;
+    
+    .hero-cta {
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        padding: 16px 32px;
+        background: #DAA520;
+        color: #000000 !important;
+        font-size: 16px;
         font-weight: 600;
-        border-radius: 50px;
+        border-radius: 4px;
         text-decoration: none;
         transition: all 0.3s ease;
-        box-shadow: 0 10px 30px rgba(255, 107, 157, 0.3);
-        border: none;
-        cursor: pointer;
     }
-
-    .cta-button:hover {
+    
+    .hero-cta:hover {
+        background: #FFD700;
         transform: translateY(-2px);
-        box-shadow: 0 15px 40px rgba(255, 107, 157, 0.4);
-        color: #fff;
+        box-shadow: 0 8px 16px rgba(218, 165, 32, 0.3);
     }
-
-    .hero-right {
-        position: relative;
+    
+    .hero-stats {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 32px;
+        margin-top: 60px;
     }
-
-    .dashboard-mockup {
-        background: rgba(255, 255, 255, 0.1);
-        backdrop-filter: blur(20px);
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        border-radius: 20px;
-        padding: 40px;
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-        position: relative;
+    
+    .stat-item {
+        text-align: center;
+        padding: 24px;
+        background: rgba(218, 165, 32, 0.1);
+        border-radius: 8px;
+        border: 1px solid rgba(218, 165, 32, 0.2);
     }
-
-    .mockup-icon {
-        width: 120px;
-        height: 120px;
-        background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
+    
+    .stat-number {
+        font-size: 36px;
+        font-weight: 700;
+        color: #DAA520 !important;
+        margin-bottom: 8px;
+    }
+    
+    .stat-label {
+        font-size: 14px;
+        color: #C0C0C0 !important;
+    }
+    
+    /* Services Section */
+    .services-section {
+        padding: 80px 0;
+        background: #2C2C2C;
+    }
+    
+    .section-title {
+        text-align: center;
+        font-size: 36px;
+        font-weight: 700;
+        color: #FFFFFF !important;
+        margin-bottom: 16px;
+    }
+    
+    .section-subtitle {
+        text-align: center;
+        font-size: 18px;
+        color: #C0C0C0 !important;
+        margin-bottom: 60px;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    
+    .service-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 32px;
+    }
+    
+    .service-card {
+        background: #353535;
+        border: 1px solid #4A4A4A;
+        border-radius: 8px;
+        padding: 40px 32px;
+        text-align: center;
+        transition: all 0.3s ease;
+    }
+    
+    .service-card:hover {
+        transform: translateY(-8px);
+        border-color: #DAA520;
+        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+    }
+    
+    .service-icon {
+        width: 80px;
+        height: 80px;
+        background: linear-gradient(135deg, #DAA520 0%, #FFD700 100%);
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
-        margin: 0 auto 30px;
-        box-shadow: 0 10px 30px rgba(74, 222, 128, 0.3);
+        margin: 0 auto 24px;
     }
-
-    .mockup-icon i {
-        font-size: 60px;
-        color: #fff;
+    
+    .service-icon i {
+        font-size: 36px;
+        color: #000000;
     }
-
-    .stats-card {
-        background: rgba(255, 255, 255, 0.15);
-        border-radius: 12px;
-        padding: 20px;
-        margin-top: 20px;
-        text-align: center;
-    }
-
-    .stats-card h3 {
-        font-size: 32px;
-        margin: 0 0 5px 0;
-        color: #4ade80;
-    }
-
-    .stats-card p {
-        margin: 0;
-        color: rgba(255, 255, 255, 0.8);
-        font-size: 14px;
-    }
-
-    .trust-section {
-        padding: 60px 40px 80px;
-        text-align: center;
-        background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #7e22ce 100%);
-        position: relative;
-    }
-
-    .trust-title {
-        font-size: 14px;
-        text-transform: uppercase;
-        letter-spacing: 2px;
-        color: rgba(255, 255, 255, 0.7);
-        margin-bottom: 40px;
+    
+    .service-title {
+        font-size: 20px;
         font-weight: 600;
+        color: #FFFFFF !important;
+        margin-bottom: 16px;
     }
-
-    .trust-badges {
+    
+    .service-description {
+        font-size: 14px;
+        color: #C0C0C0 !important;
+        line-height: 1.6;
+    }
+    
+    /* Why Choose Us Section */
+    .why-section {
+        padding: 80px 0;
+        background: #1C1C1C;
+    }
+    
+    .feature-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        grid-template-columns: repeat(2, 1fr);
         gap: 40px;
-        max-width: 1200px;
-        margin: 0 auto;
     }
-
-    .badge-item {
-        background: rgba(255, 255, 255, 0.1);
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.15);
-        border-radius: 15px;
-        padding: 30px 20px;
+    
+    .feature-item {
+        display: flex;
+        gap: 24px;
+    }
+    
+    .feature-icon {
+        width: 60px;
+        height: 60px;
+        background: rgba(218, 165, 32, 0.1);
+        border: 2px solid #DAA520;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+    
+    .feature-icon i {
+        font-size: 24px;
+        color: #DAA520;
+    }
+    
+    .feature-content h4 {
+        font-size: 18px;
+        font-weight: 600;
+        color: #FFFFFF !important;
+        margin-bottom: 8px;
+    }
+    
+    .feature-content p {
+        font-size: 14px;
+        color: #C0C0C0 !important;
+        line-height: 1.6;
+        margin: 0;
+    }
+    
+    /* CTA Section */
+    .cta-section {
+        padding: 80px 0;
+        background: linear-gradient(135deg, #DAA520 0%, #B8860B 100%);
+        text-align: center;
+    }
+    
+    .cta-section h2 {
+        font-size: 36px;
+        font-weight: 700;
+        color: #000000 !important;
+        margin-bottom: 16px;
+    }
+    
+    .cta-section p {
+        font-size: 18px;
+        color: rgba(0, 0, 0, 0.8) !important;
+        margin-bottom: 32px;
+    }
+    
+    .cta-buttons {
+        display: flex;
+        gap: 16px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+    
+    .btn-primary-cta {
+        padding: 16px 32px;
+        background: #000000;
+        color: #FFFFFF !important;
+        font-size: 16px;
+        font-weight: 600;
+        border-radius: 4px;
+        text-decoration: none;
         transition: all 0.3s ease;
     }
-
-    .badge-item:hover {
-        transform: translateY(-5px);
-        background: rgba(255, 255, 255, 0.15);
-        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+    
+    .btn-primary-cta:hover {
+        background: #1C1C1C;
+        transform: translateY(-2px);
     }
-
-    .badge-icon {
-        font-size: 48px;
-        margin-bottom: 15px;
-        background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
+    
+    .btn-secondary-cta {
+        padding: 16px 32px;
+        background: transparent;
+        color: #000000 !important;
+        font-size: 16px;
+        font-weight: 600;
+        border-radius: 4px;
+        border: 2px solid #000000;
+        text-decoration: none;
+        transition: all 0.3s ease;
     }
-
-    .badge-title {
-        font-size: 18px;
-        font-weight: 700;
-        margin-bottom: 8px;
-        color: #fff;
+    
+    .btn-secondary-cta:hover {
+        background: #000000;
+        color: #FFFFFF !important;
     }
-
-    .badge-subtitle {
-        font-size: 14px;
-        color: rgba(255, 255, 255, 0.7);
-        line-height: 1.4;
-    }
-
-    .badge-stat {
-        font-size: 32px;
-        font-weight: 700;
-        color: #4ade80;
-        margin-bottom: 5px;
-    }
-
-    @media (max-width: 992px) {
-        .hero-grid {
-            grid-template-columns: 1fr;
-            gap: 50px;
-        }
-
-        .hero-left h1 {
-            font-size: 42px;
-        }
-
-        .trust-badges {
-            grid-template-columns: repeat(2, 1fr);
-            gap: 30px;
-        }
-    }
-
+    
     @media (max-width: 768px) {
-        .hero-left h1 {
-            font-size: 36px;
+        .hero-title {
+            font-size: 32px;
         }
-
-        .hero-left p {
-            font-size: 18px;
+        
+        .hero-stats {
+            grid-template-columns: 1fr;
         }
-
-        .trust-badges {
+        
+        .feature-grid {
             grid-template-columns: 1fr;
         }
     }
@@ -282,54 +288,196 @@
 {% endblock %}
 
 {% block content %}
+<!-- Hero Section -->
 <section class="hero-section">
-    <!-- Background Slideshow -->
-    <div class="background-slideshow">
-        <div class="background-image active" style="background-image: url('{{ url_for('static', filename='uploads/hero_image_1.jpg') }}');"></div>
-        <div class="background-image" style="background-image: url('{{ url_for('static', filename='uploads/hero_image_2.jpg') }}');"></div>
-        <div class="background-image" style="background-image: url('{{ url_for('static', filename='uploads/hero_image_3.jpg') }}');"></div>
-    </div>
-
-    <div class="hero-content">
-        <div class="hero-grid">
-            <div class="hero-left">
-                <h1>Unlock Your Business Potential With 360Degree Supply Solutions</h1>
-                <p>Premium industrial supplies and comprehensive solutions for mining, fuel distribution, and facility management.</p>
-                <a href="{{ url_for('customer_products') }}" class="cta-button">WORK WITH US</a>
-            </div>
-
-            <div class="hero-right">
-                <div class="dashboard-mockup">
-                    <div class="mockup-icon">
-                        <i class="fas fa-rocket"></i>
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-8 hero-content">
+                <h1 class="hero-title">Your Trusted Partner in Industrial Supply Solutions</h1>
+                <p class="hero-subtitle">
+                    360Degree Supply delivers reliable, end-to-end supply solutions for mining, transport, agriculture, and industrial sectors across South Africa. Experience certainty, transparency, and efficiency in every transaction.
+                </p>
+                <a href="/products" class="hero-cta">
+                    <i class="fas fa-shopping-cart"></i>
+                    Explore Our Products
+                </a>
+                
+                <div class="hero-stats">
+                    <div class="stat-item">
+                        <div class="stat-number">5+</div>
+                        <div class="stat-label">Years of Excellence</div>
                     </div>
-                    <div class="stats-card">
-                        <h3>100%</h3>
-                        <p>Customer Satisfaction</p>
+                    <div class="stat-item">
+                        <div class="stat-number">500+</div>
+                        <div class="stat-label">Satisfied Clients</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">24/7</div>
+                        <div class="stat-label">Support Available</div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </section>
+
+<!-- Services Section -->
+<section class="services-section">
+    <div class="container">
+        <h2 class="section-title">Our Core Services</h2>
+        <p class="section-subtitle">
+            Comprehensive supply solutions tailored to meet the unique demands of your industry
+        </p>
+        
+        <div class="service-grid">
+            <div class="service-card">
+                <div class="service-icon">
+                    <i class="fas fa-gas-pump"></i>
+                </div>
+                <h3 class="service-title">Bulk Fuel Supply</h3>
+                <p class="service-description">
+                    Reliable diesel and petrol supply for mining operations, transport fleets, and industrial facilities with competitive pricing and timely delivery.
+                </p>
+            </div>
+            
+            <div class="service-card">
+                <div class="service-icon">
+                    <i class="fas fa-gem"></i>
+                </div>
+                <h3 class="service-title">Mineral Supply</h3>
+                <p class="service-description">
+                    High-quality minerals and raw materials sourced responsibly for manufacturing, construction, and industrial applications.
+                </p>
+            </div>
+            
+            <div class="service-card">
+                <div class="service-icon">
+                    <i class="fas fa-truck"></i>
+                </div>
+                <h3 class="service-title">Logistics & Distribution</h3>
+                <p class="service-description">
+                    Efficient supply chain management with real-time tracking, ensuring your materials arrive on time, every time.
+                </p>
+            </div>
+            
+            <div class="service-card">
+                <div class="service-icon">
+                    <i class="fas fa-tools"></i>
+                </div>
+                <h3 class="service-title">Industrial Equipment</h3>
+                <p class="service-description">
+                    Premium industrial supplies, equipment, and tools to keep your operations running smoothly and efficiently.
+                </p>
+            </div>
+            
+            <div class="service-card">
+                <div class="service-icon">
+                    <i class="fas fa-handshake"></i>
+                </div>
+                <h3 class="service-title">Consultation Services</h3>
+                <p class="service-description">
+                    Expert guidance on supply optimization, cost reduction, and operational efficiency for your business.
+                </p>
+            </div>
+            
+            <div class="service-card">
+                <div class="service-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <h3 class="service-title">Quality Assurance</h3>
+                <p class="service-description">
+                    Rigorous quality control processes ensuring all products meet industry standards and regulatory requirements.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Why Choose Us Section -->
+<section class="why-section">
+    <div class="container">
+        <h2 class="section-title">Why Choose 360Degree Supply?</h2>
+        <p class="section-subtitle">
+            We're committed to delivering excellence through reliability, transparency, and customer-focused solutions
+        </p>
+        
+        <div class="feature-grid">
+            <div class="feature-item">
+                <div class="feature-icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="feature-content">
+                    <h4>Proven Reliability</h4>
+                    <p>Established in 2020, we've built a reputation for consistent, on-time delivery and unwavering service quality across all sectors.</p>
+                </div>
+            </div>
+            
+            <div class="feature-item">
+                <div class="feature-icon">
+                    <i class="fas fa-dollar-sign"></i>
+                </div>
+                <div class="feature-content">
+                    <h4>Competitive Pricing</h4>
+                    <p>Transparent pricing with no hidden costs. We leverage our supplier relationships to offer you the best value in the market.</p>
+                </div>
+            </div>
+            
+            <div class="feature-item">
+                <div class="feature-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="feature-content">
+                    <h4>Expert Team</h4>
+                    <p>Our experienced professionals understand your industry's unique challenges and provide tailored solutions that work.</p>
+                </div>
+            </div>
+            
+            <div class="feature-item">
+                <div class="feature-icon">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <div class="feature-content">
+                    <h4>24/7 Support</h4>
+                    <p>Round-the-clock customer support ensures your operations never stop. We're here when you need us most.</p>
+                </div>
+            </div>
+            
+            <div class="feature-item">
+                <div class="feature-icon">
+                    <i class="fas fa-leaf"></i>
+                </div>
+                <div class="feature-content">
+                    <h4>Sustainable Practices</h4>
+                    <p>Committed to environmental responsibility with eco-friendly sourcing and sustainable supply chain management.</p>
+                </div>
+            </div>
+            
+            <div class="feature-item">
+                <div class="feature-icon">
+                    <i class="fas fa-certificate"></i>
+                </div>
+                <div class="feature-content">
+                    <h4>Certified Quality</h4>
+                    <p>All products meet stringent South African and international quality standards with full compliance documentation.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="cta-section">
+    <div class="container">
+        <h2>Ready to Transform Your Supply Chain?</h2>
+        <p>Join hundreds of satisfied clients who trust 360Degree Supply for their industrial needs</p>
+        <div class="cta-buttons">
+            <a href="/contact" class="btn-primary-cta">
+                <i class="fas fa-envelope"></i> Get in Touch
+            </a>
+            <a href="/products" class="btn-secondary-cta">
+                <i class="fas fa-store"></i> Browse Products
+            </a>
+        </div>
+    </div>
+</section>
 {% endblock %}
-
-{% block extra_js %}
-<script>
-    // Background image rotation
-    let currentImageIndex = 0;
-    const images = document.querySelectorAll('.background-image');
-    
-    function rotateBackgroundImages() {
-        images[currentImageIndex].classList.remove('active');
-        currentImageIndex = (currentImageIndex + 1) % images.length;
-        images[currentImageIndex].classList.add('active');
-    }
-    
-    // Rotate images every 5 seconds
-    setInterval(rotateBackgroundImages, 5000);
-</script>
-{% endblock %}
-
-
-
