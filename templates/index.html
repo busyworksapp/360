@@ -150,6 +150,36 @@
         60% { transform: translateY(-10px); }
     }
     
+    .section-title {
+        text-align: center;
+        font-size: 48px;
+        font-weight: 900;
+        color: #fff;
+        margin-bottom: 20px;
+        position: relative;
+        display: inline-block;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+    
+    .section-title::after {
+        content: '';
+        position: absolute;
+        bottom: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100px;
+        height: 4px;
+        background: linear-gradient(90deg, transparent, #DAA520, transparent);
+    }
+    
+    .section-subtitle {
+        text-align: center;
+        font-size: 18px;
+        color: #888;
+        margin-bottom: 60px;
+    }
+    
     /* Stats Section */
     .stats-section {
         background: #DAA520;
@@ -199,129 +229,7 @@
         font-weight: 600;
     }
     
-    /* Services Section */
-    .services-section {
-        padding: 100px 0;
-        background: #0a0a0a;
-        position: relative;
-    }
-    
-    .section-title {
-        text-align: center;
-        font-size: 48px;
-        font-weight: 900;
-        color: #fff;
-        margin-bottom: 20px;
-        position: relative;
-        display: inline-block;
-        left: 50%;
-        transform: translateX(-50%);
-    }
-    
-    .section-title::after {
-        content: '';
-        position: absolute;
-        bottom: -10px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 100px;
-        height: 4px;
-        background: linear-gradient(90deg, transparent, #DAA520, transparent);
-    }
-    
-    .section-subtitle {
-        text-align: center;
-        font-size: 18px;
-        color: #888;
-        margin-bottom: 60px;
-    }
-    
-    .service-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-        gap: 30px;
-    }
-    
-    .service-card {
-        background: linear-gradient(135deg, #1a1a1a 0%, #0f0f0f 100%);
-        border: 2px solid #222;
-        border-radius: 20px;
-        padding: 40px;
-        text-align: center;
-        transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        position: relative;
-        overflow: hidden;
-        cursor: pointer;
-    }
-    
-    .service-card::before {
-        content: '';
-        position: absolute;
-        top: -50%;
-        left: -50%;
-        width: 200%;
-        height: 200%;
-        background: radial-gradient(circle, rgba(218,165,32,0.1) 0%, transparent 70%);
-        opacity: 0;
-        transition: opacity 0.5s;
-    }
-    
-    .service-card:hover::before {
-        opacity: 1;
-        animation: rotate 4s linear infinite;
-    }
-    
-    @keyframes rotate {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-    }
-    
-    .service-card:hover {
-        transform: translateY(-15px) scale(1.03);
-        border-color: #DAA520;
-        box-shadow: 0 20px 60px rgba(218,165,32,0.3);
-    }
-    
-    .service-icon {
-        width: 100px;
-        height: 100px;
-        background: linear-gradient(135deg, #DAA520 0%, #FFD700 100%);
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin: 0 auto 24px;
-        transition: all 0.5s;
-        position: relative;
-        z-index: 2;
-    }
-    
-    .service-card:hover .service-icon {
-        transform: rotateY(360deg) scale(1.1);
-        box-shadow: 0 0 30px rgba(218,165,32,0.8);
-    }
-    
-    .service-icon i {
-        font-size: 40px;
-        color: #000;
-    }
-    
-    .service-title {
-        font-size: 22px;
-        font-weight: 700;
-        color: #fff;
-        margin-bottom: 16px;
-        position: relative;
-        z-index: 2;
-    }
-    
-    .service-description {
-        font-size: 15px;
-        color: #999;
-        line-height: 1.8;
-        position: relative;
-        z-index: 2;
-    }
+
     
     /* Features Section */
     .features-section {
@@ -513,7 +421,6 @@
         .hero-subtitle { font-size: 18px; }
         .section-title { font-size: 32px; }
         .feature-grid { grid-template-columns: 1fr; }
-        .service-grid { grid-template-columns: 1fr; }
     }
 </style>
 {% endblock %}
@@ -557,63 +464,7 @@
     </div>
 </section>
 
-<!-- Services Section -->
-<section class="services-section">
-    <div class="container">
-        <h2 class="section-title scroll-reveal">Our Core Services</h2>
-        <p class="section-subtitle scroll-reveal">Comprehensive solutions for your industrial needs</p>
-        
-        <div class="service-grid">
-            <div class="service-card scroll-reveal">
-                <div class="service-icon">
-                    <i class="fas fa-gas-pump"></i>
-                </div>
-                <h3 class="service-title">Bulk Fuel Supply</h3>
-                <p class="service-description">Reliable diesel and petrol supply with competitive pricing and timely delivery for all operations.</p>
-            </div>
-            
-            <div class="service-card scroll-reveal">
-                <div class="service-icon">
-                    <i class="fas fa-gem"></i>
-                </div>
-                <h3 class="service-title">Mineral Supply</h3>
-                <p class="service-description">High-quality minerals and raw materials sourced responsibly for industrial applications.</p>
-            </div>
-            
-            <div class="service-card scroll-reveal">
-                <div class="service-icon">
-                    <i class="fas fa-truck"></i>
-                </div>
-                <h3 class="service-title">Logistics & Distribution</h3>
-                <p class="service-description">Efficient supply chain management with real-time tracking and guaranteed delivery.</p>
-            </div>
-            
-            <div class="service-card scroll-reveal">
-                <div class="service-icon">
-                    <i class="fas fa-tools"></i>
-                </div>
-                <h3 class="service-title">Industrial Equipment</h3>
-                <p class="service-description">Premium industrial supplies and equipment to keep operations running smoothly.</p>
-            </div>
-            
-            <div class="service-card scroll-reveal">
-                <div class="service-icon">
-                    <i class="fas fa-handshake"></i>
-                </div>
-                <h3 class="service-title">Consultation Services</h3>
-                <p class="service-description">Expert guidance on supply optimization and operational efficiency.</p>
-            </div>
-            
-            <div class="service-card scroll-reveal">
-                <div class="service-icon">
-                    <i class="fas fa-shield-alt"></i>
-                </div>
-                <h3 class="service-title">Quality Assurance</h3>
-                <p class="service-description">Rigorous quality control ensuring compliance with industry standards.</p>
-            </div>
-        </div>
-    </div>
-</section>
+
 
 <!-- Features Section -->
 <section class="features-section">
