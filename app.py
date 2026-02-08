@@ -781,6 +781,10 @@ def admin_dashboard():
     
     recent_contacts = ContactSubmission.query.order_by(ContactSubmission.created_at.desc()).limit(5).all()
     
+    # Flash notification if there are new contacts
+    if pending_contacts > 0:
+        flash(f'You have {pending_contacts} new contact form submission{"s" if pending_contacts > 1 else ""}!', 'info')
+    
     return render_template('admin/dashboard.html',
                          total_services=total_services,
                          total_products=total_products,
