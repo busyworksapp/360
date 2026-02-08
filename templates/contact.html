@@ -495,10 +495,22 @@
             successMsg.style.display = 'none';
             errorMsg.style.display = 'none';
             
+            // Convert FormData to JSON
+            const data = {
+                name: formData.get('name'),
+                email: formData.get('email'),
+                phone: formData.get('phone'),
+                subject: formData.get('subject'),
+                message: formData.get('message')
+            };
+            
             try {
                 const response = await fetch('/api/contact', {
                     method: 'POST',
-                    body: formData
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
                 });
                 
                 if (response.ok) {
@@ -510,6 +522,8 @@
                         successMsg.style.display = 'none';
                     }, 5000);
                 } else {
+                    const result = await response.json();
+                    errorMsg.textContent = result.message || 'There was an error sending your message. Please try again.';
                     errorMsg.style.display = 'block';
                     
                     // Hide error message after 5 seconds
