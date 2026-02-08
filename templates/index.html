@@ -180,54 +180,7 @@
         margin-bottom: 60px;
     }
     
-    /* Stats Section */
-    .stats-section {
-        background: #DAA520;
-        padding: 60px 0;
-        position: relative;
-        overflow: hidden;
-    }
-    
-    .stats-section::before {
-        content: '';
-        position: absolute;
-        top: -50%;
-        left: -50%;
-        width: 200%;
-        height: 200%;
-        background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
-        background-size: 50px 50px;
-        animation: moveGrid 20s linear infinite;
-    }
-    
-    @keyframes moveGrid {
-        0% { transform: translate(0, 0); }
-        100% { transform: translate(50px, 50px); }
-    }
-    
-    .stat-item {
-        text-align: center;
-        position: relative;
-        z-index: 2;
-    }
-    
-    .stat-number {
-        font-size: 56px;
-        font-weight: 900;
-        color: #000;
-        margin-bottom: 8px;
-        transition: transform 0.3s;
-    }
-    
-    .stat-item:hover .stat-number {
-        transform: scale(1.2);
-    }
-    
-    .stat-label {
-        font-size: 16px;
-        color: rgba(0,0,0,0.8);
-        font-weight: 600;
-    }
+
     
 
     
@@ -444,25 +397,7 @@
     </div>
 </section>
 
-<!-- Stats Section -->
-<section class="stats-section">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-4 stat-item">
-                <div class="stat-number" data-target="5">0</div>
-                <div class="stat-label">YEARS EXCELLENCE</div>
-            </div>
-            <div class="col-md-4 stat-item">
-                <div class="stat-number" data-target="500">0</div>
-                <div class="stat-label">SATISFIED CLIENTS</div>
-            </div>
-            <div class="col-md-4 stat-item">
-                <div class="stat-number">24/7</div>
-                <div class="stat-label">SUPPORT AVAILABLE</div>
-            </div>
-        </div>
-    </div>
-</section>
+
 
 
 
@@ -603,13 +538,13 @@ const observer = new IntersectionObserver((entries) => {
     });
 }, observerOptions);
 
-document.querySelectorAll('.scroll-reveal, .stat-item').forEach(el => {
+document.querySelectorAll('.scroll-reveal').forEach(el => {
     observer.observe(el);
 });
 
 // Smooth Scroll
 document.querySelector('.scroll-indicator').addEventListener('click', () => {
-    document.querySelector('.stats-section').scrollIntoView({ behavior: 'smooth' });
+    document.querySelector('.features-section').scrollIntoView({ behavior: 'smooth' });
 });
 </script>
 {% endblock %}
