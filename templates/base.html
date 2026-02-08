@@ -1567,6 +1567,29 @@
         {% block content %}{% endblock %}
     </main>
 
+    <!-- Cookie Consent Banner -->
+    <div id="cookieConsent" style="display: none; position: fixed; bottom: 0; left: 0; right: 0; background: #1C1C1C; border-top: 2px solid #DAA520; padding: 20px; z-index: 9999; box-shadow: 0 -2px 10px rgba(0,0,0,0.3);">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <p style="margin: 0; color: #FFFFFF !important; font-size: 14px;">
+                        <i class="fas fa-cookie-bite" style="color: #DAA520;"></i>
+                        We use cookies to improve your experience and analyze site traffic. By continuing to use our site, you accept our use of cookies.
+                        <a href="/privacy" style="color: #DAA520; text-decoration: underline;">Learn more</a>
+                    </p>
+                </div>
+                <div class="col-md-4 text-end">
+                    <button onclick="acceptCookies()" class="btn btn-primary btn-sm me-2">
+                        <i class="fas fa-check"></i> Accept
+                    </button>
+                    <button onclick="declineCookies()" class="btn btn-secondary btn-sm">
+                        <i class="fas fa-times"></i> Decline
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Footer -->
     {% if request.endpoint != 'index' %}
     <footer>
@@ -1588,6 +1611,8 @@
                         <li><a href="/services">Services</a></li>
                         <li><a href="/products">Store</a></li>
                         <li><a href="/contact">Contact</a></li>
+                        <li><a href="/privacy">Privacy Policy</a></li>
+                        <li><a href="/terms">Terms & Conditions</a></li>
                     </ul>
                 </div>
                 <div class="col-md-3 mb-4">
@@ -1623,6 +1648,27 @@
     <script src="{{ url_for('static', filename='js/table-functions.js') }}"></script>
     
     <script>
+        // Cookie Consent
+        function checkCookieConsent() {
+            const consent = localStorage.getItem('cookieConsent');
+            if (!consent) {
+                document.getElementById('cookieConsent').style.display = 'block';
+            }
+        }
+
+        function acceptCookies() {
+            localStorage.setItem('cookieConsent', 'accepted');
+            document.getElementById('cookieConsent').style.display = 'none';
+        }
+
+        function declineCookies() {
+            localStorage.setItem('cookieConsent', 'declined');
+            document.getElementById('cookieConsent').style.display = 'none';
+        }
+
+        // Check on page load
+        window.addEventListener('load', checkCookieConsent);
+
         // Global CSRF token handling for all fetch requests
         function getCSRFToken() {
             return document.querySelector('meta[name="csrf-token"]').getAttribute('content');

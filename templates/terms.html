@@ -1,0 +1,151 @@
+{% extends "base.html" %}
+
+{% block title %}Terms and Conditions - 360Degree Supply{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="container">
+        <h1>Terms and Conditions</h1>
+        <p>Terms of use for our website and services</p>
+    </div>
+</div>
+
+<div class="container py-5">
+    <div class="card">
+        <div class="card-body">
+            <p><strong>Last Updated:</strong> {{ now.strftime('%B %d, %Y') if now else 'February 2026' }}</p>
+            
+            <h3>1. Acceptance of Terms</h3>
+            <p>By accessing and using www.360degreesupply.co.za ("Website"), you accept and agree to be bound by these Terms and Conditions. If you do not agree, please do not use our services.</p>
+            
+            <h3>2. Company Information</h3>
+            <p><strong>360Degree Supply (Pty) Ltd</strong><br>
+            Registration Number: [Your Company Registration]<br>
+            Address: Ei Ridge Office Park, 100 Elizabeth Road, Impala Park, Boksburg, 1459, Gauteng, South Africa<br>
+            Email: info@360degreesupply.co.za<br>
+            Phone: +27 64 902 4363</p>
+            
+            <h3>3. Services</h3>
+            <p>We provide bulk fuel and mineral supply services to the mining, transport, agriculture, and industrial sectors in South Africa.</p>
+            
+            <h3>4. User Accounts</h3>
+            <h4>4.1 Registration</h4>
+            <ul>
+                <li>You must provide accurate and complete information</li>
+                <li>You are responsible for maintaining account security</li>
+                <li>You must be 18 years or older to create an account</li>
+                <li>One person or entity per account</li>
+            </ul>
+            
+            <h4>4.2 Account Security</h4>
+            <ul>
+                <li>Keep your password confidential</li>
+                <li>Notify us immediately of unauthorized access</li>
+                <li>You are responsible for all activities under your account</li>
+            </ul>
+            
+            <h3>5. Orders and Payments</h3>
+            <h4>5.1 Order Process</h4>
+            <ul>
+                <li>All orders are subject to acceptance and availability</li>
+                <li>We reserve the right to refuse or cancel orders</li>
+                <li>Prices are subject to change without notice</li>
+                <li>Orders are binding once confirmed</li>
+            </ul>
+            
+            <h4>5.2 Payment Terms</h4>
+            <ul>
+                <li>Payment is due as per invoice terms (typically 30 days)</li>
+                <li>We accept bank transfers, credit cards, and approved payment methods</li>
+                <li>Late payments may incur interest charges</li>
+                <li>We reserve the right to suspend services for non-payment</li>
+            </ul>
+            
+            <h4>5.3 Pricing</h4>
+            <ul>
+                <li>All prices are in South African Rand (ZAR) unless stated otherwise</li>
+                <li>Prices exclude VAT unless stated otherwise</li>
+                <li>Delivery charges apply as per agreement</li>
+            </ul>
+            
+            <h3>6. Delivery and Risk</h3>
+            <ul>
+                <li>Delivery times are estimates and not guaranteed</li>
+                <li>Risk passes to buyer upon delivery</li>
+                <li>Buyer must inspect goods upon delivery</li>
+                <li>Claims for shortages or damages must be made within 48 hours</li>
+            </ul>
+            
+            <h3>7. Returns and Refunds</h3>
+            <ul>
+                <li>Returns are subject to our approval</li>
+                <li>Goods must be unused and in original packaging</li>
+                <li>Restocking fees may apply</li>
+                <li>Custom orders are non-refundable</li>
+            </ul>
+            
+            <h3>8. Intellectual Property</h3>
+            <ul>
+                <li>All content on this Website is owned by 360Degree Supply</li>
+                <li>You may not copy, reproduce, or distribute our content</li>
+                <li>Our trademarks and logos are protected</li>
+            </ul>
+            
+            <h3>9. User Conduct</h3>
+            <p>You agree not to:</p>
+            <ul>
+                <li>Use the Website for illegal purposes</li>
+                <li>Interfere with Website security or functionality</li>
+                <li>Transmit viruses or malicious code</li>
+                <li>Impersonate others or provide false information</li>
+                <li>Scrape or harvest data from the Website</li>
+            </ul>
+            
+            <h3>10. Limitation of Liability</h3>
+            <ul>
+                <li>We provide services "as is" without warranties</li>
+                <li>We are not liable for indirect or consequential damages</li>
+                <li>Our liability is limited to the value of the transaction</li>
+                <li>We are not responsible for third-party content or services</li>
+            </ul>
+            
+            <h3>11. Indemnification</h3>
+            <p>You agree to indemnify and hold harmless 360Degree Supply from any claims arising from your use of our services or violation of these Terms.</p>
+            
+            <h3>12. Force Majeure</h3>
+            <p>We are not liable for delays or failures due to circumstances beyond our control, including natural disasters, strikes, or government actions.</p>
+            
+            <h3>13. Termination</h3>
+            <ul>
+                <li>We may suspend or terminate your account for violations</li>
+                <li>You may close your account at any time</li>
+                <li>Outstanding obligations survive termination</li>
+            </ul>
+            
+            <h3>14. Governing Law</h3>
+            <p>These Terms are governed by the laws of the Republic of South Africa. Any disputes will be subject to the exclusive jurisdiction of South African courts.</p>
+            
+            <h3>15. Dispute Resolution</h3>
+            <ul>
+                <li>Disputes should first be resolved through negotiation</li>
+                <li>If unresolved, disputes may be referred to mediation</li>
+                <li>Legal action may be taken as a last resort</li>
+            </ul>
+            
+            <h3>16. Changes to Terms</h3>
+            <p>We reserve the right to modify these Terms at any time. Continued use of our services constitutes acceptance of modified Terms.</p>
+            
+            <h3>17. Severability</h3>
+            <p>If any provision of these Terms is found invalid, the remaining provisions remain in effect.</p>
+            
+            <h3>18. Contact Information</h3>
+            <p>For questions about these Terms, contact us:</p>
+            <ul>
+                <li><strong>Email:</strong> info@360degreesupply.co.za</li>
+                <li><strong>Phone:</strong> +27 64 902 4363</li>
+                <li><strong>Address:</strong> Ei Ridge Office Park, 100 Elizabeth Road, Impala Park, Boksburg, 1459, Gauteng, South Africa</li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

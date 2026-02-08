@@ -497,6 +497,22 @@ def contact():
                          company_info=company_info,
                          menu_items=menu_items)
 
+@app.route('/privacy')
+def privacy():
+    company_info = CompanyInfo.query.first()
+    menu_items = MenuItem.query.filter_by(is_active=True, parent_id=None).order_by(MenuItem.order_position).all()
+    return render_template('privacy.html',
+                         company_info=company_info,
+                         menu_items=menu_items)
+
+@app.route('/terms')
+def terms():
+    company_info = CompanyInfo.query.first()
+    menu_items = MenuItem.query.filter_by(is_active=True, parent_id=None).order_by(MenuItem.order_position).all()
+    return render_template('terms.html',
+                         company_info=company_info,
+                         menu_items=menu_items)
+
 @app.route('/api/contact', methods=['POST'])
 @limiter.limit("10 per minute")  # Increased from 3 to 10
 def submit_contact():
