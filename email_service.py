@@ -14,7 +14,7 @@ class EmailService:
     """Handle email notifications for the website."""
 
     def __init__(self, smtp_server, smtp_port, sender_email,
-                 sender_password, use_tls=True):
+                 sender_password, use_tls=True, reply_to=None):
         """
         Initialize email service.
 
@@ -24,12 +24,14 @@ class EmailService:
             sender_email: Email address to send from
             sender_password: SMTP password/API key
             use_tls: Use TLS encryption (default: True)
+            reply_to: Reply-To email address (optional)
         """
         self.smtp_server = smtp_server
         self.smtp_port = smtp_port
         self.sender_email = sender_email
         self.sender_password = sender_password
         self.use_tls = use_tls
+        self.reply_to = reply_to
 
     def send_email(self, recipient_email, subject, html_content,
                    plain_text=None):
@@ -58,6 +60,10 @@ class EmailService:
             message["To"] = (recipient_email if isinstance(
                 recipient_email, str
             ) else ", ".join(recipient_email))
+            
+            # Add Reply-To header if configured
+            if self.reply_to:
+                message["Reply-To"] = self.reply_to
 
             # Attach plain text version
             if plain_text:
@@ -68,18 +74,31 @@ class EmailService:
             part2 = MIMEText(html_content, "html")
             message.attach(part2)
 
-            # Send email with timeout
+            # Send email with timeout - try both TLS and SSL
             logger.info(f"Attempting to send email to {recipient_email} via {self.smtp_server}:{self.smtp_port}")
             
-            if self.use_tls:
-                server = smtplib.SMTP(
-                    self.smtp_server, self.smtp_port, timeout=30
-                )
-                server.starttls()
-            else:
-                server = smtplib.SMTP_SSL(
-                    self.smtp_server, self.smtp_port, timeout=30
-                )
+            try:
+                if self.use_tls:
+                    # Try STARTTLS on port 587
+                    server = smtplib.SMTP(
+                        self.smtp_server, self.smtp_port, timeout=10
+                    )
+                    server.starttls()
+                else:
+                    # Try SSL on port 465
+                    server = smtplib.SMTP_SSL(
+                        self.smtp_server, self.smtp_port, timeout=10
+                    )
+            except Exception as conn_error:
+                # If TLS fails, try SSL on port 465
+                logger.warning(f"TLS connection failed, trying SSL: {str(conn_error)}")
+                try:
+                    server = smtplib.SMTP_SSL(
+                        self.smtp_server, 465, timeout=10
+                    )
+                except Exception as ssl_error:
+                    logger.error(f"Both TLS and SSL failed: {str(ssl_error)}")
+                    return False
 
             server.login(self.sender_email, self.sender_password)
             server.sendmail(

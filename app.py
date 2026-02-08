@@ -178,7 +178,8 @@ email_service = EmailService(
     smtp_port=app.config.get('MAIL_PORT'),
     sender_email=app.config.get('MAIL_USERNAME'),
     sender_password=app.config.get('MAIL_PASSWORD'),
-    use_tls=app.config.get('MAIL_USE_TLS')
+    use_tls=app.config.get('MAIL_USE_TLS'),
+    reply_to=os.getenv('MAIL_REPLY_TO', 'support@360degreesupply.co.za')
 )
 
 @login_manager.user_loader
@@ -521,39 +522,50 @@ def submit_contact():
     db.session.add(submission)
     db.session.commit()
 
-    # Send emails if enabled
+    # Send emails asynchronously (non-blocking)
     if app.config.get('SEND_EMAILS'):
-        company = CompanyInfo.query.first()
+        import threading
+        
+        def send_emails_async():
+            try:
+                company = CompanyInfo.query.first()
 
-        # Send confirmation to user
-        email_service.send_contact_confirmation(
-            recipient_name=data.get('name'),
-            recipient_email=data.get('email'),
-            subject=data.get('subject'),
-            message_content=data.get('message'),
-            company_name=company.company_name if company else
-                '360Degree Supply',
-            company_phone=company.phone if company else
-                '+27 64 902 4363',
-            company_email=company.email if company else
-                'info@360degreesupply.co.za'
-        )
+                # Send confirmation to user
+                email_service.send_contact_confirmation(
+                    recipient_name=data.get('name'),
+                    recipient_email=data.get('email'),
+                    subject=data.get('subject'),
+                    message_content=data.get('message'),
+                    company_name=company.company_name if company else
+                        '360Degree Supply',
+                    company_phone=company.phone if company else
+                        '+27 64 902 4363',
+                    company_email=company.email if company else
+                        'info@360degreesupply.co.za'
+                )
 
-        # Send notification to admin (info@360degreesupply.co.za)
-        admin_email = app.config.get(
-            'ADMIN_EMAIL',
-            'info@360degreesupply.co.za'
-        )
-        email_service.send_contact_notification(
-            admin_email=admin_email,
-            sender_name=data.get('name'),
-            sender_email=data.get('email'),
-            sender_phone=data.get('phone'),
-            subject=data.get('subject'),
-            message_content=data.get('message'),
-            company_name=company.company_name if company else
-                '360Degree Supply'
-        )
+                # Send notification to admin (info@360degreesupply.co.za)
+                admin_email = app.config.get(
+                    'ADMIN_EMAIL',
+                    'info@360degreesupply.co.za'
+                )
+                email_service.send_contact_notification(
+                    admin_email=admin_email,
+                    sender_name=data.get('name'),
+                    sender_email=data.get('email'),
+                    sender_phone=data.get('phone'),
+                    subject=data.get('subject'),
+                    message_content=data.get('message'),
+                    company_name=company.company_name if company else
+                        '360Degree Supply'
+                )
+            except Exception as e:
+                app.logger.error(f"Background email error: {str(e)}")
+        
+        # Start email sending in background thread
+        email_thread = threading.Thread(target=send_emails_async)
+        email_thread.daemon = True
+        email_thread.start()
 
     return jsonify({
         'success': True,
