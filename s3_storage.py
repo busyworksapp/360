@@ -39,11 +39,11 @@ class S3StorageService:
                 )
             )
             self.enabled = True
-            print(f"✅ S3 Storage initialized: {self.bucket_name}")
+            print(f"[OK] S3 Storage initialized: {self.bucket_name}")
         else:
             self.s3_client = None
             self.enabled = False
-            print("⚠️ S3 Storage disabled - using local storage")
+            print("[WARN] S3 Storage disabled - using local storage")
     
     def upload_file(self, file, folder='uploads', allowed_extensions=None):
         """
@@ -108,16 +108,16 @@ class S3StorageService:
             # Generate public URL
             file_url = f"{self.endpoint_url}/{self.bucket_name}/{s3_key}"
             
-            print(f"✅ File uploaded: {s3_key}")
+            print(f"[OK] File uploaded: {s3_key}")
             return file_url, None
             
         except ClientError as e:
             error_msg = f"S3 upload failed: {str(e)}"
-            print(f"❌ {error_msg}")
+            print(f"[ERROR] {error_msg}")
             return None, error_msg
         except Exception as e:
             error_msg = f"Upload error: {str(e)}"
-            print(f"❌ {error_msg}")
+            print(f"[ERROR] {error_msg}")
             return None, error_msg
     
     def delete_file(self, file_url):
@@ -143,11 +143,11 @@ class S3StorageService:
                 Key=s3_key
             )
             
-            print(f"✅ File deleted: {s3_key}")
+            print(f"[OK] File deleted: {s3_key}")
             return True
             
         except Exception as e:
-            print(f"❌ Delete failed: {str(e)}")
+            print(f"[ERROR] Delete failed: {str(e)}")
             return False
     
     def generate_presigned_url(self, s3_key, expiration=3600):
@@ -175,7 +175,7 @@ class S3StorageService:
             )
             return url
         except Exception as e:
-            print(f"❌ Presigned URL generation failed: {str(e)}")
+            print(f"[ERROR] Presigned URL generation failed: {str(e)}")
             return None
     
     def list_files(self, folder=''):
@@ -202,7 +202,7 @@ class S3StorageService:
             return []
             
         except Exception as e:
-            print(f"❌ List files failed: {str(e)}")
+            print(f"[ERROR] List files failed: {str(e)}")
             return []
     
     def get_file_url(self, s3_key):

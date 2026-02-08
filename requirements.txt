@@ -24,6 +24,8 @@ python-magic==0.4.27
 boto3==1.34.23
 gunicorn==21.2.0
 psutil==5.9.8
+APScheduler==3.10.4
+dnspython==2.4.2
 
 # OCR Dependencies for Proof of Payment Processing
 pytesseract==0.3.10

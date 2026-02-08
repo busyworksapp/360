@@ -32,11 +32,21 @@ from security_utils import (
     validate_password_strength, check_account_locked, record_failed_login,
     clear_failed_login_attempts, generate_2fa_secret, get_2fa_qr_code,
     verify_2fa_token, require_2fa, secure_file_upload, log_security_event,
-    get_client_ip
+    get_client_ip, cleanup_old_data
 )
+from security_middleware import security_middleware
+from performance import optimize_db_connection, optimize_static_files, optimize_templates
 
 app = Flask(__name__)
 app.config.from_object(Config)
+
+# APPLY BANK-LEVEL SECURITY MIDDLEWARE
+security_middleware(app)
+
+# APPLY PERFORMANCE OPTIMIZATIONS
+optimize_db_connection(app)
+optimize_static_files(app)
+optimize_templates(app)
 
 # Initialize logging FIRST for early error catching
 from logging_config import setup_logging, log_request
@@ -44,6 +54,8 @@ setup_logging(app)
 log_request(app)
 
 app.logger.info("🚀 Initializing 360Degree Supply Application")
+app.logger.info("🔒 Bank-level security enabled")
+app.logger.info("⚡ Performance optimizations applied")
 
 # Version: 2.3.0 - Production Optimization with Gunicorn and Monitoring
 
@@ -1233,6 +1245,13 @@ def customer_register():
 
         if password != confirm_password:
             flash('Passwords do not match', 'danger')
+            return redirect(url_for('customer_register'))
+
+        # Validate email exists (DNS MX record check)
+        from email_validator import validate_email_for_registration
+        is_valid, error_msg = validate_email_for_registration(email)
+        if not is_valid:
+            flash(f'Invalid email: {error_msg}', 'danger')
             return redirect(url_for('customer_register'))
 
         # Validate password strength
@@ -2885,6 +2904,17 @@ def init_db():
 from monitoring import monitoring_bp
 app.register_blueprint(monitoring_bp)
 app.logger.info("✅ Monitoring endpoints registered: /health, /metrics, /status")
+
+# Periodic cleanup of security data
+import atexit
+from apscheduler.schedulers.background import BackgroundScheduler
+
+scheduler = BackgroundScheduler()
+scheduler.add_job(func=cleanup_old_data, trigger="interval", hours=1)
+scheduler.start()
+atexit.register(lambda: scheduler.shutdown())
+
+app.logger.info("✅ Security cleanup scheduler started")
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))

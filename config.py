@@ -13,15 +13,18 @@ class Config:
     
     # Handle DATABASE_URL with proper format conversion
     _db_url = os.getenv('DATABASE_URL', '')
+    print(f"[DEBUG] DATABASE_URL from env: {_db_url[:50] if _db_url else 'NOT SET'}...")  # Debug
     if _db_url:
         # Replace mysql:// with mysql+pymysql:// if needed
         if _db_url.startswith('mysql://'):
             SQLALCHEMY_DATABASE_URI = _db_url.replace('mysql://', 'mysql+pymysql://', 1)
+            print(f"[DEBUG] Converted to: {SQLALCHEMY_DATABASE_URI[:50]}...")  # Debug
         else:
             SQLALCHEMY_DATABASE_URI = _db_url
     else:
         # Fallback for development
         SQLALCHEMY_DATABASE_URI = 'sqlite:///dev.db'
+        print("[WARNING] Using SQLite fallback - DATABASE_URL not set!")  # Debug
     
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     
@@ -67,41 +70,44 @@ class Config:
     )
     SEND_EMAILS = os.getenv('SEND_EMAILS', 'True') == 'True'
     
-    # File Upload Security
+    # BANK-LEVEL File Upload Security
     UPLOAD_FOLDER = 'static/uploads'
-    MAX_CONTENT_LENGTH = 16 * 1024 * 1024  # 16MB max
-    ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
+    MAX_CONTENT_LENGTH = 5 * 1024 * 1024  # 5MB max (reduced for security)
+    ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'webp'}  # Removed gif
     ALLOWED_POP_EXTENSIONS = {'pdf', 'jpg', 'jpeg', 'png'}
     ALLOWED_MIME_TYPES = {
-        'image/jpeg', 'image/png', 'image/gif', 'image/webp', 'application/pdf'
+        'image/jpeg', 'image/png', 'image/webp', 'application/pdf'
     }
+    FILE_SCAN_ENABLED = True  # Enable virus scanning if available
     
-    # Session Security
-    # Only enforce secure cookies in production
+    # BANK-LEVEL Session Security
     is_production = os.getenv('FLASK_ENV') == 'production'
-    SESSION_COOKIE_SECURE = is_production
+    SESSION_COOKIE_SECURE = True  # Always enforce HTTPS
     SESSION_COOKIE_HTTPONLY = True
-    SESSION_COOKIE_SAMESITE = 'Lax'
-    PERMANENT_SESSION_LIFETIME = 3600  # 1 hour
-    # Use __Host- prefix only in production (requires HTTPS)
+    SESSION_COOKIE_SAMESITE = 'Strict'  # Strict for maximum security
+    PERMANENT_SESSION_LIFETIME = 1800  # 30 minutes (reduced)
     SESSION_COOKIE_NAME = '__Host-session' if is_production else 'session'
+    SESSION_REFRESH_EACH_REQUEST = True  # Auto-refresh session
     
-    # Remember Me Security
-    REMEMBER_COOKIE_SECURE = is_production
+    # BANK-LEVEL Remember Me Security
+    REMEMBER_COOKIE_SECURE = True
     REMEMBER_COOKIE_HTTPONLY = True
-    REMEMBER_COOKIE_DURATION = 7  # Days
-    # Use __Host- prefix only in production (requires HTTPS)
+    REMEMBER_COOKIE_DURATION = 1  # 1 day only (reduced for security)
     REMEMBER_COOKIE_NAME = '__Host-remember' if is_production else 'remember'
+    REMEMBER_COOKIE_SAMESITE = 'Strict'
     
-    # CSRF Protection
+    # BANK-LEVEL CSRF Protection
     WTF_CSRF_ENABLED = True
-    WTF_CSRF_TIME_LIMIT = None  # No time limit
-    # Only enforce SSL strict in production
-    WTF_CSRF_SSL_STRICT = os.getenv('FLASK_ENV') == 'production'
+    WTF_CSRF_TIME_LIMIT = 3600  # 1 hour limit
+    WTF_CSRF_SSL_STRICT = True  # Always enforce SSL
+    WTF_CSRF_METHODS = ['POST', 'PUT', 'PATCH', 'DELETE']
     
-    # Rate Limiting
+    # BANK-LEVEL Rate Limiting
     RATELIMIT_STORAGE_URL = os.getenv('REDIS_URL', 'memory://')
     RATELIMIT_STRATEGY = 'fixed-window'
+    RATELIMIT_DEFAULT = '100 per hour, 20 per minute'
+    RATELIMIT_LOGIN = '5 per minute'
+    RATELIMIT_API = '60 per minute'
     
     # OCR settings
     OCR_CONFIDENCE_THRESHOLD = 0.75  # Auto-verify if confidence >= 75%
@@ -112,15 +118,36 @@ class Config:
     PREFERRED_URL_SCHEME = 'https' if is_production else 'http'
     PROPAGATE_EXCEPTIONS = is_production
     
-    # Performance Settings
+    # OPTIMIZED Performance Settings
     SQLALCHEMY_ENGINE_OPTIONS = {
-        'pool_size': int(os.getenv('DB_POOL_SIZE', '10')),
-        'pool_recycle': int(os.getenv('DB_POOL_RECYCLE', '3600')),
+        'pool_size': int(os.getenv('DB_POOL_SIZE', '20')),  # Increased
+        'pool_recycle': int(os.getenv('DB_POOL_RECYCLE', '1800')),  # Reduced
         'pool_pre_ping': True,
-        'max_overflow': int(os.getenv('DB_MAX_OVERFLOW', '20')),
-        'pool_timeout': int(os.getenv('DB_POOL_TIMEOUT', '30')),
+        'max_overflow': int(os.getenv('DB_MAX_OVERFLOW', '40')),  # Increased
+        'pool_timeout': int(os.getenv('DB_POOL_TIMEOUT', '10')),  # Reduced
+        'echo': False,  # Disable SQL logging for speed
+        'connect_args': {'connect_timeout': 5}  # Fast connection timeout
     }
     
     # Monitoring and Health Checks
     HEALTH_CHECK_ENABLED = True
     METRICS_ENABLED = os.getenv('METRICS_ENABLED', 'True') == 'True'
+    
+    # BANK-LEVEL Security Settings
+    SECURITY_PASSWORD_SALT = os.getenv('SECURITY_PASSWORD_SALT', SECRET_KEY)
+    SECURITY_TRACKABLE = True
+    SECURITY_PASSWORD_HASH = 'pbkdf2_sha512'
+    SECURITY_PASSWORD_SCHEMES = ['pbkdf2_sha512', 'bcrypt']
+    
+    # Advanced Security
+    FORCE_2FA_FOR_ADMIN = True
+    AUTO_LOGOUT_INACTIVE_MINUTES = 15
+    MAX_LOGIN_ATTEMPTS = 3
+    LOCKOUT_DURATION_MINUTES = 60
+    PASSWORD_EXPIRY_DAYS = 90
+    
+    # Performance Optimization
+    SEND_FILE_MAX_AGE_DEFAULT = 31536000  # 1 year cache for static files
+    TEMPLATES_AUTO_RELOAD = False if is_production else True
+    JSON_SORT_KEYS = False  # Faster JSON serialization
+    JSONIFY_PRETTYPRINT_REGULAR = False  # Compact JSON

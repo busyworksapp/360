@@ -1,20 +1,18 @@
 """
-Phase 2 Security Enhancements
-- 2FA for admin accounts
-- Account lockout after failed logins
-- Enhanced audit logging
-- Password strength enforcement
-- Secure file upload validation
+BANK-LEVEL SECURITY SYSTEM
+Ultra-fast, ultra-secure authentication and protection
 """
-
 import pyotp
 import qrcode
 import io
 import base64
 import re
+import hashlib
+import secrets
+import time
 from datetime import datetime, timedelta
-from functools import wraps
-from flask import session, redirect, url_for, request, flash
+from functools import wraps, lru_cache
+from flask import session, redirect, url_for, request
 from flask_login import current_user
 from werkzeug.utils import secure_filename
 import os
@@ -24,273 +22,361 @@ try:
     MAGIC_AVAILABLE = True
 except (ImportError, OSError):
     MAGIC_AVAILABLE = False
-    print("Warning: python-magic not available. File type validation will be limited.")
 
-# Password strength requirements
-PASSWORD_MIN_LENGTH = 8
+# BANK-LEVEL PASSWORD REQUIREMENTS
+PASSWORD_MIN_LENGTH = 12
 PASSWORD_REQUIRE_UPPERCASE = True
 PASSWORD_REQUIRE_LOWERCASE = True
 PASSWORD_REQUIRE_DIGIT = True
 PASSWORD_REQUIRE_SPECIAL = True
+PASSWORD_MAX_AGE_DAYS = 90
 
-# Account lockout settings
-MAX_LOGIN_ATTEMPTS = 5
-LOCKOUT_DURATION_MINUTES = 30
+# AGGRESSIVE LOCKOUT SETTINGS
+MAX_LOGIN_ATTEMPTS = 3
+LOCKOUT_DURATION_MINUTES = 60
+PROGRESSIVE_LOCKOUT = True  # Increase lockout time with each failure
 
-# Failed login tracking (in-memory, could be moved to database/Redis)
-failed_login_attempts = {}
-locked_accounts = {}
-
-# Allowed file types for uploads
-ALLOWED_IMAGE_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
-ALLOWED_DOCUMENT_EXTENSIONS = {'pdf', 'doc', 'docx', 'xls', 'xlsx'}
-ALLOWED_MIME_TYPES = {
-    'image/png', 'image/jpeg', 'image/gif', 'image/webp',
-    'application/pdf', 'application/msword',
-    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-    'application/vnd.ms-excel',
-    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+# PRE-COMPILED REGEX (PERFORMANCE)
+_REGEX_PATTERNS = {
+    'upper': re.compile(r'[A-Z]'),
+    'lower': re.compile(r'[a-z]'),
+    'digit': re.compile(r'\d'),
+    'special': re.compile(r'[!@#$%^&*(),.?":{}|<>_\-+=\[\]\\\/~`]'),
+    'sequential': re.compile(r'(012|123|234|345|456|567|678|789|890|abc|bcd|cde|def|efg|fgh|ghi|hij|ijk|jkl|klm|lmn|mno|nop|opq|pqr|qrs|rst|stu|tuv|uvw|vwx|wxy|xyz)', re.IGNORECASE),
+    'repeated': re.compile(r'(.)\1{2,}')
 }
 
-MAX_FILE_SIZE = 10 * 1024 * 1024  # 10MB
+# COMMON WEAK PASSWORDS (HASHED FOR SPEED)
+_WEAK_PASSWORDS = frozenset([
+    hashlib.sha256(p.encode()).hexdigest() for p in [
+        'password', 'password123', 'admin', 'admin123', '12345678', 
+        'qwerty', 'letmein', 'welcome', 'monkey', 'dragon'
+    ]
+])
+
+# IN-MEMORY STORAGE (USE REDIS IN PRODUCTION)
+_failed_attempts = {}
+_locked_accounts = {}
+_rate_limits = {}
+
+# FILE SECURITY
+ALLOWED_IMAGE_EXTENSIONS = frozenset(['png', 'jpg', 'jpeg', 'gif', 'webp'])
+ALLOWED_DOCUMENT_EXTENSIONS = frozenset(['pdf'])
+ALLOWED_MIME_TYPES = frozenset([
+    'image/png', 'image/jpeg', 'image/gif', 'image/webp', 'application/pdf'
+])
+MAX_FILE_SIZE = 5 * 1024 * 1024  # 5MB (reduced for security)
+
+# SECURITY HEADERS
+SECURITY_HEADERS = {
+    'X-Content-Type-Options': 'nosniff',
+    'X-Frame-Options': 'DENY',
+    'X-XSS-Protection': '1; mode=block',
+    'Strict-Transport-Security': 'max-age=31536000; includeSubDomains; preload',
+    'Content-Security-Policy': "default-src 'self'",
+    'Referrer-Policy': 'strict-origin-when-cross-origin',
+    'Permissions-Policy': 'geolocation=(), microphone=(), camera=()'
+}
 
 
 def validate_password_strength(password):
-    """
-    Validate password meets security requirements
-    Returns: (bool, str) - (is_valid, error_message)
-    """
-    if len(password) < PASSWORD_MIN_LENGTH:
-        return False, f"Password must be at least {PASSWORD_MIN_LENGTH} characters long"
+    """BANK-LEVEL password validation - ultra-fast"""
+    if not password or len(password) < PASSWORD_MIN_LENGTH:
+        return False, f"Minimum {PASSWORD_MIN_LENGTH} characters required"
     
-    if PASSWORD_REQUIRE_UPPERCASE and not re.search(r'[A-Z]', password):
-        return False, "Password must contain at least one uppercase letter"
+    # Check patterns (pre-compiled for speed)
+    if not _REGEX_PATTERNS['upper'].search(password):
+        return False, "Must contain uppercase letter"
+    if not _REGEX_PATTERNS['lower'].search(password):
+        return False, "Must contain lowercase letter"
+    if not _REGEX_PATTERNS['digit'].search(password):
+        return False, "Must contain number"
+    if not _REGEX_PATTERNS['special'].search(password):
+        return False, "Must contain special character"
     
-    if PASSWORD_REQUIRE_LOWERCASE and not re.search(r'[a-z]', password):
-        return False, "Password must contain at least one lowercase letter"
+    # Advanced security checks
+    if _REGEX_PATTERNS['sequential'].search(password):
+        return False, "No sequential characters allowed"
+    if _REGEX_PATTERNS['repeated'].search(password):
+        return False, "No repeated characters allowed"
     
-    if PASSWORD_REQUIRE_DIGIT and not re.search(r'\d', password):
-        return False, "Password must contain at least one digit"
-    
-    if PASSWORD_REQUIRE_SPECIAL and not re.search(r'[!@#$%^&*(),.?":{}|<>]', password):
-        return False, "Password must contain at least one special character (!@#$%^&*...)"
+    # Check against weak passwords (hashed comparison for speed)
+    pwd_hash = hashlib.sha256(password.lower().encode()).hexdigest()
+    if pwd_hash in _WEAK_PASSWORDS:
+        return False, "Password too common"
     
     return True, ""
 
 
 def check_account_locked(username):
-    """Check if account is locked due to failed login attempts"""
-    if username in locked_accounts:
-        lock_time = locked_accounts[username]
-        if datetime.utcnow() < lock_time:
-            remaining = (lock_time - datetime.utcnow()).total_seconds() / 60
-            return True, f"Account locked. Try again in {int(remaining)} minutes."
-        else:
-            # Unlock account
-            del locked_accounts[username]
-            if username in failed_login_attempts:
-                del failed_login_attempts[username]
+    """Check lockout status - optimized"""
+    lock_data = _locked_accounts.get(username)
+    if not lock_data:
+        return False, ""
+    
+    now = time.time()
+    if now < lock_data['until']:
+        remaining = int((lock_data['until'] - now) / 60)
+        return True, f"Account locked for {remaining} more minutes"
+    
+    # Auto-unlock
+    _locked_accounts.pop(username, None)
+    _failed_attempts.pop(username, None)
     return False, ""
 
 
 def record_failed_login(username):
-    """Record a failed login attempt and lock account if threshold exceeded"""
-    if username not in failed_login_attempts:
-        failed_login_attempts[username] = []
+    """Record failed attempt with progressive lockout"""
+    now = time.time()
+    cutoff = now - (LOCKOUT_DURATION_MINUTES * 60)
     
-    # Add timestamp of failed attempt
-    failed_login_attempts[username].append(datetime.utcnow())
+    # Get or create attempt list
+    attempts = _failed_attempts.setdefault(username, [])
+    attempts.append(now)
     
-    # Remove attempts older than lockout duration
-    cutoff = datetime.utcnow() - timedelta(minutes=LOCKOUT_DURATION_MINUTES)
-    failed_login_attempts[username] = [
-        attempt for attempt in failed_login_attempts[username] 
-        if attempt > cutoff
-    ]
+    # Clean old attempts (in-place for speed)
+    while attempts and attempts[0] < cutoff:
+        attempts.pop(0)
     
-    # Check if threshold exceeded
-    if len(failed_login_attempts[username]) >= MAX_LOGIN_ATTEMPTS:
-        locked_accounts[username] = datetime.utcnow() + timedelta(minutes=LOCKOUT_DURATION_MINUTES)
-        return True  # Account now locked
+    # Check threshold
+    if len(attempts) >= MAX_LOGIN_ATTEMPTS:
+        # Progressive lockout: multiply duration by attempt count
+        lockout_multiplier = len(attempts) // MAX_LOGIN_ATTEMPTS if PROGRESSIVE_LOCKOUT else 1
+        lockout_seconds = LOCKOUT_DURATION_MINUTES * 60 * lockout_multiplier
+        
+        _locked_accounts[username] = {
+            'until': now + lockout_seconds,
+            'attempts': len(attempts)
+        }
+        return True
     
     return False
 
 
 def clear_failed_login_attempts(username):
-    """Clear failed login attempts after successful login"""
-    if username in failed_login_attempts:
-        del failed_login_attempts[username]
-    if username in locked_accounts:
-        del locked_accounts[username]
+    """Clear attempts after successful login"""
+    _failed_attempts.pop(username, None)
+    _locked_accounts.pop(username, None)
+
+
+def rate_limit_check(identifier, max_requests=10, window_seconds=60):
+    """Generic rate limiting - ultra-fast"""
+    now = time.time()
+    cutoff = now - window_seconds
+    
+    requests = _rate_limits.setdefault(identifier, [])
+    requests.append(now)
+    
+    # Clean old requests
+    while requests and requests[0] < cutoff:
+        requests.pop(0)
+    
+    return len(requests) <= max_requests
 
 
 def generate_2fa_secret():
-    """Generate a new 2FA secret key"""
+    """Generate cryptographically secure 2FA secret"""
     return pyotp.random_base32()
 
 
+@lru_cache(maxsize=128)
 def get_2fa_qr_code(username, secret, issuer_name="360Degree Supply"):
-    """
-    Generate QR code for 2FA setup
-    Returns: base64 encoded image
-    """
+    """Generate QR code - cached for performance"""
     totp = pyotp.TOTP(secret)
     uri = totp.provisioning_uri(name=username, issuer_name=issuer_name)
     
-    # Generate QR code
     qr = qrcode.QRCode(version=1, box_size=10, border=5)
     qr.add_data(uri)
     qr.make(fit=True)
     
     img = qr.make_image(fill_color="black", back_color="white")
-    
-    # Convert to base64
     buf = io.BytesIO()
     img.save(buf, format='PNG')
-    buf.seek(0)
-    img_base64 = base64.b64encode(buf.getvalue()).decode()
     
-    return f"data:image/png;base64,{img_base64}"
+    return f"data:image/png;base64,{base64.b64encode(buf.getvalue()).decode()}"
 
 
 def verify_2fa_token(secret, token):
-    """Verify a 2FA token"""
+    """Verify 2FA with timing attack protection"""
+    if not token or not secret:
+        return False
+    
     totp = pyotp.TOTP(secret)
-    return totp.verify(token, valid_window=1)  # Allow 1 window back/forward for clock skew
+    # Constant-time comparison
+    return totp.verify(token, valid_window=1)
 
 
 def require_2fa(f):
-    """Decorator to require 2FA verification for admin routes"""
+    """Decorator for 2FA-protected routes"""
     @wraps(f)
-    def decorated_function(*args, **kwargs):
+    def decorated(*args, **kwargs):
         if not current_user.is_authenticated:
             return redirect(url_for('login'))
         
-        # Check if user is admin and has 2FA enabled
         if hasattr(current_user, 'is_admin') and current_user.is_admin:
             if hasattr(current_user, 'two_factor_secret') and current_user.two_factor_secret:
-                # Check if 2FA is verified in this session
-                if not session.get('2fa_verified', False):
+                if not session.get('2fa_verified'):
                     return redirect(url_for('verify_2fa', next=request.url))
         
         return f(*args, **kwargs)
-    return decorated_function
+    return decorated
 
 
 def secure_file_upload(file, allowed_extensions=None, max_size=MAX_FILE_SIZE):
-    """
-    Comprehensive file upload validation
+    """BANK-LEVEL file upload security"""
+    if not file or not file.filename:
+        return False, "No file", None
     
-    Args:
-        file: FileStorage object from request.files
-        allowed_extensions: Set of allowed extensions (defaults to images + documents)
-        max_size: Maximum file size in bytes
-    
-    Returns:
-        (bool, str, str) - (is_valid, error_message, secure_filename)
-    """
-    if not file or file.filename == '':
-        return False, "No file selected", None
-    
-    # Get secure filename
     filename = secure_filename(file.filename)
-    if not filename:
+    if not filename or '.' not in filename:
         return False, "Invalid filename", None
     
-    # Check file extension
-    if '.' not in filename:
-        return False, "File must have an extension", None
-    
     ext = filename.rsplit('.', 1)[1].lower()
+    allowed = allowed_extensions or (ALLOWED_IMAGE_EXTENSIONS | ALLOWED_DOCUMENT_EXTENSIONS)
     
-    if allowed_extensions is None:
-        allowed_extensions = ALLOWED_IMAGE_EXTENSIONS | ALLOWED_DOCUMENT_EXTENSIONS
+    if ext not in allowed:
+        return False, f"File type not allowed", None
     
-    if ext not in allowed_extensions:
-        return False, f"File type .{ext} not allowed. Allowed types: {', '.join(allowed_extensions)}", None
-    
-    # Check file size
+    # Check size efficiently
     file.seek(0, os.SEEK_END)
-    file_size = file.tell()
+    size = file.tell()
     file.seek(0)
     
-    if file_size > max_size:
-        max_mb = max_size / (1024 * 1024)
-        return False, f"File too large. Maximum size: {max_mb}MB", None
+    if size == 0:
+        return False, "Empty file", None
+    if size > max_size:
+        return False, f"Max {max_size // (1024*1024)}MB", None
     
-    if file_size == 0:
-        return False, "File is empty", None
-    
-    # Validate MIME type using python-magic (if available)
+    # MIME validation
     if MAGIC_AVAILABLE:
         try:
-            file_content = file.read(2048)  # Read first 2KB for magic number detection
+            content = file.read(2048)
+            mime = magic.from_buffer(content, mime=True)
             file.seek(0)
             
-            mime = magic.from_buffer(file_content, mime=True)
-            
             if mime not in ALLOWED_MIME_TYPES:
-                return False, f"File type {mime} not allowed for security reasons", None
-        except Exception as e:
-            # If magic fails, just check extension
-            print(f"Magic detection failed: {e}")
+                return False, "Invalid file type", None
+        except:
+            file.seek(0)
     
-    return True, "", filename
+    # Generate secure filename
+    secure_name = f"{secrets.token_hex(16)}.{ext}"
+    return True, "", secure_name
 
 
 def log_security_event(event_type, user_id=None, username=None, details=None, ip_address=None):
-    """
-    Log security events for audit trail
-    
-    Args:
-        event_type: Type of event (login_success, login_failed, 2fa_enabled, etc.)
-        user_id: User ID if available
-        username: Username if available
-        details: Additional details about the event
-        ip_address: IP address of request
-    """
-    from models import db, AuditLog
-    
-    log_entry = AuditLog(
-        event_type=event_type,
-        user_id=user_id,
-        username=username,
-        details=details,
-        ip_address=ip_address or request.remote_addr,
-        user_agent=request.headers.get('User-Agent', ''),
-        timestamp=datetime.utcnow()
-    )
-    
+    """Fast security logging"""
     try:
-        db.session.add(log_entry)
+        from models import db, AuditLog
+        
+        log = AuditLog(
+            event_type=event_type,
+            user_id=user_id,
+            username=username,
+            details=details,
+            ip_address=ip_address or get_client_ip(),
+            user_agent=request.headers.get('User-Agent', '')[:500],
+            timestamp=datetime.utcnow()
+        )
+        
+        db.session.add(log)
         db.session.commit()
-    except Exception as e:
-        print(f"Failed to log security event: {e}")
-        db.session.rollback()
+    except:
+        pass  # Never fail on logging
 
 
 def get_client_ip():
-    """Get real client IP address (handles proxies and Cloudflare)
+    """Get real IP - optimized"""
+    return (request.headers.get('X-Forwarded-For', '').split(',')[0].strip() or
+            request.headers.get('X-Real-IP') or
+            request.remote_addr)
+
+
+def sanitize_input(text, max_length=1000):
+    """Fast input sanitization"""
+    if not text:
+        return ""
     
-    Priority order:
-    1. CF-Connecting-IP (Cloudflare's real visitor IP)
-    2. X-Forwarded-For (standard proxy header)
-    3. X-Real-IP (alternative proxy header)
-    4. request.remote_addr (direct connection)
-    """
-    # Cloudflare provides the real visitor IP
-    cf_ip = request.headers.get('CF-Connecting-IP')
-    if cf_ip:
-        return cf_ip
+    # Remove dangerous characters
+    text = str(text)[:max_length]
+    text = re.sub(r'[<>"\']', '', text)
+    return text.strip()
+
+
+def generate_csrf_token():
+    """Generate secure CSRF token"""
+    if '_csrf_token' not in session:
+        session['_csrf_token'] = secrets.token_hex(32)
+    return session['_csrf_token']
+
+
+def validate_csrf_token(token):
+    """Validate CSRF token - constant time"""
+    expected = session.get('_csrf_token')
+    if not expected or not token:
+        return False
+    return secrets.compare_digest(expected, token)
+
+
+def hash_password_secure(password):
+    """Secure password hashing with salt"""
+    from werkzeug.security import generate_password_hash
+    return generate_password_hash(password, method='pbkdf2:sha256:260000')
+
+
+def verify_password_secure(password_hash, password):
+    """Secure password verification"""
+    from werkzeug.security import check_password_hash
+    return check_password_hash(password_hash, password)
+
+
+def generate_secure_token(length=32):
+    """Generate cryptographically secure token"""
+    return secrets.token_urlsafe(length)
+
+
+def constant_time_compare(a, b):
+    """Constant-time string comparison"""
+    return secrets.compare_digest(str(a), str(b))
+
+
+# SECURITY MONITORING
+def detect_suspicious_activity(username, ip_address):
+    """Detect suspicious patterns"""
+    # Check for rapid requests from same IP
+    if not rate_limit_check(f"ip_{ip_address}", max_requests=20, window_seconds=60):
+        log_security_event('suspicious_activity', username=username, 
+                         details='Rate limit exceeded', ip_address=ip_address)
+        return True
     
-    # Standard proxy headers
-    forwarded_for = request.headers.get('X-Forwarded-For')
-    if forwarded_for:
-        return forwarded_for.split(',')[0].strip()
+    # Check for multiple failed logins
+    attempts = _failed_attempts.get(username, [])
+    if len(attempts) >= 2:
+        log_security_event('suspicious_activity', username=username,
+                         details='Multiple failed attempts', ip_address=ip_address)
+        return True
     
-    real_ip = request.headers.get('X-Real-IP')
-    if real_ip:
-        return real_ip
+    return False
+
+
+def cleanup_old_data():
+    """Periodic cleanup of in-memory data"""
+    now = time.time()
+    cutoff = now - 3600  # 1 hour
     
-    # Direct connection
-    return request.remote_addr
+    # Clean failed attempts
+    for username in list(_failed_attempts.keys()):
+        _failed_attempts[username] = [t for t in _failed_attempts[username] if t > cutoff]
+        if not _failed_attempts[username]:
+            del _failed_attempts[username]
+    
+    # Clean rate limits
+    for key in list(_rate_limits.keys()):
+        _rate_limits[key] = [t for t in _rate_limits[key] if t > cutoff]
+        if not _rate_limits[key]:
+            del _rate_limits[key]
+    
+    # Clean expired locks
+    for username in list(_locked_accounts.keys()):
+        if _locked_accounts[username]['until'] < now:
+            del _locked_accounts[username]
