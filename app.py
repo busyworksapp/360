@@ -80,15 +80,28 @@ csp = {
     'default-src': "'self'",
     'script-src': [
         "'self'",
-        "'unsafe-inline'",  # Allow inline scripts (needed for onclick handlers)
-        "'unsafe-eval'",    # Allow eval (needed by some libraries)
+        "'unsafe-inline'",
+        "'unsafe-eval'",
+        'cdn.jsdelivr.net',
+        'code.jquery.com',
+        'js.stripe.com'
+    ],
+    'script-src-elem': [
+        "'self'",
+        "'unsafe-inline'",
         'cdn.jsdelivr.net',
         'code.jquery.com',
         'js.stripe.com'
     ],
     'style-src': [
         "'self'",
-        "'unsafe-inline'",  # Allow inline styles
+        "'unsafe-inline'",
+        'cdn.jsdelivr.net',
+        'cdnjs.cloudflare.com'
+    ],
+    'style-src-elem': [
+        "'self'",
+        "'unsafe-inline'",
         'cdn.jsdelivr.net',
         'cdnjs.cloudflare.com'
     ],
@@ -136,7 +149,7 @@ if is_railway or (is_production and enable_https and os.getenv('RAILWAY_STATIC_U
         strict_transport_security=True,
         strict_transport_security_max_age=31536000,
         content_security_policy=csp,
-        content_security_policy_nonce_in=[]  # Disable nonces to allow 'unsafe-inline'
+        content_security_policy_nonce_in=[]
     )
 else:
     print("⚠️  HTTPS enforcement disabled (Local development)")
