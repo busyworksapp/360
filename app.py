@@ -500,6 +500,15 @@ def contact():
 @limiter.limit("3 per minute")
 def submit_contact():
     data = request.get_json()
+    
+    # Validate required fields
+    required_fields = ['name', 'email', 'message']
+    for field in required_fields:
+        if not data.get(field):
+            return jsonify({
+                'success': False,
+                'message': f'{field.capitalize()} is required'
+            }), 400
 
     submission = ContactSubmission(
         name=data.get('name'),
@@ -530,10 +539,10 @@ def submit_contact():
                 'info@360degreesupply.co.za'
         )
 
-        # Send notification to admin
+        # Send notification to admin (info@360degreesupply.co.za)
         admin_email = app.config.get(
             'ADMIN_EMAIL',
-            'admin@360degreesupply.co.za'
+            'info@360degreesupply.co.za'
         )
         email_service.send_contact_notification(
             admin_email=admin_email,
