@@ -152,23 +152,6 @@ if is_production or enable_https:
         content_security_policy=False,  # Disable Talisman CSP, use manual
         content_security_policy_nonce_in=[]
     )
-    
-    # Apply CSP manually for production
-    @app.after_request
-    def add_production_csp(response):
-        csp_header = "; ".join([
-            "default-src 'self'",
-            "script-src 'self' 'unsafe-inline' 'unsafe-eval' cdn.jsdelivr.net code.jquery.com js.stripe.com",
-            "script-src-elem 'self' 'unsafe-inline' cdn.jsdelivr.net code.jquery.com js.stripe.com",
-            "style-src 'self' 'unsafe-inline' cdn.jsdelivr.net cdnjs.cloudflare.com",
-            "style-src-elem 'self' 'unsafe-inline' cdn.jsdelivr.net cdnjs.cloudflare.com",
-            "style-src-attr 'unsafe-inline'",
-            "img-src 'self' data: https:",
-            "font-src 'self' cdnjs.cloudflare.com",
-            "connect-src 'self' https://api.stripe.com cdn.jsdelivr.net"
-        ])
-        response.headers['Content-Security-Policy'] = csp_header
-        return response
 else:
     print("⚠️  HTTPS enforcement disabled (Local development)")
     # Still apply CSP without HTTPS enforcement for local testing
@@ -234,6 +217,21 @@ def set_security_headers(response):
     
     # Permissions policy
     response.headers['Permissions-Policy'] = 'geolocation=(), microphone=(), camera=()'
+    
+    # CSP - Override any previous CSP headers
+    if is_production or enable_https:
+        csp_header = "; ".join([
+            "default-src 'self'",
+            "script-src 'self' 'unsafe-inline' 'unsafe-eval' cdn.jsdelivr.net code.jquery.com js.stripe.com",
+            "script-src-elem 'self' 'unsafe-inline' cdn.jsdelivr.net code.jquery.com js.stripe.com",
+            "style-src 'self' 'unsafe-inline' cdn.jsdelivr.net cdnjs.cloudflare.com",
+            "style-src-elem 'self' 'unsafe-inline' cdn.jsdelivr.net cdnjs.cloudflare.com",
+            "style-src-attr 'unsafe-inline'",
+            "img-src 'self' data: https:",
+            "font-src 'self' cdnjs.cloudflare.com",
+            "connect-src 'self' https://api.stripe.com cdn.jsdelivr.net"
+        ])
+        response.headers['Content-Security-Policy'] = csp_header
     
     return response
 
