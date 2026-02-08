@@ -105,6 +105,7 @@ csp = {
         'cdn.jsdelivr.net',
         'cdnjs.cloudflare.com'
     ],
+    'style-src-attr': ["'unsafe-inline'"],
     'img-src': ["'self'", 'data:', 'https:'],
     'font-src': ["'self'", 'cdnjs.cloudflare.com'],
     'connect-src': ["'self'", 'https://api.stripe.com']
@@ -156,13 +157,14 @@ else:
     # Still apply CSP without HTTPS enforcement for local testing
     @app.after_request
     def add_csp_header(response):
-        # Build CSP header manually with ALL directives
+        # Build CSP header manually with ALL directives including style-src-attr
         csp_header = "; ".join([
             "default-src 'self'",
             "script-src 'self' 'unsafe-inline' 'unsafe-eval' cdn.jsdelivr.net code.jquery.com js.stripe.com",
             "script-src-elem 'self' 'unsafe-inline' cdn.jsdelivr.net code.jquery.com js.stripe.com",
             "style-src 'self' 'unsafe-inline' cdn.jsdelivr.net cdnjs.cloudflare.com",
             "style-src-elem 'self' 'unsafe-inline' cdn.jsdelivr.net cdnjs.cloudflare.com",
+            "style-src-attr 'unsafe-inline'",
             "img-src 'self' data: https:",
             "font-src 'self' cdnjs.cloudflare.com",
             "connect-src 'self' https://api.stripe.com cdn.jsdelivr.net"

@@ -102,6 +102,15 @@ class Config:
     WTF_CSRF_SSL_STRICT = True  # Always enforce SSL
     WTF_CSRF_METHODS = ['POST', 'PUT', 'PATCH', 'DELETE']
     
+    # Content Security Policy
+    CONTENT_SECURITY_POLICY = {
+        'default-src': ["'self'"],
+        'style-src': ["'self'", "'unsafe-inline'", 'https://cdn.jsdelivr.net', 'https://cdnjs.cloudflare.com'],
+        'script-src': ["'self'", "'unsafe-inline'", 'https://cdn.jsdelivr.net', 'https://code.jquery.com'],
+        'font-src': ["'self'", 'https://cdnjs.cloudflare.com'],
+        'img-src': ["'self'", 'data:', 'https:'],
+    }
+    
     # BANK-LEVEL Rate Limiting
     RATELIMIT_STORAGE_URL = os.getenv('REDIS_URL', 'memory://')
     RATELIMIT_STRATEGY = 'fixed-window'
