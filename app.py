@@ -77,7 +77,7 @@ limiter = Limiter(
 
 # HTTPS and Security Headers
 csp = {
-    'default-src': "'self'",
+    'default-src': ["'self'"],
     'script-src': [
         "'self'",
         "'unsafe-inline'",
