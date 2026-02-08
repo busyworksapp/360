@@ -68,7 +68,7 @@ class Config:
         'ADMIN_EMAIL',
         'admin@360degreesupply.co.za'
     )
-    SEND_EMAILS = os.getenv('SEND_EMAILS', 'True') == 'True'
+    SEND_EMAILS = os.getenv('SEND_EMAILS', 'False') == 'True'  # Disabled by default
     
     # BANK-LEVEL File Upload Security
     UPLOAD_FOLDER = 'static/uploads'
