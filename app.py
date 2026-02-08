@@ -141,9 +141,9 @@ def force_https():
                 app.logger.info(f"🔒 Redirecting HTTP to HTTPS: {request.url} -> {url}")
                 return redirect(url, code=301)
 
-# Only enforce HTTPS if running on Railway or explicitly enabled in production
-if is_railway or (is_production and enable_https and os.getenv('RAILWAY_STATIC_URL')):
-    print("🔒 HTTPS enforcement enabled (Production/Railway)")
+# Apply CSP in all environments
+if is_production or enable_https:
+    print("🔒 HTTPS enforcement enabled (Production)")
     Talisman(app,
         force_https=True,
         strict_transport_security=True,
@@ -156,11 +156,13 @@ else:
     # Still apply CSP without HTTPS enforcement for local testing
     @app.after_request
     def add_csp_header(response):
-        # Build CSP header manually for local development
+        # Build CSP header manually with ALL directives
         csp_header = "; ".join([
             "default-src 'self'",
             "script-src 'self' 'unsafe-inline' 'unsafe-eval' cdn.jsdelivr.net code.jquery.com js.stripe.com",
+            "script-src-elem 'self' 'unsafe-inline' cdn.jsdelivr.net code.jquery.com js.stripe.com",
             "style-src 'self' 'unsafe-inline' cdn.jsdelivr.net cdnjs.cloudflare.com",
+            "style-src-elem 'self' 'unsafe-inline' cdn.jsdelivr.net cdnjs.cloudflare.com",
             "img-src 'self' data: https:",
             "font-src 'self' cdnjs.cloudflare.com",
             "connect-src 'self' https://api.stripe.com cdn.jsdelivr.net"
