@@ -12,7 +12,7 @@ class Config:
         raise ValueError("CRITICAL SECURITY ERROR: Change SECRET_KEY from default value!")
     
     # Handle DATABASE_URL with proper format conversion
-    _db_url = os.getenv('DATABASE_URL', '')
+    _db_url = os.getenv('DATABASE_URL', '').strip()  # Strip whitespace/newlines
     print(f"[DEBUG] DATABASE_URL from env: {_db_url[:50] if _db_url else 'NOT SET'}...")  # Debug
     if _db_url:
         # Replace mysql:// with mysql+pymysql:// if needed
