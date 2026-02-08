@@ -142,16 +142,12 @@ def force_https():
                 app.logger.info(f"🔒 Redirecting HTTP to HTTPS: {request.url} -> {url}")
                 return redirect(url, code=301)
 
-# Apply CSP in all environments
+# Apply security in production - Manual implementation without Talisman
 if is_production or enable_https:
     print("🔒 HTTPS enforcement enabled (Production)")
-    Talisman(app,
-        force_https=True,
-        strict_transport_security=True,
-        strict_transport_security_max_age=31536000,
-        content_security_policy=False,  # Disable Talisman CSP, use manual
-        content_security_policy_nonce_in=[]
-    )
+    
+    # Manual HTTPS redirect is already handled by force_https() function above
+    # No Talisman needed
 else:
     print("⚠️  HTTPS enforcement disabled (Local development)")
     # Still apply CSP without HTTPS enforcement for local testing
@@ -217,6 +213,10 @@ def set_security_headers(response):
     
     # Permissions policy
     response.headers['Permissions-Policy'] = 'geolocation=(), microphone=(), camera=()'
+    
+    # HSTS for production
+    if is_production or enable_https:
+        response.headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains'
     
     # CSP - Override any previous CSP headers
     if is_production or enable_https:
