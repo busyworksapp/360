@@ -313,57 +313,84 @@
             color: var(--d365-text);
         }
 
-        /* Footer - D365 Style */
+        /* Footer */
         footer {
-            background: #000000 !important;
-            color: #FFFFFF !important;
-            padding: 40px 0 20px;
+            background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%);
+            color: #fff;
+            padding: 60px 0 20px;
             margin-top: auto;
-            position: relative;
-            z-index: 10;
             border-top: 3px solid #DAA520;
         }
 
         footer h5 {
-            font-weight: 600;
-            margin-bottom: 16px;
-            font-size: 16px;
-            color: #FFFFFF !important;
-        }
-
-        footer h5 i {
-            margin-right: 8px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            font-size: 18px;
             color: #DAA520 !important;
         }
 
-        footer p, footer a {
-            color: #FFFFFF !important;
+        footer p, footer a, footer li {
+            color: #c0c0c0 !important;
             font-size: 14px;
-            line-height: 1.6;
+            line-height: 1.8;
         }
 
         footer a:hover {
-            color: #DAA520 !important;
-            text-decoration: underline;
+            color: #FFD700 !important;
+            text-decoration: none;
         }
 
         footer .list-unstyled li {
-            margin-bottom: 8px;
+            margin-bottom: 10px;
+            transition: all 0.3s;
+        }
+
+        footer .list-unstyled li:hover {
+            transform: translateX(5px);
+        }
+
+        .footer-social {
+            display: flex;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .footer-social a {
+            width: 40px;
+            height: 40px;
+            background: rgba(218,165,32,0.1);
+            border: 2px solid #DAA520;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        .footer-social a:hover {
+            background: #DAA520;
+            transform: translateY(-3px);
+        }
+
+        .footer-social a i {
+            color: #DAA520 !important;
+        }
+
+        .footer-social a:hover i {
+            color: #000 !important;
         }
 
         .footer-bottom {
-            border-top: 1px solid #333333;
-            padding-top: 20px;
-            margin-top: 32px;
+            border-top: 1px solid rgba(218,165,32,0.2);
+            padding-top: 30px;
+            margin-top: 40px;
             text-align: center;
-            color: #FFFFFF !important;
-            font-size: 12px;
         }
 
         .footer-bottom p {
-            margin-bottom: 4px;
-            font-size: 12px;
-            color: #FFFFFF !important;
+            margin-bottom: 5px;
+            font-size: 13px;
+            color: #888 !important;
         }
 
         /* Alerts - D365 Style */
@@ -1591,57 +1618,51 @@
     </div>
 
     <!-- Footer -->
-    {% if request.endpoint != 'index' %}
     <footer>
         <div class="container">
             <div class="row">
-                <div class="col-md-3 mb-4">
-                    <h5><i class="fas fa-cube"></i> 360Degree Supply</h5>
-                    {% if company_info %}
-                        <p style="font-weight: 600;">{{ company_info.company_name }}</p>
-                        <p><small>{{ company_info.description|truncate(150) }}</small></p>
-                    {% else %}
-                        <p>Your trusted partner for industrial supplies and services.</p>
-                    {% endif %}
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <h5>360Degree Supply</h5>
+                    <p>Your trusted partner in industrial supply solutions. Delivering excellence across mining, transport, agriculture, and industrial sectors throughout South Africa.</p>
+                    <div class="footer-social">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                    </div>
                 </div>
-                <div class="col-md-3 mb-4">
-                    <h5><i class="fas fa-link"></i> Quick Links</h5>
+                <div class="col-lg-2 col-md-6 mb-4">
+                    <h5>Quick Links</h5>
                     <ul class="list-unstyled">
-                        <li><a href="/">Home</a></li>
-                        <li><a href="/services">Services</a></li>
-                        <li><a href="/products">Store</a></li>
-                        <li><a href="/contact">Contact</a></li>
-                        <li><a href="/privacy">Privacy Policy</a></li>
-                        <li><a href="/terms">Terms & Conditions</a></li>
+                        <li><a href="/"><i class="fas fa-chevron-right" style="font-size: 10px; margin-right: 8px;"></i>Home</a></li>
+                        <li><a href="/services"><i class="fas fa-chevron-right" style="font-size: 10px; margin-right: 8px;"></i>Services</a></li>
+                        <li><a href="/products"><i class="fas fa-chevron-right" style="font-size: 10px; margin-right: 8px;"></i>Products</a></li>
+                        <li><a href="/contact"><i class="fas fa-chevron-right" style="font-size: 10px; margin-right: 8px;"></i>Contact</a></li>
                     </ul>
                 </div>
-                <div class="col-md-3 mb-4">
-                    <h5><i class="fas fa-info-circle"></i> About</h5>
-                    {% if company_info %}
-                        <p><strong>Founded:</strong> {{ company_info.established_year }}</p>
-                        <p><strong>Mission:</strong><br><small>{{ company_info.mission }}</small></p>
-                    {% else %}
-                        <p>Delivering excellence in industrial supplies since establishment.</p>
-                    {% endif %}
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <h5>Contact Info</h5>
+                    <p><i class="fas fa-map-marker-alt" style="color: #DAA520; margin-right: 10px;"></i>South Africa</p>
+                    <p><i class="fas fa-phone" style="color: #DAA520; margin-right: 10px;"></i>+27 XX XXX XXXX</p>
+                    <p><i class="fas fa-envelope" style="color: #DAA520; margin-right: 10px;"></i><a href="mailto:info@360degreesupply.co.za">info@360degreesupply.co.za</a></p>
+                    <p><i class="fas fa-clock" style="color: #DAA520; margin-right: 10px;"></i>Mon-Fri: 8AM-5PM</p>
                 </div>
-                <div class="col-md-3 mb-4">
-                    <h5><i class="fas fa-phone"></i> Contact Info</h5>
-                    {% if company_info %}
-                        <p><i class="fas fa-map-marker-alt"></i> {{ company_info.address|truncate(50) }}</p>
-                        <p><i class="fas fa-phone"></i> {{ company_info.phone }}</p>
-                        <p><i class="fas fa-envelope"></i> <a href="mailto:{{ company_info.email }}">{{ company_info.email }}</a></p>
-                    {% else %}
-                        <p><i class="fas fa-envelope"></i> info@360degreesupply.com</p>
-                    {% endif %}
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <h5>Legal</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="/privacy"><i class="fas fa-chevron-right" style="font-size: 10px; margin-right: 8px;"></i>Privacy Policy</a></li>
+                        <li><a href="/terms"><i class="fas fa-chevron-right" style="font-size: 10px; margin-right: 8px;"></i>Terms & Conditions</a></li>
+                    </ul>
+                    <p style="margin-top: 20px; font-size: 12px;"><i class="fas fa-shield-alt" style="color: #DAA520; margin-right: 8px;"></i>POPIA Compliant</p>
+                    <p style="font-size: 12px;"><i class="fas fa-certificate" style="color: #DAA520; margin-right: 8px;"></i>ISO Certified</p>
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; {% if company_info %}{{ company_info.company_name }}{% else %}360Degree Supply (Pty) Ltd{% endif %} {{ now.year if now else '2024' }}. All rights reserved.</p>
-                <p>South African Supply Excellence | Trusted by Industry Leaders</p>
+                <p>&copy; 2024 360Degree Supply (Pty) Ltd. All rights reserved.</p>
+                <p>Trusted Industrial Supply Partner | South African Excellence</p>
             </div>
         </div>
     </footer>
-    {% endif %}
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
