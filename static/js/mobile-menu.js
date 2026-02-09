@@ -4,65 +4,34 @@
  */
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Only create mobile menu toggle if sidebar exists and button doesn't exist
+    // Don't create hamburger button - use bottom nav only
     const sidebar = document.querySelector('.sidebar');
-    if (sidebar && window.innerWidth <= 991 && !document.querySelector('.mobile-menu-toggle')) {
-        const toggleBtn = document.createElement('button');
-        toggleBtn.className = 'mobile-menu-toggle';
-        toggleBtn.innerHTML = '<i class="fas fa-bars"></i>';
-        toggleBtn.setAttribute('aria-label', 'Toggle Menu');
-        document.body.appendChild(toggleBtn);
-        
+    if (sidebar && window.innerWidth <= 991) {
         // Create overlay for sidebar
-        const overlay = document.createElement('div');
-        overlay.className = 'sidebar-overlay';
-        document.body.appendChild(overlay);
-        
-        // Toggle sidebar
-        toggleBtn.addEventListener('click', function() {
-            const sidebar = document.querySelector('.sidebar');
-            if (sidebar) {
-                sidebar.classList.toggle('show');
-                overlay.classList.toggle('show');
-                
-                // Change icon
-                const icon = this.querySelector('i');
-                if (sidebar.classList.contains('show')) {
-                    icon.className = 'fas fa-times';
-                } else {
-                    icon.className = 'fas fa-bars';
-                }
-            }
-        });
-        
-        // Close sidebar when clicking overlay
-        overlay.addEventListener('click', function() {
-            const sidebar = document.querySelector('.sidebar');
-            if (sidebar) {
+        if (!document.querySelector('.sidebar-overlay')) {
+            const overlay = document.createElement('div');
+            overlay.className = 'sidebar-overlay';
+            document.body.appendChild(overlay);
+            
+            // Close sidebar when clicking overlay
+            overlay.addEventListener('click', function() {
                 sidebar.classList.remove('show');
                 overlay.classList.remove('show');
-                toggleBtn.querySelector('i').className = 'fas fa-bars';
-            }
-        });
+            });
+        }
     }
-    
     // Handle window resize
     let resizeTimer;
     window.addEventListener('resize', function() {
         clearTimeout(resizeTimer);
         resizeTimer = setTimeout(function() {
-            const toggleBtn = document.querySelector('.mobile-menu-toggle');
             const overlay = document.querySelector('.sidebar-overlay');
             const sidebar = document.querySelector('.sidebar');
             
             if (window.innerWidth > 991) {
                 // Desktop view
-                if (toggleBtn) toggleBtn.style.display = 'none';
                 if (overlay) overlay.classList.remove('show');
                 if (sidebar) sidebar.classList.remove('show');
-            } else {
-                // Mobile view
-                if (toggleBtn) toggleBtn.style.display = 'flex';
             }
         }, 250);
     });
@@ -102,14 +71,12 @@ document.addEventListener('DOMContentLoaded', function() {
     function handleSwipe() {
         const sidebar = document.querySelector('.sidebar');
         const overlay = document.querySelector('.sidebar-overlay');
-        const toggleBtn = document.querySelector('.mobile-menu-toggle');
         
         if (sidebar && sidebar.classList.contains('show')) {
             // Swipe left to close
             if (touchEndX < touchStartX - 50) {
                 sidebar.classList.remove('show');
                 if (overlay) overlay.classList.remove('show');
-                if (toggleBtn) toggleBtn.querySelector('i').className = 'fas fa-bars';
             }
         }
     }
@@ -210,11 +177,9 @@ window.mobileMenu = {
     close: function() {
         const sidebar = document.querySelector('.sidebar');
         const overlay = document.querySelector('.sidebar-overlay');
-        const toggleBtn = document.querySelector('.mobile-menu-toggle');
         if (sidebar) {
             sidebar.classList.remove('show');
             if (overlay) overlay.classList.remove('show');
-            if (toggleBtn) toggleBtn.querySelector('i').className = 'fas fa-bars';
         }
     },
     toggle: function() {
