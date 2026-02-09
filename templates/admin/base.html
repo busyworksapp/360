@@ -1540,66 +1540,77 @@
             <span class="brand-text">360° Supply Admin</span>
         </div>
         <ul class="sidebar-menu">
-            <li><a href="{{ url_for('admin_dashboard') }}" class="{% if request.endpoint == 'admin_dashboard' %}active{% endif %}" data-title="Dashboard">
-                <i class="fas fa-th-large"></i>
-                <span>Dashboard</span>
-            </a></li>
-            <li><a href="{{ url_for('admin_products') }}" class="{% if 'product' in request.endpoint %}active{% endif %}" data-title="Products">
-                <i class="fas fa-box"></i>
-                <span>Products</span>
-            </a></li>
-            <li><a href="{{ url_for('admin_services') }}" class="{% if 'service' in request.endpoint %}active{% endif %}" data-title="Services">
-                <i class="fas fa-tools"></i>
-                <span>Services</span>
-            </a></li>
-            <li><a href="{{ url_for('admin_orders') }}" class="{% if 'order' in request.endpoint %}active{% endif %}" data-title="Orders">
-                <i class="fas fa-shopping-cart"></i>
-                <span>Orders</span>
-            </a></li>
-            <li><a href="{{ url_for('admin_invoices') }}" class="{% if 'invoice' in request.endpoint %}active{% endif %}" data-title="Invoices">
-                <i class="fas fa-file-invoice-dollar"></i>
-                <span>Invoices</span>
-            </a></li>
-            <li><a href="{{ url_for('admin_transactions') }}" class="{% if 'transaction' in request.endpoint %}active{% endif %}" data-title="Transactions">
-                <i class="fas fa-exchange-alt"></i>
-                <span>Transactions</span>
-            </a></li>
-            <li><a href="{{ url_for('admin_company') }}" class="{% if 'company' in request.endpoint %}active{% endif %}" data-title="Company">
-                <i class="fas fa-building"></i>
-                <span>Company</span>
-            </a></li>
-            <li><a href="{{ url_for('admin_homepage') }}" class="{% if request.endpoint == 'admin_homepage' %}active{% endif %}" data-title="Homepage">
-                <i class="fas fa-home"></i>
-                <span>Homepage</span>
-            </a></li>
-            <li><a href="{{ url_for('admin_payment_methods') }}" class="{% if 'payment' in request.endpoint %}active{% endif %}" data-title="Payments">
-                <i class="fas fa-credit-card"></i>
-                <span>Payments</span>
-            </a></li>
-            <li><a href="{{ url_for('admin_hero_sections') }}" class="{% if 'hero' in request.endpoint %}active{% endif %}" data-title="Hero Sections">
-                <i class="fas fa-image"></i>
-                <span>Hero Sections</span>
-            </a></li>
-            <li><a href="{{ url_for('admin_testimonials') }}" class="{% if 'testimonial' in request.endpoint %}active{% endif %}" data-title="Testimonials">
-                <i class="fas fa-comment"></i>
-                <span>Testimonials</span>
-            </a></li>
-            <li><a href="{{ url_for('admin_contacts') }}" class="{% if 'contact' in request.endpoint %}active{% endif %}" data-title="Contacts">
-                <i class="fas fa-envelope"></i>
-                <span>Contacts</span>
-            </a></li>
-            <li><a href="{{ url_for('admin_menu') }}" class="{% if 'menu' in request.endpoint %}active{% endif %}" data-title="Menu">
-                <i class="fas fa-bars"></i>
-                <span>Menu</span>
-            </a></li>
-            <li><a href="{{ url_for('master_admin.dashboard') }}" class="{% if 'master_admin' in request.endpoint %}active{% endif %}" data-title="Master Admin">
-                <i class="fas fa-shield-alt"></i>
-                <span>Master Admin</span>
-            </a></li>
-            <li><a href="{{ url_for('admin_logout') }}" data-title="Logout">
-                <i class="fas fa-sign-out-alt"></i>
-                <span>Logout</span>
-            </a></li>
+            {% if current_user.master_admin_profile %}
+                <li><a href="{{ url_for('master_admin.dashboard') }}" class="{% if 'master_admin' in request.endpoint %}active{% endif %}" data-title="Master Admin">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>Master Admin</span>
+                </a></li>
+                <li><a href="{{ url_for('admin_logout') }}" data-title="Logout">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </a></li>
+            {% else %}
+                <li><a href="{{ url_for('admin_dashboard') }}" class="{% if request.endpoint == 'admin_dashboard' %}active{% endif %}" data-title="Dashboard">
+                    <i class="fas fa-th-large"></i>
+                    <span>Dashboard</span>
+                </a></li>
+                <li><a href="{{ url_for('admin_products') }}" class="{% if 'product' in request.endpoint %}active{% endif %}" data-title="Products">
+                    <i class="fas fa-box"></i>
+                    <span>Products</span>
+                </a></li>
+                <li><a href="{{ url_for('admin_services') }}" class="{% if 'service' in request.endpoint %}active{% endif %}" data-title="Services">
+                    <i class="fas fa-tools"></i>
+                    <span>Services</span>
+                </a></li>
+                <li><a href="{{ url_for('admin_orders') }}" class="{% if 'order' in request.endpoint %}active{% endif %}" data-title="Orders">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span>Orders</span>
+                </a></li>
+                <li><a href="{{ url_for('admin_invoices') }}" class="{% if 'invoice' in request.endpoint %}active{% endif %}" data-title="Invoices">
+                    <i class="fas fa-file-invoice-dollar"></i>
+                    <span>Invoices</span>
+                </a></li>
+                <li><a href="{{ url_for('admin_transactions') }}" class="{% if 'transaction' in request.endpoint %}active{% endif %}" data-title="Transactions">
+                    <i class="fas fa-exchange-alt"></i>
+                    <span>Transactions</span>
+                </a></li>
+                <li><a href="{{ url_for('admin_company') }}" class="{% if 'company' in request.endpoint %}active{% endif %}" data-title="Company">
+                    <i class="fas fa-building"></i>
+                    <span>Company</span>
+                </a></li>
+                <li><a href="{{ url_for('admin_homepage') }}" class="{% if request.endpoint == 'admin_homepage' %}active{% endif %}" data-title="Homepage">
+                    <i class="fas fa-home"></i>
+                    <span>Homepage</span>
+                </a></li>
+                <li><a href="{{ url_for('admin_payment_methods') }}" class="{% if 'payment' in request.endpoint %}active{% endif %}" data-title="Payments">
+                    <i class="fas fa-credit-card"></i>
+                    <span>Payments</span>
+                </a></li>
+                <li><a href="{{ url_for('admin_hero_sections') }}" class="{% if 'hero' in request.endpoint %}active{% endif %}" data-title="Hero Sections">
+                    <i class="fas fa-image"></i>
+                    <span>Hero Sections</span>
+                </a></li>
+                <li><a href="{{ url_for('admin_testimonials') }}" class="{% if 'testimonial' in request.endpoint %}active{% endif %}" data-title="Testimonials">
+                    <i class="fas fa-comment"></i>
+                    <span>Testimonials</span>
+                </a></li>
+                <li><a href="{{ url_for('admin_contacts') }}" class="{% if 'contact' in request.endpoint %}active{% endif %}" data-title="Contacts">
+                    <i class="fas fa-envelope"></i>
+                    <span>Contacts</span>
+                </a></li>
+                <li><a href="{{ url_for('admin_menu') }}" class="{% if 'menu' in request.endpoint %}active{% endif %}" data-title="Menu">
+                    <i class="fas fa-bars"></i>
+                    <span>Menu</span>
+                </a></li>
+                <li><a href="{{ url_for('master_admin.dashboard') }}" class="{% if 'master_admin' in request.endpoint %}active{% endif %}" data-title="Master Admin">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>Master Admin</span>
+                </a></li>
+                <li><a href="{{ url_for('admin_logout') }}" data-title="Logout">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </a></li>
+            {% endif %}
         </ul>
     </div>
 
