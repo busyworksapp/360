@@ -1,6 +1,10 @@
 from flask import request
-from models.master_admin import AuditLog, SecurityEvent, UserActivity, SystemLog
-from extensions import db
+import sys
+import os
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
+from models import db, AuditLog
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'models'))
+from master_admin import SecurityEvent, UserActivity, SystemLog
 import json
 
 def log_audit(user_id, action, table_name=None, record_id=None, old_value=None, new_value=None, severity='info'):

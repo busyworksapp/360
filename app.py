@@ -2979,6 +2979,11 @@ from monitoring import monitoring_bp
 app.register_blueprint(monitoring_bp)
 app.logger.info("✅ Monitoring endpoints registered: /health, /metrics, /status")
 
+# Register Master Admin blueprint
+from master_admin_routes import master_admin_bp
+app.register_blueprint(master_admin_bp)
+app.logger.info("✅ Master Admin routes registered: /master-admin/*")
+
 # Periodic cleanup of security data
 import atexit
 from apscheduler.schedulers.background import BackgroundScheduler

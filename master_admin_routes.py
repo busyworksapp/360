@@ -1,9 +1,11 @@
 from flask import Blueprint, render_template, request, jsonify, flash, redirect, url_for
 from flask_login import login_required, current_user
 from utils.master_admin_utils import require_master_admin, log_audit, log_user_activity
-from models.master_admin import AuditLog, SecurityEvent, UserActivity, SystemLog
-from models import User, Product, Order
-from extensions import db
+import sys
+import os
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'models'))
+from master_admin import SecurityEvent, UserActivity, SystemLog
+from models import db, User, Product, Order, AuditLog
 from sqlalchemy import inspect, text
 from datetime import datetime
 
