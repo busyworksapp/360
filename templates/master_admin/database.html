@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Database - Master Admin{% endblock %}
+{% block content %}
+<div class="container mt-4">
+    <h1 class="text-warning"><i class="fas fa-database"></i> Database Tables</h1>
+    <div class="alert alert-warning"><i class="fas fa-exclamation-triangle"></i> Caution: Direct database access. All actions are logged.</div>
+    <div class="row">
+        {% for table in tables %}
+        <div class="col-md-3 mb-3">
+            <div class="card bg-dark">
+                <div class="card-body">
+                    <h5>{{ table }}</h5>
+                    <a href="{{ url_for('master_admin.database_table', table_name=table) }}" class="btn btn-sm btn-warning">View Data</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

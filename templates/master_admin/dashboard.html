@@ -1,0 +1,179 @@
+{% extends "base.html" %}
+
+{% block title %}Master Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="text-danger"><i class="fas fa-shield-alt"></i> Master Admin Dashboard</h1>
+            <p class="text-muted">System Administration & Monitoring</p>
+        </div>
+    </div>
+
+    <!-- System Health -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card bg-dark border-primary">
+                <div class="card-body text-center">
+                    <i class="fas fa-users fa-3x text-primary mb-3"></i>
+                    <h3>{{ total_users }}</h3>
+                    <p>Total Users</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-dark border-success">
+                <div class="card-body text-center">
+                    <i class="fas fa-shopping-cart fa-3x text-success mb-3"></i>
+                    <h3>{{ total_orders }}</h3>
+                    <p>Total Orders</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-dark border-warning">
+                <div class="card-body text-center">
+                    <i class="fas fa-box fa-3x text-warning mb-3"></i>
+                    <h3>{{ total_products }}</h3>
+                    <p>Total Products</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-dark border-danger">
+                <div class="card-body text-center">
+                    <i class="fas fa-exclamation-triangle fa-3x text-danger mb-3"></i>
+                    <h3>{{ recent_security|length }}</h3>
+                    <p>Security Alerts</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card bg-dark">
+                <div class="card-header">
+                    <h5><i class="fas fa-bolt"></i> Quick Actions</h5>
+                </div>
+                <div class="card-body">
+                    <a href="{{ url_for('master_admin.users') }}" class="btn btn-primary me-2"><i class="fas fa-users"></i> Manage Users</a>
+                    <a href="{{ url_for('master_admin.database') }}" class="btn btn-warning me-2"><i class="fas fa-database"></i> Database</a>
+                    <a href="{{ url_for('master_admin.audit_logs') }}" class="btn btn-info me-2"><i class="fas fa-clipboard-list"></i> Audit Logs</a>
+                    <a href="{{ url_for('master_admin.security_events') }}" class="btn btn-danger me-2"><i class="fas fa-shield-alt"></i> Security Events</a>
+                    <a href="{{ url_for('master_admin.system_logs') }}" class="btn btn-secondary"><i class="fas fa-file-alt"></i> System Logs</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Security Events -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card bg-dark">
+                <div class="card-header bg-danger">
+                    <h5><i class="fas fa-exclamation-triangle"></i> Unresolved Security Events</h5>
+                </div>
+                <div class="card-body" style="max-height: 400px; overflow-y: auto;">
+                    {% if recent_security %}
+                        <table class="table table-dark table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Time</th>
+                                    <th>Type</th>
+                                    <th>Severity</th>
+                                    <th>User</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for event in recent_security %}
+                                <tr>
+                                    <td>{{ event.timestamp.strftime('%Y-%m-%d %H:%M') }}</td>
+                                    <td>{{ event.event_type }}</td>
+                                    <td><span class="badge bg-{{ 'danger' if event.severity == 'critical' else 'warning' if event.severity == 'high' else 'info' }}">{{ event.severity }}</span></td>
+                                    <td>{{ event.user.email if event.user else 'N/A' }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    {% else %}
+                        <p class="text-muted">No unresolved security events</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Audit Logs -->
+        <div class="col-md-6">
+            <div class="card bg-dark">
+                <div class="card-header bg-info">
+                    <h5><i class="fas fa-clipboard-list"></i> Recent Audit Logs</h5>
+                </div>
+                <div class="card-body" style="max-height: 400px; overflow-y: auto;">
+                    {% if recent_audits %}
+                        <table class="table table-dark table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Time</th>
+                                    <th>Action</th>
+                                    <th>User</th>
+                                    <th>Severity</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for log in recent_audits %}
+                                <tr>
+                                    <td>{{ log.timestamp.strftime('%Y-%m-%d %H:%M') }}</td>
+                                    <td>{{ log.action }}</td>
+                                    <td>{{ log.user.email if log.user else 'System' }}</td>
+                                    <td><span class="badge bg-{{ 'danger' if log.severity == 'critical' else 'warning' if log.severity == 'warning' else 'secondary' }}">{{ log.severity }}</span></td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    {% else %}
+                        <p class="text-muted">No recent audit logs</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- System Errors -->
+    {% if recent_errors %}
+    <div class="row">
+        <div class="col-12">
+            <div class="card bg-dark border-danger">
+                <div class="card-header bg-danger">
+                    <h5><i class="fas fa-bug"></i> Recent System Errors</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table table-dark table-sm">
+                        <thead>
+                            <tr>
+                                <th>Time</th>
+                                <th>Level</th>
+                                <th>Message</th>
+                                <th>Module</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for error in recent_errors %}
+                            <tr>
+                                <td>{{ error.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                                <td><span class="badge bg-danger">{{ error.level }}</span></td>
+                                <td>{{ error.message[:100] }}...</td>
+                                <td>{{ error.module }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
