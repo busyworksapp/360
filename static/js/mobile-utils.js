@@ -179,12 +179,13 @@
      * Add bottom navigation for mobile
      */
     function addBottomNavigation() {
+        // Only add if on mobile and doesn't exist
+        if (window.innerWidth > MOBILE_BREAKPOINT) return;
+        if (document.querySelector('.bottom-nav-mobile')) return;
+        
         // Check if we're in admin or customer portal
         const isAdmin = document.querySelector('.sidebar');
         if (!isAdmin) return;
-        
-        // Check if bottom nav already exists
-        if (document.querySelector('.bottom-nav-mobile')) return;
         
         const nav = document.createElement('nav');
         nav.className = 'bottom-nav-mobile';

@@ -4,8 +4,9 @@
  */
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Create mobile menu toggle button if it doesn't exist
-    if (window.innerWidth <= 991 && !document.querySelector('.mobile-menu-toggle')) {
+    // Only create mobile menu toggle if sidebar exists and button doesn't exist
+    const sidebar = document.querySelector('.sidebar');
+    if (sidebar && window.innerWidth <= 991 && !document.querySelector('.mobile-menu-toggle')) {
         const toggleBtn = document.createElement('button');
         toggleBtn.className = 'mobile-menu-toggle';
         toggleBtn.innerHTML = '<i class="fas fa-bars"></i>';
@@ -42,21 +43,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 overlay.classList.remove('show');
                 toggleBtn.querySelector('i').className = 'fas fa-bars';
             }
-        });
-        
-        // Close sidebar when clicking a link
-        const sidebarLinks = document.querySelectorAll('.sidebar a');
-        sidebarLinks.forEach(link => {
-            link.addEventListener('click', function() {
-                if (window.innerWidth <= 991) {
-                    const sidebar = document.querySelector('.sidebar');
-                    if (sidebar) {
-                        sidebar.classList.remove('show');
-                        overlay.classList.remove('show');
-                        toggleBtn.querySelector('i').className = 'fas fa-bars';
-                    }
-                }
-            });
         });
     }
     
