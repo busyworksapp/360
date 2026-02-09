@@ -1,0 +1,612 @@
+/* ========================================
+   MOBILE RESPONSIVE STYLES
+   Complete mobile optimization for 360Degree Supply
+   ======================================== */
+
+/* Mobile-First Base Styles */
+@media (max-width: 991px) {
+    /* Sidebar - Mobile Hamburger */
+    .sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+        width: 260px !important;
+        z-index: 9999;
+    }
+    
+    .sidebar.show {
+        transform: translateX(0);
+    }
+    
+    .sidebar-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 9998;
+    }
+    
+    .sidebar-overlay.show {
+        display: block;
+    }
+    
+    /* Mobile Menu Toggle Button */
+    .mobile-menu-toggle {
+        display: block !important;
+        position: fixed;
+        top: 10px;
+        left: 10px;
+        z-index: 10000;
+        background: #DAA520;
+        color: #1C1C1C;
+        border: none;
+        padding: 10px 15px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 18px;
+    }
+    
+    /* Content adjustments */
+    .content {
+        margin-left: 0 !important;
+        padding: 60px 15px 15px 15px !important;
+    }
+    
+    /* Topbar mobile */
+    .topbar {
+        flex-direction: column;
+        align-items: flex-start !important;
+        padding: 15px !important;
+        margin: -60px -15px 20px -15px !important;
+    }
+    
+    .topbar-title {
+        font-size: 18px !important;
+        margin-bottom: 10px;
+    }
+    
+    .topbar-right {
+        width: 100%;
+        justify-content: space-between;
+    }
+}
+
+/* Tablet and Mobile */
+@media (max-width: 768px) {
+    /* Typography scaling */
+    h1, .h1 { font-size: 24px !important; }
+    h2, .h2 { font-size: 20px !important; }
+    h3, .h3 { font-size: 18px !important; }
+    h4, .h4 { font-size: 16px !important; }
+    h5, .h5 { font-size: 14px !important; }
+    
+    /* Navbar mobile */
+    .navbar {
+        padding: 10px 0 !important;
+    }
+    
+    .navbar-brand {
+        font-size: 16px !important;
+    }
+    
+    .navbar-toggler {
+        padding: 5px 10px;
+    }
+    
+    /* Hero section mobile */
+    .hero {
+        padding: 60px 0 !important;
+    }
+    
+    .hero h1 {
+        font-size: 28px !important;
+    }
+    
+    .hero p {
+        font-size: 16px !important;
+    }
+    
+    /* Page header mobile */
+    .page-header {
+        padding: 30px 0 !important;
+    }
+    
+    .page-header h1 {
+        font-size: 22px !important;
+    }
+    
+    /* Cards mobile */
+    .card, .d365-card, .stat-card {
+        margin-bottom: 15px !important;
+    }
+    
+    .card-body, .card-body-d365 {
+        padding: 15px !important;
+    }
+    
+    .card-header, .card-header-d365 {
+        padding: 12px 15px !important;
+    }
+    
+    /* Tables mobile - horizontal scroll */
+    .table-responsive {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        margin-bottom: 15px;
+    }
+    
+    .table-d365, .table {
+        min-width: 600px;
+        font-size: 11px !important;
+    }
+    
+    .table-d365 th, .table th {
+        padding: 8px 6px !important;
+        font-size: 11px !important;
+    }
+    
+    .table-d365 td, .table td {
+        padding: 8px 6px !important;
+        font-size: 11px !important;
+    }
+    
+    /* Buttons mobile */
+    .btn {
+        padding: 10px 15px !important;
+        font-size: 14px !important;
+        width: 100%;
+        margin-bottom: 10px;
+    }
+    
+    .btn-group {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .btn-group .btn {
+        width: 100%;
+    }
+    
+    /* Command bar mobile */
+    .command-bar-d365 {
+        flex-direction: column;
+        align-items: stretch !important;
+        padding: 10px !important;
+    }
+    
+    .command-bar-left,
+    .command-bar-right {
+        width: 100%;
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    /* Forms mobile */
+    .form-control, .form-select, .form-control-d365 {
+        font-size: 16px !important; /* Prevents zoom on iOS */
+        padding: 12px !important;
+    }
+    
+    .form-label, .form-label-d365 {
+        font-size: 14px !important;
+    }
+    
+    /* Search box mobile */
+    .search-box-d365 {
+        width: 100% !important;
+        min-width: auto !important;
+    }
+    
+    /* Grid adjustments */
+    .row {
+        margin-left: -10px;
+        margin-right: -10px;
+    }
+    
+    .row > * {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+    
+    /* Product cards mobile */
+    .product-card {
+        margin-bottom: 20px;
+    }
+    
+    .product-image {
+        height: 180px !important;
+    }
+    
+    /* Service cards mobile */
+    .service-card {
+        margin-bottom: 20px;
+        padding: 20px !important;
+    }
+    
+    .service-icon {
+        font-size: 2.5rem !important;
+    }
+    
+    /* Testimonial cards mobile */
+    .testimonial-card {
+        margin-bottom: 20px;
+        padding: 20px !important;
+    }
+    
+    /* Footer mobile */
+    footer {
+        padding: 40px 0 20px !important;
+    }
+    
+    footer .col-lg-4,
+    footer .col-lg-3,
+    footer .col-lg-2,
+    footer .col-md-6 {
+        margin-bottom: 30px;
+    }
+    
+    /* Modal mobile */
+    .modal-dialog {
+        margin: 10px;
+        max-width: calc(100% - 20px);
+    }
+    
+    .modal-content {
+        border-radius: 8px;
+    }
+    
+    /* Stat cards mobile */
+    .stat-card .value {
+        font-size: 28px !important;
+    }
+    
+    /* Badges mobile */
+    .badge, .badge-d365 {
+        font-size: 10px !important;
+        padding: 3px 8px !important;
+    }
+    
+    /* Alerts mobile */
+    .alert {
+        padding: 12px !important;
+        font-size: 13px !important;
+    }
+    
+    /* Pagination mobile */
+    .pagination {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    .pagination .page-link {
+        padding: 6px 10px;
+        font-size: 12px;
+    }
+}
+
+/* Small Mobile Devices */
+@media (max-width: 576px) {
+    /* Extra small typography */
+    h1, .h1 { font-size: 20px !important; }
+    h2, .h2 { font-size: 18px !important; }
+    h3, .h3 { font-size: 16px !important; }
+    
+    /* Container padding */
+    .container {
+        padding-left: 10px !important;
+        padding-right: 10px !important;
+    }
+    
+    /* Hero extra small */
+    .hero {
+        padding: 40px 0 !important;
+    }
+    
+    .hero h1 {
+        font-size: 24px !important;
+    }
+    
+    .hero p {
+        font-size: 14px !important;
+    }
+    
+    /* Page header extra small */
+    .page-header {
+        padding: 20px 0 !important;
+    }
+    
+    .page-header h1 {
+        font-size: 20px !important;
+    }
+    
+    /* Cards extra small */
+    .card-body, .card-body-d365 {
+        padding: 12px !important;
+    }
+    
+    /* Tables extra small */
+    .table-d365, .table {
+        font-size: 10px !important;
+    }
+    
+    .table-d365 th, .table th,
+    .table-d365 td, .table td {
+        padding: 6px 4px !important;
+        font-size: 10px !important;
+    }
+    
+    /* Buttons extra small */
+    .btn {
+        padding: 8px 12px !important;
+        font-size: 13px !important;
+    }
+    
+    /* Stat cards extra small */
+    .stat-card {
+        padding: 15px !important;
+    }
+    
+    .stat-card .value {
+        font-size: 24px !important;
+    }
+    
+    /* Product image extra small */
+    .product-image {
+        height: 150px !important;
+    }
+    
+    /* Service icon extra small */
+    .service-icon {
+        font-size: 2rem !important;
+    }
+    
+    /* Footer extra small */
+    footer h5 {
+        font-size: 16px !important;
+    }
+    
+    footer p, footer a, footer li {
+        font-size: 13px !important;
+    }
+    
+    .footer-social a {
+        width: 35px;
+        height: 35px;
+    }
+}
+
+/* Landscape Mobile */
+@media (max-width: 896px) and (orientation: landscape) {
+    .hero {
+        padding: 40px 0 !important;
+    }
+    
+    .page-header {
+        padding: 25px 0 !important;
+    }
+    
+    .sidebar {
+        height: 100vh;
+        overflow-y: auto;
+    }
+}
+
+/* Touch-friendly improvements */
+@media (hover: none) and (pointer: coarse) {
+    /* Larger touch targets */
+    .btn, button, a {
+        min-height: 44px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .nav-link {
+        padding: 12px 16px !important;
+    }
+    
+    .sidebar-menu a {
+        height: 48px !important;
+        padding: 0 16px !important;
+    }
+    
+    /* Prevent text selection on buttons */
+    .btn, button {
+        -webkit-user-select: none;
+        user-select: none;
+        -webkit-tap-highlight-color: transparent;
+    }
+    
+    /* Better form controls for touch */
+    input, select, textarea {
+        min-height: 44px;
+    }
+    
+    /* Larger checkboxes and radios */
+    input[type="checkbox"],
+    input[type="radio"] {
+        width: 20px;
+        height: 20px;
+    }
+}
+
+/* Print styles */
+@media print {
+    .sidebar,
+    .topbar,
+    .navbar,
+    .mobile-menu-toggle,
+    .btn,
+    footer,
+    .command-bar-d365 {
+        display: none !important;
+    }
+    
+    .content {
+        margin-left: 0 !important;
+        padding: 0 !important;
+    }
+    
+    .card, .d365-card {
+        border: 1px solid #000 !important;
+        page-break-inside: avoid;
+    }
+}
+
+/* Accessibility improvements for mobile */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    .btn, .card, .table {
+        border-width: 2px !important;
+    }
+}
+
+/* Dark mode support (if system prefers dark) */
+@media (prefers-color-scheme: dark) {
+    /* Already dark themed, but ensure consistency */
+    body {
+        background: #1C1C1C !important;
+        color: #FFFFFF !important;
+    }
+}
+
+/* Utility classes for mobile */
+.mobile-only {
+    display: none !important;
+}
+
+.desktop-only {
+    display: block !important;
+}
+
+@media (max-width: 768px) {
+    .mobile-only {
+        display: block !important;
+    }
+    
+    .desktop-only {
+        display: none !important;
+    }
+    
+    .mobile-hide {
+        display: none !important;
+    }
+    
+    .mobile-show {
+        display: block !important;
+    }
+}
+
+/* Horizontal scroll indicator for tables */
+.table-responsive::after {
+    content: '← Scroll →';
+    display: none;
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(218, 165, 32, 0.9);
+    color: #1C1C1C;
+    padding: 4px 12px;
+    border-radius: 4px 4px 0 0;
+    font-size: 11px;
+    font-weight: 600;
+    pointer-events: none;
+}
+
+@media (max-width: 768px) {
+    .table-responsive {
+        position: relative;
+    }
+    
+    .table-responsive::after {
+        display: block;
+    }
+}
+
+/* Mobile navigation improvements */
+@media (max-width: 991px) {
+    .navbar-collapse {
+        background: #1C1C1C;
+        padding: 15px;
+        margin-top: 10px;
+        border-radius: 4px;
+        border: 1px solid #4A4A4A;
+    }
+    
+    .navbar-nav {
+        gap: 5px;
+    }
+    
+    .nav-item {
+        width: 100%;
+    }
+    
+    .nav-link {
+        padding: 12px 15px !important;
+        border-radius: 4px;
+        width: 100%;
+    }
+}
+
+/* Cookie consent mobile */
+@media (max-width: 768px) {
+    #cookieConsent {
+        padding: 15px !important;
+    }
+    
+    #cookieConsent .row {
+        flex-direction: column;
+    }
+    
+    #cookieConsent .col-md-8,
+    #cookieConsent .col-md-4 {
+        width: 100%;
+        text-align: center !important;
+        margin-bottom: 10px;
+    }
+    
+    #cookieConsent .btn {
+        width: 100%;
+        margin-bottom: 5px;
+    }
+}
+
+/* Improved mobile menu toggle button */
+.mobile-menu-toggle {
+    display: none;
+}
+
+@media (max-width: 991px) {
+    .mobile-menu-toggle {
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+        width: 44px;
+        height: 44px;
+        position: fixed;
+        top: 10px;
+        left: 10px;
+        z-index: 10000;
+        background: #DAA520;
+        color: #1C1C1C;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    }
+    
+    .mobile-menu-toggle:active {
+        transform: scale(0.95);
+    }
+}
