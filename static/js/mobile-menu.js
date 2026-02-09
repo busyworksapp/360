@@ -20,6 +20,18 @@ document.addEventListener('DOMContentLoaded', function() {
                     overlay.classList.remove('show');
                 });
             }
+            
+            // Close sidebar when clicking any sidebar link
+            const sidebarLinks = sidebar.querySelectorAll('a');
+            sidebarLinks.forEach(link => {
+                link.addEventListener('click', function() {
+                    const overlay = document.querySelector('.sidebar-overlay');
+                    setTimeout(() => {
+                        sidebar.classList.remove('show');
+                        if (overlay) overlay.classList.remove('show');
+                    }, 100);
+                });
+            });
         }
     }
     // Handle window resize
