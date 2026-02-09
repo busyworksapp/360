@@ -5,19 +5,21 @@
 
 document.addEventListener('DOMContentLoaded', function() {
     // Don't create hamburger button - use bottom nav only
-    const sidebar = document.querySelector('.sidebar');
-    if (sidebar && window.innerWidth <= 991) {
-        // Create overlay for sidebar
-        if (!document.querySelector('.sidebar-overlay')) {
-            const overlay = document.createElement('div');
-            overlay.className = 'sidebar-overlay';
-            document.body.appendChild(overlay);
-            
-            // Close sidebar when clicking overlay
-            overlay.addEventListener('click', function() {
-                sidebar.classList.remove('show');
-                overlay.classList.remove('show');
-            });
+    if (window.innerWidth <= 991) {
+        const sidebar = document.querySelector('.sidebar');
+        if (sidebar) {
+            // Create overlay for sidebar
+            if (!document.querySelector('.sidebar-overlay')) {
+                const overlay = document.createElement('div');
+                overlay.className = 'sidebar-overlay';
+                document.body.appendChild(overlay);
+                
+                // Close sidebar when clicking overlay
+                overlay.addEventListener('click', function() {
+                    sidebar.classList.remove('show');
+                    overlay.classList.remove('show');
+                });
+            }
         }
     }
     // Handle window resize

@@ -224,10 +224,12 @@
             }
             
             if (item.onclick) {
-                link.onclick = function(e) {
+                link.addEventListener('click', function(e) {
                     e.preventDefault();
-                    eval(item.onclick);
-                };
+                    if (window.mobileMenu) {
+                        window.mobileMenu.toggle();
+                    }
+                });
             }
             
             link.innerHTML = `
