@@ -24,12 +24,11 @@ document.addEventListener('DOMContentLoaded', function() {
             // Close sidebar when clicking any sidebar link
             const sidebarLinks = sidebar.querySelectorAll('a');
             sidebarLinks.forEach(link => {
-                link.addEventListener('click', function() {
+                link.addEventListener('click', function(e) {
+                    // Don't prevent default - let navigation happen
                     const overlay = document.querySelector('.sidebar-overlay');
-                    setTimeout(() => {
-                        sidebar.classList.remove('show');
-                        if (overlay) overlay.classList.remove('show');
-                    }, 100);
+                    sidebar.classList.remove('show');
+                    if (overlay) overlay.classList.remove('show');
                 });
             });
         }
