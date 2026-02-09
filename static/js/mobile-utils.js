@@ -226,8 +226,11 @@
             if (item.onclick) {
                 link.addEventListener('click', function(e) {
                     e.preventDefault();
-                    if (window.mobileMenu) {
-                        window.mobileMenu.toggle();
+                    const sidebar = document.querySelector('.sidebar');
+                    const overlay = document.querySelector('.sidebar-overlay');
+                    if (sidebar && overlay) {
+                        sidebar.classList.toggle('show');
+                        overlay.classList.toggle('show');
                     }
                 });
             }
