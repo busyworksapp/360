@@ -15,7 +15,7 @@ class MasterAdmin(db.Model):
     granted_by = db.Column(db.Integer)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     
-    user = db.relationship('User', backref='master_admin_profile')
+    user = db.relationship('User', backref=db.backref('master_admin_profile', uselist=False))
 
 class SecurityEvent(db.Model):
     __tablename__ = 'security_events'
