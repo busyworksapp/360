@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+{% block title %}Detailed Logs - Master Admin{% endblock %}
+{% block content %}
+<div class="container-fluid mt-4">
+    <h1><i class="fas fa-list-alt"></i> Detailed System Logs</h1>
+    
+    <div class="row mb-3">
+        <div class="col-md-3">
+            <div class="card bg-dark">
+                <div class="card-body text-center">
+                    <h3>{{ total_logs }}</h3>
+                    <p>Total Logs</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-dark border-warning">
+                <div class="card-body text-center">
+                    <h3 class="text-warning">{{ suspicious_logs }}</h3>
+                    <p>Suspicious</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-dark border-danger">
+                <div class="card-body text-center">
+                    <h3 class="text-danger">{{ error_logs }}</h3>
+                    <p>Errors</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-dark">
+                <div class="card-body text-center">
+                    <a href="{{ url_for('master_admin.live_logs') }}" class="btn btn-success">
+                        <i class="fas fa-broadcast-tower"></i> Live Logs
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="card bg-dark mb-3">
+        <div class="card-body">
+            <form method="GET" class="row g-3">
+                <div class="col-md-3">
+                    <label class="form-label">Log Type</label>
+                    <select name="type" class="form-select">
+                        <option value="all" {{ 'selected' if current_type == 'all' else '' }}>All Types</option>
+                        <option value="request" {{ 'selected' if current_type == 'request' else '' }}>Requests</option>
+                        <option value="action" {{ 'selected' if current_type == 'action' else '' }}>Actions</option>
+                        <option value="error" {{ 'selected' if current_type == 'error' else '' }}>Errors</option>
+                        <option value="security" {{ 'selected' if current_type == 'security' else '' }}>Security</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Severity</label>
+                    <select name="severity" class="form-select">
+                        <option value="all" {{ 'selected' if current_severity == 'all' else '' }}>All Levels</option>
+                        <option value="info" {{ 'selected' if current_severity == 'info' else '' }}>Info</option>
+                        <option value="warning" {{ 'selected' if current_severity == 'warning' else '' }}>Warning</option>
+                        <option value="error" {{ 'selected' if current_severity == 'error' else '' }}>Error</option>
+                        <option value="critical" {{ 'selected' if current_severity == 'critical' else '' }}>Critical</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">&nbsp;</label>
+                    <div class="form-check">
+                        <input type="checkbox" name="suspicious" value="true" class="form-check-input" id="suspiciousOnly">
+                        <label class="form-check-label" for="suspiciousOnly">Suspicious Only</label>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="submit" class="btn btn-primary w-100">Filter</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <div class="table-responsive">
+        <table class="table table-dark table-hover">
+            <thead>
+                <tr>
+                    <th>Time</th>
+                    <th>Severity</th>
+                    <th>Type</th>
+                    <th>User</th>
+                    <th>IP</th>
+                    <th>Path</th>
+                    <th>Status</th>
+                    <th>Time (ms)</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for log in logs.items %}
+                <tr class="{{ 'table-danger' if log.severity == 'critical' else 'table-warning' if log.severity == 'error' else 'table-info' if log.severity == 'warning' else '' }}" style="{{ 'background-color: rgba(255,0,0,0.1) !important;' if log.is_suspicious else '' }}">
+                    <td>{{ log.timestamp.strftime('%H:%M:%S') }}</td>
+                    <td>
+                        <span class="badge bg-{{ 'danger' if log.severity == 'critical' else 'warning' if log.severity == 'error' else 'info' if log.severity == 'warning' else 'success' }}">
+                            {{ log.severity.upper() }}
+                        </span>
+                        {% if log.is_suspicious %}
+                        <span class="badge bg-danger"><i class="fas fa-exclamation-triangle"></i> SUSPICIOUS</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ log.log_type }}</td>
+                    <td>{{ log.username or 'Anonymous' }}</td>
+                    <td><code>{{ log.ip_address }}</code></td>
+                    <td><small>{{ log.request_path }}</small></td>
+                    <td>
+                        {% if log.response_status %}
+                        <span class="badge bg-{{ 'success' if log.response_status < 300 else 'warning' if log.response_status < 400 else 'danger' }}">
+                            {{ log.response_status }}
+                        </span>
+                        {% endif %}
+                    </td>
+                    <td>{{ "%.2f"|format(log.response_time) if log.response_time else '-' }}</td>
+                    <td>
+                        <a href="{{ url_for('master_admin.log_detail', log_id=log.id) }}" class="btn btn-sm btn-info">
+                            <i class="fas fa-search"></i> Details
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    <nav>
+        <ul class="pagination">
+            {% if logs.has_prev %}<li class="page-item"><a class="page-link" href="?page={{ logs.prev_num }}&type={{ current_type }}&severity={{ current_severity }}">Previous</a></li>{% endif %}
+            <li class="page-item disabled"><span class="page-link">Page {{ logs.page }} of {{ logs.pages }}</span></li>
+            {% if logs.has_next %}<li class="page-item"><a class="page-link" href="?page={{ logs.next_num }}&type={{ current_type }}&severity={{ current_severity }}">Next</a></li>{% endif %}
+        </ul>
+    </nav>
+</div>
+
+<style>
+.table-danger { background-color: rgba(220, 53, 69, 0.2) !important; }
+.table-warning { background-color: rgba(255, 193, 7, 0.2) !important; }
+.table-info { background-color: rgba(13, 202, 240, 0.2) !important; }
+</style>
+{% endblock %}

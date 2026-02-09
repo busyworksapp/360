@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Edit User - Master Admin{% endblock %}
+{% block content %}
+<div class="container mt-4">
+    <h1><i class="fas fa-user-edit"></i> Edit User</h1>
+    <a href="{{ url_for('master_admin.user_detail', user_id=user.id) }}" class="btn btn-secondary mb-3">← Back</a>
+    
+    <div class="card bg-dark">
+        <div class="card-body">
+            <form method="POST">
+                <div class="mb-3">
+                    <label class="form-label">Email</label>
+                    <input type="email" name="email" class="form-control" value="{{ user.email }}" required>
+                </div>
+                <div class="mb-3 form-check">
+                    <input type="checkbox" name="is_admin" class="form-check-input" id="isAdmin" {{ 'checked' if user.is_admin else '' }}>
+                    <label class="form-check-label" for="isAdmin">Admin User</label>
+                </div>
+                <button type="submit" class="btn btn-primary">Update User</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

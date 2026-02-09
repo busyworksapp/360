@@ -1,0 +1,240 @@
+{% extends "base.html" %}
+{% block title %}Live Logs - Master Admin{% endblock %}
+{% block content %}
+<div class="container-fluid mt-4">
+    <h1><i class="fas fa-broadcast-tower"></i> Live System Logs</h1>
+    <a href="{{ url_for('master_admin.detailed_logs') }}" class="btn btn-secondary mb-3">← Back to Logs</a>
+    
+    <div class="row mb-3">
+        <div class="col-md-3">
+            <div class="card bg-dark">
+                <div class="card-body text-center">
+                    <h3 id="liveCount">0</h3>
+                    <p>Live Logs</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-dark">
+                <div class="card-body text-center">
+                    <span class="badge bg-success" id="statusBadge">CONNECTED</span>
+                    <p>Status</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-dark">
+                <div class="card-body text-center">
+                    <button class="btn btn-warning" onclick="pauseLogs()">
+                        <i class="fas fa-pause" id="pauseIcon"></i> <span id="pauseText">Pause</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-dark">
+                <div class="card-body text-center">
+                    <button class="btn btn-danger" onclick="clearLogs()">
+                        <i class="fas fa-trash"></i> Clear
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="card bg-dark">
+        <div class="card-body">
+            <div class="form-check form-check-inline">
+                <input type="checkbox" class="form-check-input" id="filterInfo" checked>
+                <label class="form-check-label" for="filterInfo">Info</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input type="checkbox" class="form-check-input" id="filterWarning" checked>
+                <label class="form-check-label" for="filterWarning">Warning</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input type="checkbox" class="form-check-input" id="filterError" checked>
+                <label class="form-check-label" for="filterError">Error</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input type="checkbox" class="form-check-input" id="filterCritical" checked>
+                <label class="form-check-label" for="filterCritical">Critical</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input type="checkbox" class="form-check-input" id="filterSuspicious">
+                <label class="form-check-label" for="filterSuspicious">Suspicious Only</label>
+            </div>
+        </div>
+    </div>
+    
+    <div class="table-responsive mt-3" style="max-height: 600px; overflow-y: auto;">
+        <table class="table table-dark table-sm table-hover">
+            <thead style="position: sticky; top: 0; background-color: #212529; z-index: 10;">
+                <tr>
+                    <th>Time</th>
+                    <th>Severity</th>
+                    <th>User</th>
+                    <th>IP</th>
+                    <th>Path</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="logsTable">
+                <tr>
+                    <td colspan="7" class="text-center">Waiting for logs...</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+let isPaused = false;
+let lastTimestamp = 0;
+let logCount = 0;
+
+function getSeverityBadge(severity) {
+    const colors = {
+        'info': 'success',
+        'warning': 'info',
+        'error': 'warning',
+        'critical': 'danger'
+    };
+    return `<span class="badge bg-${colors[severity] || 'secondary'}">${severity.toUpperCase()}</span>`;
+}
+
+function getStatusBadge(status) {
+    if (!status) return '-';
+    const color = status < 300 ? 'success' : status < 400 ? 'warning' : 'danger';
+    return `<span class="badge bg-${color}">${status}</span>`;
+}
+
+function shouldShowLog(log) {
+    const filterSuspicious = document.getElementById('filterSuspicious').checked;
+    if (filterSuspicious && !log.is_suspicious) return false;
+    
+    const severity = log.severity.toLowerCase();
+    const filterMap = {
+        'info': 'filterInfo',
+        'warning': 'filterWarning',
+        'error': 'filterError',
+        'critical': 'filterCritical'
+    };
+    
+    const filterId = filterMap[severity];
+    return filterId ? document.getElementById(filterId).checked : true;
+}
+
+function addLogRow(log) {
+    if (!shouldShowLog(log)) return;
+    
+    const table = document.getElementById('logsTable');
+    const row = table.insertRow(0);
+    
+    const bgClass = log.severity === 'critical' ? 'table-danger' : 
+                    log.severity === 'error' ? 'table-warning' : 
+                    log.severity === 'warning' ? 'table-info' : '';
+    
+    if (bgClass) row.className = bgClass;
+    if (log.is_suspicious) row.style.backgroundColor = 'rgba(255,0,0,0.2)';
+    
+    const time = new Date(log.timestamp);
+    const timeStr = time.toLocaleTimeString();
+    
+    row.innerHTML = `
+        <td>${timeStr}</td>
+        <td>
+            ${getSeverityBadge(log.severity)}
+            ${log.is_suspicious ? '<span class="badge bg-danger"><i class="fas fa-exclamation-triangle"></i></span>' : ''}
+        </td>
+        <td>${log.username || 'Anonymous'}</td>
+        <td><code>${log.ip_address}</code></td>
+        <td><small>${log.request_path || '-'}</small></td>
+        <td>${getStatusBadge(log.response_status)}</td>
+        <td>
+            <a href="/master-admin/logs/detailed/${log.id}" class="btn btn-sm btn-info">
+                <i class="fas fa-search"></i>
+            </a>
+        </td>
+    `;
+    
+    logCount++;
+    document.getElementById('liveCount').textContent = logCount;
+    
+    // Keep only last 100 rows
+    while (table.rows.length > 100) {
+        table.deleteRow(table.rows.length - 1);
+    }
+}
+
+function fetchLogs() {
+    if (isPaused) return;
+    
+    fetch(`/master-admin/api/logs/live?since=${lastTimestamp}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.logs && data.logs.length > 0) {
+                data.logs.reverse().forEach(log => addLogRow(log));
+            }
+            lastTimestamp = data.timestamp;
+            document.getElementById('statusBadge').textContent = 'CONNECTED';
+            document.getElementById('statusBadge').className = 'badge bg-success';
+        })
+        .catch(error => {
+            console.error('Error fetching logs:', error);
+            document.getElementById('statusBadge').textContent = 'ERROR';
+            document.getElementById('statusBadge').className = 'badge bg-danger';
+        });
+}
+
+function pauseLogs() {
+    isPaused = !isPaused;
+    const icon = document.getElementById('pauseIcon');
+    const text = document.getElementById('pauseText');
+    
+    if (isPaused) {
+        icon.className = 'fas fa-play';
+        text.textContent = 'Resume';
+        document.getElementById('statusBadge').textContent = 'PAUSED';
+        document.getElementById('statusBadge').className = 'badge bg-warning';
+    } else {
+        icon.className = 'fas fa-pause';
+        text.textContent = 'Pause';
+        document.getElementById('statusBadge').textContent = 'CONNECTED';
+        document.getElementById('statusBadge').className = 'badge bg-success';
+    }
+}
+
+function clearLogs() {
+    const table = document.getElementById('logsTable');
+    table.innerHTML = '<tr><td colspan="7" class="text-center">Logs cleared. Waiting for new logs...</td></tr>';
+    logCount = 0;
+    document.getElementById('liveCount').textContent = '0';
+}
+
+// Update logs every 2 seconds
+setInterval(fetchLogs, 2000);
+
+// Initial fetch
+fetchLogs();
+
+// Re-filter when checkboxes change
+document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+    checkbox.addEventListener('change', () => {
+        // Refresh display by re-fetching
+        const table = document.getElementById('logsTable');
+        table.innerHTML = '<tr><td colspan="7" class="text-center">Filtering...</td></tr>';
+        logCount = 0;
+        lastTimestamp = 0;
+        fetchLogs();
+    });
+});
+</script>
+
+<style>
+.table-danger { background-color: rgba(220, 53, 69, 0.2) !important; }
+.table-warning { background-color: rgba(255, 193, 7, 0.2) !important; }
+.table-info { background-color: rgba(13, 202, 240, 0.2) !important; }
+</style>
+{% endblock %}

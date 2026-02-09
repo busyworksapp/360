@@ -2,7 +2,10 @@
 {% block title %}Users - Master Admin{% endblock %}
 {% block content %}
 <div class="container mt-4">
-    <h1><i class="fas fa-users"></i> User Management</h1>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1><i class="fas fa-users"></i> User Management</h1>
+        <a href="{{ url_for('master_admin.add_user') }}" class="btn btn-success"><i class="fas fa-plus"></i> Add User</a>
+    </div>
     <table class="table table-dark">
         <thead>
             <tr>
@@ -20,7 +23,10 @@
                 <td>{{ user.email }}</td>
                 <td><span class="badge bg-{{ 'danger' if user.is_admin else 'primary' }}">{{ 'Admin' if user.is_admin else 'Customer' }}</span></td>
                 <td>{{ user.created_at.strftime('%Y-%m-%d') }}</td>
-                <td><a href="{{ url_for('master_admin.user_detail', user_id=user.id) }}" class="btn btn-sm btn-info">View</a></td>
+                <td>
+                    <a href="{{ url_for('master_admin.user_detail', user_id=user.id) }}" class="btn btn-sm btn-info">View</a>
+                    <a href="{{ url_for('master_admin.edit_user', user_id=user.id) }}" class="btn btn-sm btn-warning">Edit</a>
+                </td>
             </tr>
             {% endfor %}
         </tbody>

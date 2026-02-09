@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Add User - Master Admin{% endblock %}
+{% block content %}
+<div class="container mt-4">
+    <h1><i class="fas fa-user-plus"></i> Add New User</h1>
+    <a href="{{ url_for('master_admin.users') }}" class="btn btn-secondary mb-3">← Back</a>
+    
+    <div class="card bg-dark">
+        <div class="card-body">
+            <form method="POST">
+                <div class="mb-3">
+                    <label class="form-label">Email</label>
+                    <input type="email" name="email" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Password</label>
+                    <input type="password" name="password" class="form-control" minlength="8" required>
+                    <small class="text-muted">Minimum 8 characters</small>
+                </div>
+                <div class="mb-3 form-check">
+                    <input type="checkbox" name="is_admin" class="form-check-input" id="isAdmin">
+                    <label class="form-check-label" for="isAdmin">Admin User</label>
+                </div>
+                <button type="submit" class="btn btn-primary">Create User</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -59,11 +59,33 @@
                     <h5><i class="fas fa-bolt"></i> Quick Actions</h5>
                 </div>
                 <div class="card-body">
-                    <a href="{{ url_for('master_admin.users') }}" class="btn btn-primary me-2"><i class="fas fa-users"></i> Manage Users</a>
-                    <a href="{{ url_for('master_admin.database') }}" class="btn btn-warning me-2"><i class="fas fa-database"></i> Database</a>
-                    <a href="{{ url_for('master_admin.audit_logs') }}" class="btn btn-info me-2"><i class="fas fa-clipboard-list"></i> Audit Logs</a>
-                    <a href="{{ url_for('master_admin.security_events') }}" class="btn btn-danger me-2"><i class="fas fa-shield-alt"></i> Security Events</a>
-                    <a href="{{ url_for('master_admin.system_logs') }}" class="btn btn-secondary"><i class="fas fa-file-alt"></i> System Logs</a>
+                    <div class="mb-3">
+                        <h6 class="text-muted">User Management</h6>
+                        <a href="{{ url_for('master_admin.users') }}" class="btn btn-primary me-2 mb-2"><i class="fas fa-users"></i> Users</a>
+                        <a href="{{ url_for('master_admin.customers') }}" class="btn btn-primary me-2 mb-2"><i class="fas fa-user-friends"></i> Customers</a>
+                    </div>
+                    <div class="mb-3">
+                        <h6 class="text-muted">Data Management</h6>
+                        <a href="{{ url_for('master_admin.products') }}" class="btn btn-success me-2 mb-2"><i class="fas fa-box"></i> Products</a>
+                        <a href="{{ url_for('master_admin.orders') }}" class="btn btn-success me-2 mb-2"><i class="fas fa-shopping-cart"></i> Orders</a>
+                        <a href="{{ url_for('master_admin.invoices') }}" class="btn btn-success me-2 mb-2"><i class="fas fa-file-invoice"></i> Invoices</a>
+                        <a href="{{ url_for('master_admin.transactions') }}" class="btn btn-success me-2 mb-2"><i class="fas fa-money-bill"></i> Transactions</a>
+                    </div>
+                    <div class="mb-3">
+                        <h6 class="text-muted">Security & Control</h6>
+                        <a href="{{ url_for('master_admin.blocked_ips') }}" class="btn btn-danger me-2 mb-2"><i class="fas fa-ban"></i> Blocked IPs</a>
+                        <a href="{{ url_for('master_admin.system_control') }}" class="btn btn-danger me-2 mb-2"><i class="fas fa-power-off"></i> System Control</a>
+                        <a href="{{ url_for('master_admin.live_logs') }}" class="btn btn-warning me-2 mb-2"><i class="fas fa-broadcast-tower"></i> Live Logs</a>
+                        <a href="{{ url_for('master_admin.detailed_logs') }}" class="btn btn-warning me-2 mb-2"><i class="fas fa-list-alt"></i> Detailed Logs</a>
+                        <a href="{{ url_for('master_admin.analytics') }}" class="btn btn-info me-2 mb-2"><i class="fas fa-chart-line"></i> Analytics</a>
+                    </div>
+                    <div class="mb-3">
+                        <h6 class="text-muted">System</h6>
+                        <a href="{{ url_for('master_admin.database') }}" class="btn btn-secondary me-2 mb-2"><i class="fas fa-database"></i> Database</a>
+                        <a href="{{ url_for('master_admin.audit_logs') }}" class="btn btn-secondary me-2 mb-2"><i class="fas fa-clipboard-list"></i> Audit Logs</a>
+                        <a href="{{ url_for('master_admin.security_events') }}" class="btn btn-secondary me-2 mb-2"><i class="fas fa-shield-alt"></i> Security Events</a>
+                        <a href="{{ url_for('master_admin.system_logs') }}" class="btn btn-secondary mb-2"><i class="fas fa-file-alt"></i> System Logs</a>
+                    </div>
                 </div>
             </div>
         </div>

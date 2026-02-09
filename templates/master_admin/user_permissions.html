@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% block title %}User Permissions - Master Admin{% endblock %}
+{% block content %}
+<div class="container mt-4">
+    <h1><i class="fas fa-user-shield"></i> Manage Permissions: {{ user.email }}</h1>
+    <a href="{{ url_for('master_admin.user_detail', user_id=user.id) }}" class="btn btn-secondary mb-3">← Back</a>
+    
+    <form method="POST">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card bg-dark mb-3">
+                    <div class="card-header"><h5>Access Permissions</h5></div>
+                    <div class="card-body">
+                        <div class="form-check mb-2">
+                            <input type="checkbox" name="can_access_products" class="form-check-input" id="accessProducts" {{ 'checked' if perms.can_access_products else '' }}>
+                            <label class="form-check-label" for="accessProducts">Can Access Products</label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input type="checkbox" name="can_access_services" class="form-check-input" id="accessServices" {{ 'checked' if perms.can_access_services else '' }}>
+                            <label class="form-check-label" for="accessServices">Can Access Services</label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input type="checkbox" name="can_access_cart" class="form-check-input" id="accessCart" {{ 'checked' if perms.can_access_cart else '' }}>
+                            <label class="form-check-label" for="accessCart">Can Access Cart</label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input type="checkbox" name="can_access_orders" class="form-check-input" id="accessOrders" {{ 'checked' if perms.can_access_orders else '' }}>
+                            <label class="form-check-label" for="accessOrders">Can Access Orders</label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input type="checkbox" name="can_access_invoices" class="form-check-input" id="accessInvoices" {{ 'checked' if perms.can_access_invoices else '' }}>
+                            <label class="form-check-label" for="accessInvoices">Can Access Invoices</label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input type="checkbox" name="can_access_transactions" class="form-check-input" id="accessTransactions" {{ 'checked' if perms.can_access_transactions else '' }}>
+                            <label class="form-check-label" for="accessTransactions">Can Access Transactions</label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input type="checkbox" name="can_access_profile" class="form-check-input" id="accessProfile" {{ 'checked' if perms.can_access_profile else '' }}>
+                            <label class="form-check-label" for="accessProfile">Can Access Profile</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card bg-dark mb-3">
+                    <div class="card-header"><h5>Sidebar Visibility</h5></div>
+                    <div class="card-body">
+                        <div class="form-check mb-2">
+                            <input type="checkbox" name="show_products_tab" class="form-check-input" id="showProducts" {{ 'checked' if perms.show_products_tab else '' }}>
+                            <label class="form-check-label" for="showProducts">Show Products Tab</label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input type="checkbox" name="show_services_tab" class="form-check-input" id="showServices" {{ 'checked' if perms.show_services_tab else '' }}>
+                            <label class="form-check-label" for="showServices">Show Services Tab</label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input type="checkbox" name="show_orders_tab" class="form-check-input" id="showOrders" {{ 'checked' if perms.show_orders_tab else '' }}>
+                            <label class="form-check-label" for="showOrders">Show Orders Tab</label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input type="checkbox" name="show_invoices_tab" class="form-check-input" id="showInvoices" {{ 'checked' if perms.show_invoices_tab else '' }}>
+                            <label class="form-check-label" for="showInvoices">Show Invoices Tab</label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input type="checkbox" name="show_transactions_tab" class="form-check-input" id="showTransactions" {{ 'checked' if perms.show_transactions_tab else '' }}>
+                            <label class="form-check-label" for="showTransactions">Show Transactions Tab</label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input type="checkbox" name="show_profile_tab" class="form-check-input" id="showProfile" {{ 'checked' if perms.show_profile_tab else '' }}>
+                            <label class="form-check-label" for="showProfile">Show Profile Tab</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card bg-dark mb-3">
+            <div class="card-header bg-danger"><h5>Account Block</h5></div>
+            <div class="card-body">
+                <div class="form-check mb-3">
+                    <input type="checkbox" name="is_blocked" class="form-check-input" id="isBlocked" {{ 'checked' if perms.is_blocked else '' }}>
+                    <label class="form-check-label" for="isBlocked"><strong>Block User Account</strong></label>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Block Reason</label>
+                    <textarea name="block_reason" class="form-control" rows="3">{{ perms.block_reason or '' }}</textarea>
+                </div>
+                {% if perms.is_blocked %}
+                <p><strong>Blocked By:</strong> {{ perms.blocker.email if perms.blocker else 'Unknown' }}</p>
+                <p><strong>Blocked At:</strong> {{ perms.blocked_at.strftime('%Y-%m-%d %H:%M') if perms.blocked_at else 'Unknown' }}</p>
+                {% endif %}
+            </div>
+        </div>
+        
+        <button type="submit" class="btn btn-primary">Save Permissions</button>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}Edit Customer - Master Admin{% endblock %}
+{% block content %}
+<div class="container mt-4">
+    <h1><i class="fas fa-user-edit"></i> Edit Customer</h1>
+    <a href="{{ url_for('master_admin.customers') }}" class="btn btn-secondary mb-3">← Back</a>
+    
+    <div class="card bg-dark">
+        <div class="card-body">
+            <form method="POST">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Email</label>
+                        <input type="email" name="email" class="form-control" value="{{ customer.email }}" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Phone</label>
+                        <input type="text" name="phone" class="form-control" value="{{ customer.phone or '' }}">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">First Name</label>
+                        <input type="text" name="first_name" class="form-control" value="{{ customer.first_name or '' }}">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Last Name</label>
+                        <input type="text" name="last_name" class="form-control" value="{{ customer.last_name or '' }}">
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Company</label>
+                    <input type="text" name="company" class="form-control" value="{{ customer.company or '' }}">
+                </div>
+                <div class="mb-3 form-check">
+                    <input type="checkbox" name="is_active" class="form-check-input" id="isActive" {{ 'checked' if customer.is_active else '' }}>
+                    <label class="form-check-label" for="isActive">Active</label>
+                </div>
+                <button type="submit" class="btn btn-primary">Update Customer</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

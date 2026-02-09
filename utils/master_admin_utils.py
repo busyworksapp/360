@@ -11,14 +11,10 @@ def log_audit(user_id, action, table_name=None, record_id=None, old_value=None, 
     try:
         audit = AuditLog(
             user_id=user_id,
-            action=action,
-            table_name=table_name,
-            record_id=record_id,
-            old_value=json.dumps(old_value) if old_value else None,
-            new_value=json.dumps(new_value) if new_value else None,
+            event_type=action,
+            details=json.dumps({'table': table_name, 'record_id': record_id, 'old': old_value, 'new': new_value}),
             ip_address=request.remote_addr if request else None,
-            user_agent=request.headers.get('User-Agent') if request else None,
-            severity=severity
+            user_agent=request.headers.get('User-Agent') if request else None
         )
         db.session.add(audit)
         db.session.commit()

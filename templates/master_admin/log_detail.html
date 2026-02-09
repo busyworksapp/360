@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+{% block title %}Log Detail - Master Admin{% endblock %}
+{% block content %}
+<div class="container mt-4">
+    <h1><i class="fas fa-search"></i> Log Detail #{{ log.id }}</h1>
+    <a href="{{ url_for('master_admin.detailed_logs') }}" class="btn btn-secondary mb-3">← Back to Logs</a>
+    
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card bg-dark mb-3">
+                <div class="card-header bg-{{ 'danger' if log.severity == 'critical' else 'warning' if log.severity == 'error' else 'info' if log.severity == 'warning' else 'success' }}">
+                    <h5>Basic Information</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Timestamp:</strong> {{ log.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</p>
+                    <p><strong>Severity:</strong> 
+                        <span class="badge bg-{{ 'danger' if log.severity == 'critical' else 'warning' if log.severity == 'error' else 'info' if log.severity == 'warning' else 'success' }}">
+                            {{ log.severity.upper() }}
+                        </span>
+                    </p>
+                    <p><strong>Log Type:</strong> {{ log.log_type }}</p>
+                    <p><strong>Suspicious:</strong> 
+                        <span class="badge bg-{{ 'danger' if log.is_suspicious else 'success' }}">
+                            {{ 'YES' if log.is_suspicious else 'NO' }}
+                        </span>
+                    </p>
+                    <p><strong>Reviewed:</strong> 
+                        <span class="badge bg-{{ 'success' if log.is_reviewed else 'secondary' }}">
+                            {{ 'YES' if log.is_reviewed else 'NO' }}
+                        </span>
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card bg-dark mb-3">
+                <div class="card-header"><h5>User Information</h5></div>
+                <div class="card-body">
+                    <p><strong>Username:</strong> {{ log.username or 'Anonymous' }}</p>
+                    <p><strong>User ID:</strong> {{ log.user_id or log.customer_id or 'N/A' }}</p>
+                    <p><strong>IP Address:</strong> <code>{{ log.ip_address }}</code></p>
+                    <p><strong>Session ID:</strong> <code>{{ log.session_id or 'N/A' }}</code></p>
+                    <p><strong>Device:</strong> {{ log.device_type or 'Unknown' }}</p>
+                    <p><strong>Browser:</strong> {{ log.browser or 'Unknown' }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="card bg-dark mb-3">
+        <div class="card-header"><h5>Request Details</h5></div>
+        <div class="card-body">
+            <p><strong>Method:</strong> <span class="badge bg-primary">{{ log.request_method }}</span></p>
+            <p><strong>Path:</strong> <code>{{ log.request_path }}</code></p>
+            <p><strong>Referrer:</strong> {{ log.referrer or 'Direct' }}</p>
+            <p><strong>User Agent:</strong> <small>{{ log.user_agent }}</small></p>
+            {% if log.request_data %}
+            <p><strong>Request Data:</strong></p>
+            <pre class="bg-secondary p-2 rounded"><code>{{ log.request_data }}</code></pre>
+            {% endif %}
+        </div>
+    </div>
+    
+    <div class="card bg-dark mb-3">
+        <div class="card-header"><h5>Response Details</h5></div>
+        <div class="card-body">
+            <p><strong>Status Code:</strong> 
+                {% if log.response_status %}
+                <span class="badge bg-{{ 'success' if log.response_status < 300 else 'warning' if log.response_status < 400 else 'danger' }}">
+                    {{ log.response_status }}
+                </span>
+                {% else %}
+                N/A
+                {% endif %}
+            </p>
+            <p><strong>Response Time:</strong> {{ "%.2f"|format(log.response_time) if log.response_time else 'N/A' }} ms</p>
+        </div>
+    </div>
+    
+    {% if log.action %}
+    <div class="card bg-dark mb-3">
+        <div class="card-header"><h5>Action Details</h5></div>
+        <div class="card-body">
+            <p><strong>Action:</strong> {{ log.action }}</p>
+            <p><strong>Target Table:</strong> {{ log.target_table or 'N/A' }}</p>
+            <p><strong>Target ID:</strong> {{ log.target_id or 'N/A' }}</p>
+            {% if log.old_value %}
+            <p><strong>Old Value:</strong></p>
+            <pre class="bg-secondary p-2 rounded"><code>{{ log.old_value }}</code></pre>
+            {% endif %}
+            {% if log.new_value %}
+            <p><strong>New Value:</strong></p>
+            <pre class="bg-secondary p-2 rounded"><code>{{ log.new_value }}</code></pre>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+    
+    {% if log.error_message %}
+    <div class="card bg-dark border-danger mb-3">
+        <div class="card-header bg-danger"><h5>Error Information</h5></div>
+        <div class="card-body">
+            <p><strong>Error Message:</strong></p>
+            <pre class="bg-secondary p-2 rounded text-danger"><code>{{ log.error_message }}</code></pre>
+            {% if log.error_traceback %}
+            <p><strong>Traceback:</strong></p>
+            <pre class="bg-secondary p-2 rounded" style="max-height: 300px; overflow-y: auto;"><code>{{ log.error_traceback }}</code></pre>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+    
+    {% if log.is_reviewed %}
+    <div class="card bg-dark mb-3">
+        <div class="card-header bg-success"><h5>Review Information</h5></div>
+        <div class="card-body">
+            <p><strong>Reviewed By:</strong> {{ log.reviewer.email if log.reviewer else 'Unknown' }}</p>
+            <p><strong>Reviewed At:</strong> {{ log.reviewed_at.strftime('%Y-%m-%d %H:%M:%S') if log.reviewed_at else 'Unknown' }}</p>
+            <p><strong>Review Notes:</strong></p>
+            <p>{{ log.review_notes or 'No notes' }}</p>
+        </div>
+    </div>
+    {% else %}
+    <div class="card bg-dark mb-3">
+        <div class="card-header"><h5>Mark as Reviewed</h5></div>
+        <div class="card-body">
+            <form method="POST" action="{{ url_for('master_admin.review_log', log_id=log.id) }}">
+                <div class="mb-3">
+                    <label class="form-label">Review Notes</label>
+                    <textarea name="notes" class="form-control" rows="3" placeholder="Add your review notes..."></textarea>
+                </div>
+                <button type="submit" class="btn btn-success">Mark as Reviewed</button>
+            </form>
+        </div>
+    </div>
+    {% endif %}
+    
+    {% if log.is_suspicious %}
+    <div class="alert alert-danger">
+        <i class="fas fa-exclamation-triangle"></i> <strong>This log has been flagged as suspicious!</strong>
+        Consider blocking the IP address or investigating the user's activity.
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
