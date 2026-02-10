@@ -2984,6 +2984,63 @@ from master_admin_routes import master_admin_bp
 app.register_blueprint(master_admin_bp)
 app.logger.info("✅ Master Admin routes registered: /master-admin/*")
 
+# Migration route for security tables
+@app.route('/run-migration')
+@login_required
+def run_migration():
+    """Execute security tables migration - Master Admin only"""
+    from models.master_admin_models import MasterAdmin
+    from sqlalchemy import text
+    
+    # Check if user is master admin
+    master_admin = MasterAdmin.query.filter_by(user_id=current_user.id, is_active=True).first()
+    if not master_admin:
+        return jsonify({'error': 'Master Admin access required'}), 403
+    
+    results = []
+    try:
+        # Read SQL file
+        with open('migrations/create_security_tables.sql', 'r') as f:
+            sql_script = f.read()
+        
+        # Split and execute statements
+        statements = [s.strip() for s in sql_script.split(';') if s.strip() and not s.strip().startswith('--')]
+        
+        for statement in statements:
+            if statement and not statement.startswith('SELECT'):
+                try:
+                    db.session.execute(text(statement))
+                    db.session.commit()
+                    results.append(f"✅ Executed: {statement[:50]}...")
+                except Exception as e:
+                    results.append(f"⚠️ Warning: {str(e)[:100]}")
+                    db.session.rollback()
+        
+        # Verify tables
+        tables = ['blocked_ips', 'system_controls', 'user_permissions', 'detailed_logs']
+        verification = []
+        
+        for table in tables:
+            try:
+                result = db.session.execute(text(f"SELECT COUNT(*) FROM {table}"))
+                count = result.scalar()
+                verification.append(f"✅ {table}: {count} records")
+            except Exception as e:
+                verification.append(f"❌ {table}: Failed")
+        
+        return jsonify({
+            'status': 'success',
+            'message': 'Migration completed',
+            'results': results,
+            'verification': verification
+        })
+        
+    except Exception as e:
+        return jsonify({
+            'status': 'error',
+            'message': str(e)
+        }), 500
+
 # Periodic cleanup of security data
 import atexit
 from apscheduler.schedulers.background import BackgroundScheduler
