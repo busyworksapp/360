@@ -370,9 +370,13 @@ def delete_testimonial(testimonial_id):
 @login_required
 @require_master_admin
 def blocked_ips():
-    page = request.args.get('page', 1, type=int)
-    blocked = BlockedIP.query.order_by(BlockedIP.blocked_at.desc()).paginate(page=page, per_page=50)
-    return render_template('master_admin/blocked_ips.html', blocked_ips=blocked)
+    try:
+        page = request.args.get('page', 1, type=int)
+        blocked = BlockedIP.query.order_by(BlockedIP.blocked_at.desc()).paginate(page=page, per_page=50)
+        return render_template('master_admin/blocked_ips.html', blocked_ips=blocked)
+    except Exception as e:
+        flash(f'Feature not available: {str(e)}. Please run database migration.', 'warning')
+        return redirect(url_for('master_admin.dashboard'))
 
 @master_admin_bp.route('/security/block-ip', methods=['POST'])
 @login_required
@@ -426,12 +430,16 @@ def unblock_ip(block_id):
 @login_required
 @require_master_admin
 def system_control():
-    control = SystemControl.query.first()
-    if not control:
-        control = SystemControl()
-        db.session.add(control)
-        db.session.commit()
-    return render_template('master_admin/system_control.html', control=control)
+    try:
+        control = SystemControl.query.first()
+        if not control:
+            control = SystemControl()
+            db.session.add(control)
+            db.session.commit()
+        return render_template('master_admin/system_control.html', control=control)
+    except Exception as e:
+        flash(f'Feature not available: {str(e)}. Please run database migration.', 'warning')
+        return redirect(url_for('master_admin.dashboard'))
 
 @master_admin_bp.route('/system/shutdown', methods=['POST'])
 @login_required
@@ -593,34 +601,38 @@ def manage_customer_permissions(customer_id):
 @login_required
 @require_master_admin
 def detailed_logs():
-    page = request.args.get('page', 1, type=int)
-    log_type = request.args.get('type', 'all')
-    severity = request.args.get('severity', 'all')
-    suspicious_only = request.args.get('suspicious') == 'true'
-    
-    query = DetailedLog.query
-    
-    if log_type != 'all':
-        query = query.filter_by(log_type=log_type)
-    if severity != 'all':
-        query = query.filter_by(severity=severity)
-    if suspicious_only:
-        query = query.filter_by(is_suspicious=True)
-    
-    logs = query.order_by(DetailedLog.timestamp.desc()).paginate(page=page, per_page=100)
-    
-    # Get statistics
-    total_logs = DetailedLog.query.count()
-    suspicious_logs = DetailedLog.query.filter_by(is_suspicious=True).count()
-    error_logs = DetailedLog.query.filter(DetailedLog.severity.in_(['error', 'critical'])).count()
-    
-    return render_template('master_admin/detailed_logs.html', 
-                         logs=logs, 
-                         total_logs=total_logs,
-                         suspicious_logs=suspicious_logs,
-                         error_logs=error_logs,
-                         current_type=log_type,
-                         current_severity=severity)
+    try:
+        page = request.args.get('page', 1, type=int)
+        log_type = request.args.get('type', 'all')
+        severity = request.args.get('severity', 'all')
+        suspicious_only = request.args.get('suspicious') == 'true'
+        
+        query = DetailedLog.query
+        
+        if log_type != 'all':
+            query = query.filter_by(log_type=log_type)
+        if severity != 'all':
+            query = query.filter_by(severity=severity)
+        if suspicious_only:
+            query = query.filter_by(is_suspicious=True)
+        
+        logs = query.order_by(DetailedLog.timestamp.desc()).paginate(page=page, per_page=100)
+        
+        # Get statistics
+        total_logs = DetailedLog.query.count()
+        suspicious_logs = DetailedLog.query.filter_by(is_suspicious=True).count()
+        error_logs = DetailedLog.query.filter(DetailedLog.severity.in_(['error', 'critical'])).count()
+        
+        return render_template('master_admin/detailed_logs.html', 
+                             logs=logs, 
+                             total_logs=total_logs,
+                             suspicious_logs=suspicious_logs,
+                             error_logs=error_logs,
+                             current_type=log_type,
+                             current_severity=severity)
+    except Exception as e:
+        flash(f'Feature not available: {str(e)}. Please run database migration.', 'warning')
+        return redirect(url_for('master_admin.dashboard'))
 
 @master_admin_bp.route('/logs/detailed/<int:log_id>')
 @login_required
@@ -655,29 +667,32 @@ def live_logs():
 @require_master_admin
 def api_live_logs():
     """API endpoint for live log updates"""
-    since = request.args.get('since', type=int, default=0)
-    
-    if since > 0:
-        since_time = datetime.fromtimestamp(since / 1000.0)
-        logs = DetailedLog.query.filter(DetailedLog.timestamp > since_time).order_by(DetailedLog.timestamp.desc()).limit(50).all()
-    else:
-        logs = DetailedLog.query.order_by(DetailedLog.timestamp.desc()).limit(50).all()
-    
-    return jsonify({
-        'logs': [{
-            'id': log.id,
-            'timestamp': log.timestamp.isoformat(),
-            'severity': log.severity,
-            'log_type': log.log_type,
-            'username': log.username or 'Anonymous',
-            'ip_address': log.ip_address,
-            'request_path': log.request_path,
-            'response_status': log.response_status,
-            'is_suspicious': log.is_suspicious,
-            'error_message': log.error_message
-        } for log in logs],
-        'timestamp': int(datetime.utcnow().timestamp() * 1000)
-    })
+    try:
+        since = request.args.get('since', type=int, default=0)
+        
+        if since > 0:
+            since_time = datetime.fromtimestamp(since / 1000.0)
+            logs = DetailedLog.query.filter(DetailedLog.timestamp > since_time).order_by(DetailedLog.timestamp.desc()).limit(50).all()
+        else:
+            logs = DetailedLog.query.order_by(DetailedLog.timestamp.desc()).limit(50).all()
+        
+        return jsonify({
+            'logs': [{
+                'id': log.id,
+                'timestamp': log.timestamp.isoformat(),
+                'severity': log.severity,
+                'log_type': log.log_type,
+                'username': log.username or 'Anonymous',
+                'ip_address': log.ip_address,
+                'request_path': log.request_path,
+                'response_status': log.response_status,
+                'is_suspicious': log.is_suspicious,
+                'error_message': log.error_message
+            } for log in logs],
+            'timestamp': int(datetime.utcnow().timestamp() * 1000)
+        })
+    except Exception as e:
+        return jsonify({'error': str(e), 'logs': [], 'timestamp': int(datetime.utcnow().timestamp() * 1000)})
 
 # ===== ANALYTICS & INSIGHTS =====
 
@@ -685,49 +700,53 @@ def api_live_logs():
 @login_required
 @require_master_admin
 def analytics():
-    # Get statistics for last 24 hours
-    last_24h = datetime.utcnow() - timedelta(hours=24)
-    
-    # Request statistics
-    total_requests = DetailedLog.query.filter(DetailedLog.timestamp >= last_24h).count()
-    error_requests = DetailedLog.query.filter(
-        DetailedLog.timestamp >= last_24h,
-        DetailedLog.severity.in_(['error', 'critical'])
-    ).count()
-    suspicious_requests = DetailedLog.query.filter(
-        DetailedLog.timestamp >= last_24h,
-        DetailedLog.is_suspicious == True
-    ).count()
-    
-    # Top IPs
-    top_ips = db.session.query(
-        DetailedLog.ip_address,
-        func.count(DetailedLog.id).label('count')
-    ).filter(
-        DetailedLog.timestamp >= last_24h
-    ).group_by(DetailedLog.ip_address).order_by(desc('count')).limit(10).all()
-    
-    # Top users
-    top_users = db.session.query(
-        DetailedLog.username,
-        func.count(DetailedLog.id).label('count')
-    ).filter(
-        DetailedLog.timestamp >= last_24h,
-        DetailedLog.username.isnot(None)
-    ).group_by(DetailedLog.username).order_by(desc('count')).limit(10).all()
-    
-    # Response time statistics
-    avg_response_time = db.session.query(
-        func.avg(DetailedLog.response_time)
-    ).filter(
-        DetailedLog.timestamp >= last_24h,
-        DetailedLog.response_time.isnot(None)
-    ).scalar() or 0
-    
-    return render_template('master_admin/analytics.html',
-                         total_requests=total_requests,
-                         error_requests=error_requests,
-                         suspicious_requests=suspicious_requests,
-                         top_ips=top_ips,
-                         top_users=top_users,
-                         avg_response_time=round(avg_response_time, 2))
+    try:
+        # Get statistics for last 24 hours
+        last_24h = datetime.utcnow() - timedelta(hours=24)
+        
+        # Request statistics
+        total_requests = DetailedLog.query.filter(DetailedLog.timestamp >= last_24h).count()
+        error_requests = DetailedLog.query.filter(
+            DetailedLog.timestamp >= last_24h,
+            DetailedLog.severity.in_(['error', 'critical'])
+        ).count()
+        suspicious_requests = DetailedLog.query.filter(
+            DetailedLog.timestamp >= last_24h,
+            DetailedLog.is_suspicious == True
+        ).count()
+        
+        # Top IPs
+        top_ips = db.session.query(
+            DetailedLog.ip_address,
+            func.count(DetailedLog.id).label('count')
+        ).filter(
+            DetailedLog.timestamp >= last_24h
+        ).group_by(DetailedLog.ip_address).order_by(desc('count')).limit(10).all()
+        
+        # Top users
+        top_users = db.session.query(
+            DetailedLog.username,
+            func.count(DetailedLog.id).label('count')
+        ).filter(
+            DetailedLog.timestamp >= last_24h,
+            DetailedLog.username.isnot(None)
+        ).group_by(DetailedLog.username).order_by(desc('count')).limit(10).all()
+        
+        # Response time statistics
+        avg_response_time = db.session.query(
+            func.avg(DetailedLog.response_time)
+        ).filter(
+            DetailedLog.timestamp >= last_24h,
+            DetailedLog.response_time.isnot(None)
+        ).scalar() or 0
+        
+        return render_template('master_admin/analytics.html',
+                             total_requests=total_requests,
+                             error_requests=error_requests,
+                             suspicious_requests=suspicious_requests,
+                             top_ips=top_ips,
+                             top_users=top_users,
+                             avg_response_time=round(avg_response_time, 2))
+    except Exception as e:
+        flash(f'Feature not available: {str(e)}. Please run database migration.', 'warning')
+        return redirect(url_for('master_admin.dashboard'))
